@@ -127,3 +127,18 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+# OpenRouter AI配置
+openrouter:
+  # API密钥（请替换为您的实际API密钥）
+  api-key: ${OPENROUTER_API_KEY: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}
+  # API基础地址
+  base-url: https://openrouter.ai/api/v1
+  # 模型名称
+  model: deepseek/deepseek-r1:free:online
+  # 最大令牌数
+  max-tokens: 1000
+  # 温度参数
+  temperature: 0.7
+  # 请求超时时间（毫秒）
+  timeout: 30000

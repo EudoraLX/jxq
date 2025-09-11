@@ -13,9 +13,13 @@ import router from './router'
 import directive from './directive' // directive
 import plugins from './plugins' // plugins
 import { download } from '@/utils/request'
+import { setupErrorHandler } from '@/utils/errorHandler'
 
 import './assets/icons' // icon
 import './permission' // permission control
+
+// 设置全局错误处理器
+setupErrorHandler()
 import { getDicts } from "@/api/system/dict/data"
 import { getConfigKey } from "@/api/system/config"
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree } from "@/utils/jxqvue"

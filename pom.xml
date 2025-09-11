@@ -218,6 +218,13 @@
                 <version>${jxqvue.version}</version>
             </dependency>
 
+            <!-- AI聊天模块-->
+            <dependency>
+                <groupId>com.jxqvue</groupId>
+                <artifactId>jxqvue-ai-chat</artifactId>
+                <version>${jxqvue.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
