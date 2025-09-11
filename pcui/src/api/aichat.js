@@ -91,7 +91,8 @@ export function sendMessage(data) {
   return request({
     url: '/aichat/send',
     method: 'post',
-    data: data
+    data: data,
+    timeout: 120000  // AI请求使用2分钟超时
   })
 }
 

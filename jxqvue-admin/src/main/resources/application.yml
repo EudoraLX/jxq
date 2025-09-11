@@ -135,7 +135,7 @@ openrouter:
   # API基础地址
   base-url: https://openrouter.ai/api/v1
   # 模型名称
-  model: deepseek/deepseek-r1:free:online
+  model: openai/gpt-oss-20b:free
   # 最大令牌数
   max-tokens: 1000
   # 温度参数

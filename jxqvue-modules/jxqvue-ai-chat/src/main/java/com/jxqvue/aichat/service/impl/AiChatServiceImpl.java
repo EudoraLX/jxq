@@ -203,6 +203,13 @@ public class AiChatServiceImpl implements IAiChatService
                 response.setIsNewSession(true);
             }
             
+            // 测试API连接
+            if (!openRouterClient.testConnection()) {
+                response.setSuccess(false);
+                response.setErrorMessage("AI服务连接失败，请检查网络连接和API配置");
+                return response;
+            }
+            
             // 保存用户消息
             ChatMessage userMessage = new ChatMessage();
             userMessage.setSessionId(sessionId);

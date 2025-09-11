@@ -104,8 +104,20 @@ public class OpenRouterClient
             return "抱歉，AI服务暂时不可用，请稍后重试。";
             
         } catch (Exception e) {
-            log.error("调用OpenRouter API失败", e);
-            return "抱歉，AI服务出现错误，请稍后重试。";
+            log.error("调用OpenRouter API失败: {}", e.getMessage(), e);
+            
+            // 根据不同的异常类型返回不同的错误信息
+            if (e.getMessage().contains("timeout")) {
+                return "AI服务响应超时，请稍后重试。";
+            } else if (e.getMessage().contains("Connection refused")) {
+                return "无法连接到AI服务，请检查网络连接。";
+            } else if (e.getMessage().contains("401") || e.getMessage().contains("Unauthorized")) {
+                return "AI服务认证失败，请检查API密钥配置。";
+            } else if (e.getMessage().contains("429") || e.getMessage().contains("rate limit")) {
+                return "AI服务请求过于频繁，请稍后再试。";
+            } else {
+                return "AI服务暂时不可用，请稍后重试。错误详情：" + e.getMessage();
+            }
         }
     }
 
