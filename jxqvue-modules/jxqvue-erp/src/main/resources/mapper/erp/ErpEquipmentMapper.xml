@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpEquipmentMapper">
+    
+    <resultMap type="ErpEquipment" id="ErpEquipmentResult">
+        <result property="id"    column="id"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="equipmentType"    column="equipment_type"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="workCenterName"    column="work_center_name"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <result property="warrantyExpiryDate"    column="warranty_expiry_date"    />
+        <result property="depreciationMethod"    column="depreciation_method"    />
+        <result property="usefulLife"    column="useful_life"    />
+        <result property="originalValue"    column="original_value"    />
+        <result property="currentValue"    column="current_value"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="capacityUnit"    column="capacity_unit"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpEquipmentVo">
+        select e.id, e.equipment_code, e.equipment_name, e.equipment_model, e.equipment_type, e.manufacturer, e.supplier_id, e.work_center_id, 
+               s.supplier_name, wc.work_center_name,
+               e.purchase_date, e.warranty_expiry_date, e.depreciation_method, e.useful_life, e.original_value, e.current_value, 
+               e.capacity, e.capacity_unit, e.status, e.remark, e.create_by, e.create_time, e.update_by, e.update_time, e.del_flag 
+        from erp_equipment e
+        left join erp_supplier s on e.supplier_id = s.id and s.del_flag = '0'
+        left join erp_work_center wc on e.work_center_id = wc.id and wc.del_flag = '0'
+    </sql>
+
+    <select id="selectErpEquipmentList" parameterType="ErpEquipment" resultMap="ErpEquipmentResult">
+        <include refid="selectErpEquipmentVo"/>
+        <where>  
+            and e.del_flag = '0'
+            <if test="equipmentCode != null  and equipmentCode != ''"> and e.equipment_code = #{equipmentCode}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and e.equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and e.equipment_model = #{equipmentModel}</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and e.equipment_type = #{equipmentType}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and e.manufacturer = #{manufacturer}</if>
+            <if test="supplierId != null "> and e.supplier_id = #{supplierId}</if>
+            <if test="workCenterId != null "> and e.work_center_id = #{workCenterId}</if>
+            <if test="purchaseDate != null "> and e.purchase_date = #{purchaseDate}</if>
+            <if test="warrantyExpiryDate != null "> and e.warranty_expiry_date = #{warrantyExpiryDate}</if>
+            <if test="depreciationMethod != null  and depreciationMethod != ''"> and e.depreciation_method = #{depreciationMethod}</if>
+            <if test="usefulLife != null "> and e.useful_life = #{usefulLife}</if>
+            <if test="originalValue != null "> and e.original_value = #{originalValue}</if>
+            <if test="currentValue != null "> and e.current_value = #{currentValue}</if>
+            <if test="capacity != null "> and e.capacity = #{capacity}</if>
+            <if test="capacityUnit != null  and capacityUnit != ''"> and e.capacity_unit = #{capacityUnit}</if>
+            <if test="status != null  and status != ''"> and e.status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpEquipmentById" parameterType="Long" resultMap="ErpEquipmentResult">
+        <include refid="selectErpEquipmentVo"/>
+        where e.id = #{id} and e.del_flag = '0'
+    </select>
+
+    <insert id="insertErpEquipment" parameterType="ErpEquipment" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentCode != null and equipmentCode != ''">equipment_code,</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name,</if>
+            <if test="equipmentModel != null">equipment_model,</if>
+            <if test="equipmentType != null">equipment_type,</if>
+            <if test="manufacturer != null">manufacturer,</if>
+            <if test="supplierId != null">supplier_id,</if>
+            <if test="workCenterId != null">work_center_id,</if>
+            <if test="purchaseDate != null">purchase_date,</if>
+            <if test="warrantyExpiryDate != null">warranty_expiry_date,</if>
+            <if test="depreciationMethod != null">depreciation_method,</if>
+            <if test="usefulLife != null">useful_life,</if>
+            <if test="originalValue != null">original_value,</if>
+            <if test="currentValue != null">current_value,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="capacityUnit != null">capacity_unit,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentCode != null and equipmentCode != ''">#{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">#{equipmentName},</if>
+            <if test="equipmentModel != null">#{equipmentModel},</if>
+            <if test="equipmentType != null">#{equipmentType},</if>
+            <if test="manufacturer != null">#{manufacturer},</if>
+            <if test="supplierId != null">#{supplierId},</if>
+            <if test="workCenterId != null">#{workCenterId},</if>
+            <if test="purchaseDate != null">#{purchaseDate},</if>
+            <if test="warrantyExpiryDate != null">#{warrantyExpiryDate},</if>
+            <if test="depreciationMethod != null">#{depreciationMethod},</if>
+            <if test="usefulLife != null">#{usefulLife},</if>
+            <if test="originalValue != null">#{originalValue},</if>
+            <if test="currentValue != null">#{currentValue},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="capacityUnit != null">#{capacityUnit},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpEquipment" parameterType="ErpEquipment">
+        update erp_equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentCode != null and equipmentCode != ''">equipment_code = #{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="equipmentModel != null">equipment_model = #{equipmentModel},</if>
+            <if test="equipmentType != null">equipment_type = #{equipmentType},</if>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="workCenterId != null">work_center_id = #{workCenterId},</if>
+            <if test="purchaseDate != null">purchase_date = #{purchaseDate},</if>
+            <if test="warrantyExpiryDate != null">warranty_expiry_date = #{warrantyExpiryDate},</if>
+            <if test="depreciationMethod != null">depreciation_method = #{depreciationMethod},</if>
+            <if test="usefulLife != null">useful_life = #{usefulLife},</if>
+            <if test="originalValue != null">original_value = #{originalValue},</if>
+            <if test="currentValue != null">current_value = #{currentValue},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="capacityUnit != null">capacity_unit = #{capacityUnit},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 软删除：将del_flag设置为'1' -->
+    <update id="deleteErpEquipmentById" parameterType="Long">
+        update erp_equipment set del_flag = '1' where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 批量软删除：将del_flag设置为'1' -->
+    <update id="deleteErpEquipmentByIds" parameterType="String">
+        update erp_equipment set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '0'
+    </update>
+
+    <!-- 物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpEquipmentById" parameterType="Long">
+        delete from erp_equipment where id = #{id}
+    </delete>
+
+    <!-- 批量物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpEquipmentByIds" parameterType="String">
+        delete from erp_equipment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpEquipmentById" parameterType="Long">
+        update erp_equipment set del_flag = '0' where id = #{id} and del_flag = '1'
+    </update>
+
+    <!-- 批量恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpEquipmentByIds" parameterType="String">
+        update erp_equipment set del_flag = '0' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '1'
+    </update>
+
+    <!-- 查询已删除的记录 -->
+    <select id="selectDeletedErpEquipmentList" parameterType="ErpEquipment" resultMap="ErpEquipmentResult">
+        <include refid="selectErpEquipmentVo"/>
+        <where>  
+            and e.del_flag = '1'
+            <if test="equipmentCode != null  and equipmentCode != ''"> and e.equipment_code = #{equipmentCode}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and e.equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and e.equipment_model = #{equipmentModel}</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and e.equipment_type = #{equipmentType}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and e.manufacturer = #{manufacturer}</if>
+            <if test="supplierId != null "> and e.supplier_id = #{supplierId}</if>
+            <if test="workCenterId != null "> and e.work_center_id = #{workCenterId}</if>
+            <if test="purchaseDate != null "> and e.purchase_date = #{purchaseDate}</if>
+            <if test="warrantyExpiryDate != null "> and e.warranty_expiry_date = #{warrantyExpiryDate}</if>
+            <if test="depreciationMethod != null  and depreciationMethod != ''"> and e.depreciation_method = #{depreciationMethod}</if>
+            <if test="usefulLife != null "> and e.useful_life = #{usefulLife}</if>
+            <if test="originalValue != null "> and e.original_value = #{originalValue}</if>
+            <if test="currentValue != null "> and e.current_value = #{currentValue}</if>
+            <if test="capacity != null "> and e.capacity = #{capacity}</if>
+            <if test="capacityUnit != null  and capacityUnit != ''"> and e.capacity_unit = #{capacityUnit}</if>
+            <if test="status != null  and status != ''"> and e.status = #{status}</if>
+        </where>
+    </select>
+
+    <!-- 查询所有记录（包括已删除的） -->
+    <select id="selectAllErpEquipmentList" parameterType="ErpEquipment" resultMap="ErpEquipmentResult">
+        <include refid="selectErpEquipmentVo"/>
+        <where>  
+            <if test="equipmentCode != null  and equipmentCode != ''"> and e.equipment_code = #{equipmentCode}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and e.equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and e.equipment_model = #{equipmentModel}</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and e.equipment_type = #{equipmentType}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and e.manufacturer = #{manufacturer}</if>
+            <if test="supplierId != null "> and e.supplier_id = #{supplierId}</if>
+            <if test="workCenterId != null "> and e.work_center_id = #{workCenterId}</if>
+            <if test="purchaseDate != null "> and e.purchase_date = #{purchaseDate}</if>
+            <if test="warrantyExpiryDate != null "> and e.warranty_expiry_date = #{warrantyExpiryDate}</if>
+            <if test="depreciationMethod != null  and depreciationMethod != ''"> and e.depreciation_method = #{depreciationMethod}</if>
+            <if test="usefulLife != null "> and e.useful_life = #{usefulLife}</if>
+            <if test="originalValue != null "> and e.original_value = #{originalValue}</if>
+            <if test="currentValue != null "> and e.current_value = #{currentValue}</if>
+            <if test="capacity != null "> and e.capacity = #{capacity}</if>
+            <if test="capacityUnit != null  and capacityUnit != ''"> and e.capacity_unit = #{capacityUnit}</if>
+            <if test="status != null  and status != ''"> and e.status = #{status}</if>
+        </where>
+    </select>
+</mapper>

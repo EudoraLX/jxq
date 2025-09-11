@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>创建简单消息图标</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .icon-container { display: inline-block; margin: 10px; }
+        .icon { width: 81px; height: 81px; border: 1px solid #ccc; }
+        .instructions { background: #f5f5f5; padding: 15px; margin: 20px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>简单消息图标生成器</h1>
+    
+    <div class="instructions">
+        <h3>使用说明：</h3>
+        <ol>
+            <li>右键点击下面的图标</li>
+            <li>选择"另存为图片"</li>
+            <li>保存为 message.png (未选中状态)</li>
+            <li>将图标颜色改为蓝色，保存为 message_.png (选中状态)</li>
+        </ol>
+    </div>
+
+    <h3>消息气泡图标 (未选中状态 - 灰色)</h3>
+    <div class="icon-container">
+        <svg class="icon" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+            <!-- 消息气泡 -->
+            <ellipse cx="40" cy="35" rx="25" ry="20" fill="none" stroke="#999999" stroke-width="3"/>
+            <!-- 消息尾巴 -->
+            <path d="M15 50 L5 60 L20 55 Z" fill="#999999"/>
+            <!-- 消息内容线条 -->
+            <line x1="25" y1="30" x2="55" y2="30" stroke="#999999" stroke-width="2"/>
+            <line x1="25" y1="35" x2="50" y2="35" stroke="#999999" stroke-width="2"/>
+            <line x1="25" y1="40" x2="45" y2="40" stroke="#999999" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <h3>消息气泡图标 (选中状态 - 蓝色)</h3>
+    <div class="icon-container">
+        <svg class="icon" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+            <!-- 消息气泡 -->
+            <ellipse cx="40" cy="35" rx="25" ry="20" fill="none" stroke="#409EFF" stroke-width="3"/>
+            <!-- 消息尾巴 -->
+            <path d="M15 50 L5 60 L20 55 Z" fill="#409EFF"/>
+            <!-- 消息内容线条 -->
+            <line x1="25" y1="30" x2="55" y2="30" stroke="#409EFF" stroke-width="2"/>
+            <line x1="25" y1="35" x2="50" y2="35" stroke="#409EFF" stroke-width="2"/>
+            <line x1="25" y1="40" x2="45" y2="40" stroke="#409EFF" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <h3>铃铛图标 (未选中状态 - 灰色)</h3>
+    <div class="icon-container">
+        <svg class="icon" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+            <!-- 铃铛主体 -->
+            <path d="M25 25 Q25 15 35 15 L45 15 Q55 15 55 25 L55 35 Q55 45 50 50 L30 50 Q25 45 25 35 Z" fill="none" stroke="#999999" stroke-width="3"/>
+            <!-- 铃铛顶部 -->
+            <rect x="35" y="10" width="10" height="8" fill="#999999"/>
+            <!-- 铃铛内部 -->
+            <circle cx="40" cy="35" r="3" fill="#999999"/>
+            <!-- 铃铛底部 -->
+            <rect x="35" y="50" width="10" height="5" fill="#999999"/>
+        </svg>
+    </div>
+
+    <h3>铃铛图标 (选中状态 - 蓝色)</h3>
+    <div class="icon-container">
+        <svg class="icon" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+            <!-- 铃铛主体 -->
+            <path d="M25 25 Q25 15 35 15 L45 15 Q55 15 55 25 L55 35 Q55 45 50 50 L30 50 Q25 45 25 35 Z" fill="none" stroke="#409EFF" stroke-width="3"/>
+            <!-- 铃铛顶部 -->
+            <rect x="35" y="10" width="10" height="8" fill="#409EFF"/>
+            <!-- 铃铛内部 -->
+            <circle cx="40" cy="35" r="3" fill="#409EFF"/>
+            <!-- 铃铛底部 -->
+            <rect x="35" y="50" width="10" height="5" fill="#409EFF"/>
+        </svg>
+    </div>
+
+    <div class="instructions">
+        <h3>保存步骤：</h3>
+        <ol>
+            <li>右键点击选中的图标</li>
+            <li>选择"另存为图片"或"复制图片"</li>
+            <li>保存到 D:\Develop\Jxq2509_1\app\static\images\tabbar\ 目录</li>
+            <li>分别保存为 message.png 和 message_.png</li>
+            <li>确保图片尺寸为 81x81 像素</li>
+        </ol>
+    </div>
+</body>
+</html>

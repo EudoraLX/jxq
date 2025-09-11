@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpWorkCenterConfigMapper">
+    
+    <resultMap type="ErpWorkCenterConfig" id="ErpWorkCenterConfigResult">
+        <result property="id"    column="id"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="capacityType"    column="capacity_type"    />
+        <result property="standardCapacity"    column="standard_capacity"    />
+        <result property="capacityUnit"    column="capacity_unit"    />
+        <result property="efficiencyRate"    column="efficiency_rate"    />
+        <result property="availableCapacity"    column="available_capacity"    />
+        <result property="setupTime"    column="setup_time"    />
+        <result property="processingTime" column="processing_time" />
+        <result property="moveTime" column="move_time" />
+        <result property="queueTime" column="queue_time" />
+        <result property="cycleTime" column="cycle_time" />
+        <result property="isPrimary"    column="is_primary"    />
+        <result property="remark"    column="remark"    />
+        <!-- 关联字段 -->
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="moldCode"    column="mold_code"    />
+        <result property="moldName"    column="mold_name"    />
+    </resultMap>
+
+    <sql id="selectErpWorkCenterConfigVo">
+        select c.id, c.work_center_id, c.equipment_id, c.mold_id, c.capacity_type, c.standard_capacity, 
+               c.capacity_unit, c.efficiency_rate, c.available_capacity, c.setup_time, c.processing_time, c.move_time, c.queue_time, c.cycle_time,
+               c.is_primary, c.remark,
+               e.equipment_code, e.equipment_name,
+               m.mold_code, m.mold_name
+        from erp_work_center_config c
+        left join erp_equipment e on c.equipment_id = e.id
+        left join erp_mold m on c.mold_id = m.id
+    </sql>
+
+    <select id="selectErpWorkCenterConfigList" parameterType="ErpWorkCenterConfig" resultMap="ErpWorkCenterConfigResult">
+        <include refid="selectErpWorkCenterConfigVo"/>
+        <where>  
+            <if test="workCenterId != null"> and c.work_center_id = #{workCenterId}</if>
+            <if test="equipmentId != null"> and c.equipment_id = #{equipmentId}</if>
+            <if test="moldId != null"> and c.mold_id = #{moldId}</if>
+            <if test="capacityType != null  and capacityType != ''"> and c.capacity_type = #{capacityType}</if>
+            <if test="standardCapacity != null"> and c.standard_capacity = #{standardCapacity}</if>
+            <if test="capacityUnit != null  and capacityUnit != ''"> and c.capacity_unit = #{capacityUnit}</if>
+            <if test="efficiencyRate != null"> and c.efficiency_rate = #{efficiencyRate}</if>
+            <if test="availableCapacity != null"> and c.available_capacity = #{availableCapacity}</if>
+            <if test="isPrimary != null  and isPrimary != ''"> and c.is_primary = #{isPrimary}</if>
+        </where>
+        order by c.is_primary desc, c.id asc
+    </select>
+    
+    <select id="selectErpWorkCenterConfigById" parameterType="Long" resultMap="ErpWorkCenterConfigResult">
+        <include refid="selectErpWorkCenterConfigVo"/>
+        where c.id = #{id}
+    </select>
+
+    <select id="selectErpWorkCenterConfigByWorkCenterId" parameterType="Long" resultMap="ErpWorkCenterConfigResult">
+        <include refid="selectErpWorkCenterConfigVo"/>
+        where c.work_center_id = #{workCenterId}
+        order by c.is_primary desc, c.id asc
+    </select>
+
+    <select id="selectPrimaryConfigByWorkCenterId" parameterType="Long" resultMap="ErpWorkCenterConfigResult">
+        <include refid="selectErpWorkCenterConfigVo"/>
+        where c.work_center_id = #{workCenterId} and c.is_primary = '1'
+        limit 1
+    </select>
+        
+    <insert id="insertErpWorkCenterConfig" parameterType="ErpWorkCenterConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_work_center_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workCenterId != null">work_center_id,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="moldId != null">mold_id,</if>
+            <if test="capacityType != null">capacity_type,</if>
+            <if test="standardCapacity != null">standard_capacity,</if>
+            <if test="capacityUnit != null">capacity_unit,</if>
+            <if test="efficiencyRate != null">efficiency_rate,</if>
+            <if test="availableCapacity != null">available_capacity,</if>
+            <if test="setupTime != null">setup_time,</if>
+            <if test="processingTime != null">processing_time,</if>
+            <if test="moveTime != null">move_time,</if>
+            <if test="queueTime != null">queue_time,</if>
+            <if test="cycleTime != null">cycle_time,</if>
+            <if test="isPrimary != null">is_primary,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workCenterId != null">#{workCenterId},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="moldId != null">#{moldId},</if>
+            <if test="capacityType != null">#{capacityType},</if>
+            <if test="standardCapacity != null">#{standardCapacity},</if>
+            <if test="capacityUnit != null">#{capacityUnit},</if>
+            <if test="efficiencyRate != null">#{efficiencyRate},</if>
+            <if test="availableCapacity != null">#{availableCapacity},</if>
+            <if test="setupTime != null">#{setupTime},</if>
+            <if test="processingTime != null">#{processingTime},</if>
+            <if test="moveTime != null">#{moveTime},</if>
+            <if test="queueTime != null">#{queueTime},</if>
+            <if test="cycleTime != null">#{cycleTime},</if>
+            <if test="isPrimary != null">#{isPrimary},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpWorkCenterConfig" parameterType="ErpWorkCenterConfig">
+        update erp_work_center_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workCenterId != null">work_center_id = #{workCenterId},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="moldId != null">mold_id = #{moldId},</if>
+            <if test="capacityType != null">capacity_type = #{capacityType},</if>
+            <if test="standardCapacity != null">standard_capacity = #{standardCapacity},</if>
+            <if test="capacityUnit != null">capacity_unit = #{capacityUnit},</if>
+            <if test="efficiencyRate != null">efficiency_rate = #{efficiencyRate},</if>
+            <if test="availableCapacity != null">available_capacity = #{availableCapacity},</if>
+            <if test="setupTime != null">setup_time = #{setupTime},</if>
+            <if test="processingTime != null">processing_time = #{processingTime},</if>
+            <if test="moveTime != null">move_time = #{moveTime},</if>
+            <if test="queueTime != null">queue_time = #{queueTime},</if>
+            <if test="cycleTime != null">cycle_time = #{cycleTime},</if>
+            <if test="isPrimary != null">is_primary = #{isPrimary},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpWorkCenterConfigById" parameterType="Long">
+        delete from erp_work_center_config where id = #{id}
+    </delete>
+
+    <delete id="deleteErpWorkCenterConfigByIds" parameterType="String">
+        delete from erp_work_center_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpWorkCenterConfigByWorkCenterId" parameterType="Long">
+        delete from erp_work_center_config where work_center_id = #{workCenterId}
+    </delete>
+</mapper>

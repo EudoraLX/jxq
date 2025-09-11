@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpSupplierMapper">
+    
+    <resultMap type="ErpSupplier" id="ErpSupplierResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="supplierShortName"    column="supplier_short_name"    />
+        <result property="supplierType"    column="supplier_type"    />
+        <result property="businessLicense"    column="business_license"    />
+        <result property="taxRegistrationNumber"    column="tax_registration_number"    />
+        <result property="legalRepresentative"    column="legal_representative"    />
+        <result property="registeredCapital"    column="registered_capital"    />
+        <result property="establishmentDate"    column="establishment_date"    />
+        <result property="businessScope"    column="business_scope"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="contactEmail"    column="contact_email"    />
+        <result property="address"    column="address"    />
+        <result property="postalCode"    column="postal_code"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="bankAccount"    column="bank_account"    />
+        <result property="accountName"    column="account_name"    />
+        <result property="creditRating"    column="credit_rating"    />
+        <result property="paymentTerms"    column="payment_terms"    />
+        <result property="deliveryTerms"    column="delivery_terms"    />
+        <result property="qualityRating"    column="quality_rating"    />
+        <result property="deliveryRating"    column="delivery_rating"    />
+        <result property="serviceRating"    column="service_rating"    />
+        <result property="overallRating"    column="overall_rating"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpSupplierVo">
+        select id, supplier_code, supplier_name, supplier_short_name, supplier_type, business_license, tax_registration_number, legal_representative, registered_capital, establishment_date, business_scope, contact_person, contact_phone, contact_email, address, postal_code, bank_name, bank_account, account_name, credit_rating, payment_terms, delivery_terms, quality_rating, delivery_rating, service_rating, overall_rating, is_active, remark, create_by, create_time, update_by, update_time from erp_supplier
+    </sql>
+
+    <select id="selectErpSupplierList" parameterType="ErpSupplier" resultMap="ErpSupplierResult">
+        <include refid="selectErpSupplierVo"/>
+        <where>  
+            and del_flag = '0'
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="supplierShortName != null  and supplierShortName != ''"> and supplier_short_name like concat('%', #{supplierShortName}, '%')</if>
+            <if test="supplierType != null  and supplierType != ''"> and supplier_type = #{supplierType}</if>
+            <if test="creditRating != null  and creditRating != ''"> and credit_rating = #{creditRating}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpSupplierById" parameterType="Long" resultMap="ErpSupplierResult">
+        <include refid="selectErpSupplierVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <insert id="insertErpSupplier" parameterType="ErpSupplier" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_supplier
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null and supplierCode != ''">supplier_code,</if>
+            <if test="supplierName != null and supplierName != ''">supplier_name,</if>
+            <if test="supplierShortName != null">supplier_short_name,</if>
+            <if test="supplierType != null">supplier_type,</if>
+            <if test="businessLicense != null">business_license,</if>
+            <if test="taxRegistrationNumber != null">tax_registration_number,</if>
+            <if test="legalRepresentative != null">legal_representative,</if>
+            <if test="registeredCapital != null">registered_capital,</if>
+            <if test="establishmentDate != null">establishment_date,</if>
+            <if test="businessScope != null">business_scope,</if>
+            <if test="contactPerson != null">contact_person,</if>
+            <if test="contactPhone != null">contact_phone,</if>
+            <if test="contactEmail != null">contact_email,</if>
+            <if test="address != null">address,</if>
+            <if test="postalCode != null">postal_code,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="bankAccount != null">bank_account,</if>
+            <if test="accountName != null">account_name,</if>
+            <if test="creditRating != null">credit_rating,</if>
+            <if test="paymentTerms != null">payment_terms,</if>
+            <if test="deliveryTerms != null">delivery_terms,</if>
+            <if test="qualityRating != null">quality_rating,</if>
+            <if test="deliveryRating != null">delivery_rating,</if>
+            <if test="serviceRating != null">service_rating,</if>
+            <if test="overallRating != null">overall_rating,</if>
+            <if test="isActive != null and isActive != ''">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null and supplierCode != ''">#{supplierCode},</if>
+            <if test="supplierName != null and supplierName != ''">#{supplierName},</if>
+            <if test="supplierShortName != null">#{supplierShortName},</if>
+            <if test="supplierType != null">#{supplierType},</if>
+            <if test="businessLicense != null">#{businessLicense},</if>
+            <if test="taxRegistrationNumber != null">#{taxRegistrationNumber},</if>
+            <if test="legalRepresentative != null">#{legalRepresentative},</if>
+            <if test="registeredCapital != null">#{registeredCapital},</if>
+            <if test="establishmentDate != null">#{establishmentDate},</if>
+            <if test="businessScope != null">#{businessScope},</if>
+            <if test="contactPerson != null">#{contactPerson},</if>
+            <if test="contactPhone != null">#{contactPhone},</if>
+            <if test="contactEmail != null">#{contactEmail},</if>
+            <if test="address != null">#{address},</if>
+            <if test="postalCode != null">#{postalCode},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="bankAccount != null">#{bankAccount},</if>
+            <if test="accountName != null">#{accountName},</if>
+            <if test="creditRating != null">#{creditRating},</if>
+            <if test="paymentTerms != null">#{paymentTerms},</if>
+            <if test="deliveryTerms != null">#{deliveryTerms},</if>
+            <if test="qualityRating != null">#{qualityRating},</if>
+            <if test="deliveryRating != null">#{deliveryRating},</if>
+            <if test="serviceRating != null">#{serviceRating},</if>
+            <if test="overallRating != null">#{overallRating},</if>
+            <if test="isActive != null and isActive != ''">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpSupplier" parameterType="ErpSupplier">
+        update erp_supplier
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null and supplierCode != ''">update_time = #{supplierCode},</if>
+            <if test="supplierName != null and supplierName != ''">update_time = #{supplierName},</if>
+            <if test="supplierShortName != null">update_time = #{supplierShortName},</if>
+            <if test="supplierType != null">update_time = #{supplierType},</if>
+            <if test="businessLicense != null">update_time = #{businessLicense},</if>
+            <if test="taxRegistrationNumber != null">update_time = #{taxRegistrationNumber},</if>
+            <if test="legalRepresentative != null">update_time = #{legalRepresentative},</if>
+            <if test="registeredCapital != null">update_time = #{registeredCapital},</if>
+            <if test="establishmentDate != null">update_time = #{establishmentDate},</if>
+            <if test="businessScope != null">update_time = #{businessScope},</if>
+            <if test="contactPerson != null">update_time = #{contactPerson},</if>
+            <if test="contactPhone != null">update_time = #{contactPhone},</if>
+            <if test="contactEmail != null">update_time = #{contactEmail},</if>
+            <if test="address != null">update_time = #{address},</if>
+            <if test="postalCode != null">update_time = #{postalCode},</if>
+            <if test="bankName != null">update_time = #{bankName},</if>
+            <if test="bankAccount != null">update_time = #{bankAccount},</if>
+            <if test="accountName != null">update_time = #{accountName},</if>
+            <if test="creditRating != null">update_time = #{creditRating},</if>
+            <if test="paymentTerms != null">update_time = #{paymentTerms},</if>
+            <if test="deliveryTerms != null">update_time = #{deliveryTerms},</if>
+            <if test="qualityRating != null">update_time = #{qualityRating},</if>
+            <if test="deliveryRating != null">update_time = #{deliveryRating},</if>
+            <if test="serviceRating != null">update_time = #{serviceRating},</if>
+            <if test="overallRating != null">update_time = #{overallRating},</if>
+            <if test="isActive != null and isActive != ''">update_time = #{isActive},</if>
+            <if test="remark != null">update_time = #{remark},</if>
+            <if test="createBy != null">update_time = #{createBy},</if>
+            <if test="createTime != null">update_time = #{createTime},</if>
+            <if test="updateBy != null">update_time = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 软删除：将del_flag设置为'1' -->
+    <update id="deleteErpSupplierById" parameterType="Long">
+        update erp_supplier set del_flag = '1' where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 批量软删除：将del_flag设置为'1' -->
+    <update id="deleteErpSupplierByIds" parameterType="String">
+        update erp_supplier set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '0'
+    </update>
+
+    <!-- 物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpSupplierById" parameterType="Long">
+        delete from erp_supplier where id = #{id}
+    </delete>
+
+    <!-- 批量物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpSupplierByIds" parameterType="String">
+        delete from erp_supplier where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpSupplierById" parameterType="Long">
+        update erp_supplier set del_flag = '0' where id = #{id} and del_flag = '1'
+    </update>
+
+    <!-- 批量恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpSupplierByIds" parameterType="String">
+        update erp_supplier set del_flag = '0' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '1'
+    </update>
+
+    <!-- 查询已删除的记录 -->
+    <select id="selectDeletedErpSupplierList" parameterType="ErpSupplier" resultMap="ErpSupplierResult">
+        <include refid="selectErpSupplierVo"/>
+        <where>  
+            and del_flag = '1'
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="supplierShortName != null  and supplierShortName != ''"> and supplier_short_name like concat('%', #{supplierShortName}, '%')</if>
+            <if test="supplierType != null  and supplierType != ''"> and supplier_type = #{supplierType}</if>
+            <if test="creditRating != null  and creditRating != ''"> and credit_rating = #{creditRating}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+
+    <!-- 查询所有记录（包括已删除的） -->
+    <select id="selectAllErpSupplierList" parameterType="ErpSupplier" resultMap="ErpSupplierResult">
+        <include refid="selectErpSupplierVo"/>
+        <where>  
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="supplierShortName != null  and supplierShortName != ''"> and supplier_short_name like concat('%', #{supplierShortName}, '%')</if>
+            <if test="supplierType != null  and supplierType != ''"> and supplier_type = #{supplierType}</if>
+            <if test="creditRating != null  and creditRating != ''"> and credit_rating = #{creditRating}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpWarehouseMapper">
+    
+    <resultMap type="ErpWarehouse" id="ErpWarehouseResult">
+        <result property="id"    column="id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="warehouseName"    column="warehouse_name"    />
+        <result property="warehouseType"    column="warehouse_type"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="manager"    column="manager"    />
+        <result property="phone"    column="phone"    />
+        <result property="address"    column="address"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpWarehouseVo">
+        select id, warehouse_code, warehouse_name, warehouse_type, parent_id, manager, phone, address, is_active, remark, create_by, create_time, update_by, update_time, del_flag from erp_warehouse
+    </sql>
+
+    <select id="selectErpWarehouseList" parameterType="ErpWarehouse" resultMap="ErpWarehouseResult">
+        <include refid="selectErpWarehouseVo"/>
+        <where>  
+            <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="warehouseType != null  and warehouseType != ''"> and warehouse_type = #{warehouseType}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="manager != null  and manager != ''"> and manager like concat('%', #{manager}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+            and del_flag = '0'
+        </where>
+    </select>
+    
+    <select id="selectErpWarehouseById" parameterType="Long" resultMap="ErpWarehouseResult">
+        <include refid="selectErpWarehouseVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <select id="selectAvailableWarehouses" resultMap="ErpWarehouseResult">
+        <include refid="selectErpWarehouseVo"/>
+        where is_active = '1' and del_flag = '0'
+        order by warehouse_code
+    </select>
+        
+    <insert id="insertErpWarehouse" parameterType="ErpWarehouse" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_warehouse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="warehouseCode != null and warehouseCode != ''">warehouse_code,</if>
+            <if test="warehouseName != null and warehouseName != ''">warehouse_name,</if>
+            <if test="warehouseType != null">warehouse_type,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="manager != null">manager,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="warehouseCode != null and warehouseCode != ''">#{warehouseCode},</if>
+            <if test="warehouseName != null and warehouseName != ''">#{warehouseName},</if>
+            <if test="warehouseType != null">#{warehouseType},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="manager != null">#{manager},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpWarehouse" parameterType="ErpWarehouse">
+        update erp_warehouse
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="warehouseCode != null and warehouseCode != ''">warehouse_code = #{warehouseCode},</if>
+            <if test="warehouseName != null and warehouseName != ''">warehouse_name = #{warehouseName},</if>
+            <if test="warehouseType != null">warehouse_type = #{warehouseType},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="manager != null">manager = #{manager},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpWarehouseById" parameterType="Long">
+        update erp_warehouse set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpWarehouseByIds" parameterType="String">
+        update erp_warehouse set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpInventoryAlertMapper">
+    
+    <resultMap type="ErpInventoryAlert" id="ErpInventoryAlertResult">
+        <result property="id"    column="id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="warehouseName"    column="warehouse_name"    />
+        <result property="alertType"    column="alert_type"    />
+        <result property="currentQuantity"    column="current_quantity"    />
+        <result property="thresholdQuantity"    column="threshold_quantity"    />
+        <result property="alertLevel"    column="alert_level"    />
+        <result property="alertMessage"    column="alert_message"    />
+        <result property="isHandled"    column="is_handled"    />
+        <result property="handlerId"    column="handler_id"    />
+        <result property="handlerName"    column="handler_name"    />
+        <result property="handleTime"    column="handle_time"    />
+        <result property="handleRemark"    column="handle_remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpInventoryAlertVo">
+        select id, material_id, material_code, material_name, warehouse_id, warehouse_code, warehouse_name, alert_type, current_quantity, threshold_quantity, alert_level, alert_message, is_handled, handler_id, handler_name, handle_time, handle_remark, create_by, create_time, update_by, update_time from erp_inventory_alert
+    </sql>
+
+    <select id="selectErpInventoryAlertList" parameterType="ErpInventoryAlert" resultMap="ErpInventoryAlertResult">
+        <include refid="selectErpInventoryAlertVo"/>
+        <where>  
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="materialCode != null  and materialCode != ''"> and material_code like concat('%', #{materialCode}, '%')</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="alertType != null  and alertType != ''"> and alert_type = #{alertType}</if>
+            <if test="currentQuantity != null "> and current_quantity = #{currentQuantity}</if>
+            <if test="thresholdQuantity != null "> and threshold_quantity = #{thresholdQuantity}</if>
+            <if test="alertLevel != null  and alertLevel != ''"> and alert_level = #{alertLevel}</if>
+            <if test="alertMessage != null  and alertMessage != ''"> and alert_message like concat('%', #{alertMessage}, '%')</if>
+            <if test="isHandled != null  and isHandled != ''"> and is_handled = #{isHandled}</if>
+            <if test="handlerId != null "> and handler_id = #{handlerId}</if>
+            <if test="handlerName != null  and handlerName != ''"> and handler_name like concat('%', #{handlerName}, '%')</if>
+            <if test="handleTime != null "> and handle_time = #{handleTime}</if>
+            <if test="handleRemark != null  and handleRemark != ''"> and handle_remark like concat('%', #{handleRemark}, '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+        order by alert_level desc, create_time desc
+    </select>
+    
+    <select id="selectErpInventoryAlertById" parameterType="Long" resultMap="ErpInventoryAlertResult">
+        <include refid="selectErpInventoryAlertVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectErpInventoryAlertStatistics" parameterType="ErpInventoryAlert" resultMap="ErpInventoryAlertResult">
+        <include refid="selectErpInventoryAlertVo"/>
+        <where>  
+            <if test="alertType != null  and alertType != ''"> and alert_type = #{alertType}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="alertLevel != null  and alertLevel != ''"> and alert_level = #{alertLevel}</if>
+            <if test="isHandled != null  and isHandled != ''"> and is_handled = #{isHandled}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <insert id="insertErpInventoryAlert" parameterType="ErpInventoryAlert" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_inventory_alert
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="materialCode != null">material_code,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="warehouseCode != null">warehouse_code,</if>
+            <if test="warehouseName != null">warehouse_name,</if>
+            <if test="alertType != null and alertType != ''">alert_type,</if>
+            <if test="currentQuantity != null">current_quantity,</if>
+            <if test="thresholdQuantity != null">threshold_quantity,</if>
+            <if test="alertLevel != null and alertLevel != ''">alert_level,</if>
+            <if test="alertMessage != null">alert_message,</if>
+            <if test="isHandled != null and isHandled != ''">is_handled,</if>
+            <if test="handlerId != null">handler_id,</if>
+            <if test="handlerName != null">handler_name,</if>
+            <if test="handleTime != null">handle_time,</if>
+            <if test="handleRemark != null">handle_remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialCode != null">#{materialCode},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="warehouseCode != null">#{warehouseCode},</if>
+            <if test="warehouseName != null">#{warehouseName},</if>
+            <if test="alertType != null and alertType != ''">#{alertType},</if>
+            <if test="currentQuantity != null">#{currentQuantity},</if>
+            <if test="thresholdQuantity != null">#{thresholdQuantity},</if>
+            <if test="alertLevel != null and alertLevel != ''">#{alertLevel},</if>
+            <if test="alertMessage != null">#{alertMessage},</if>
+            <if test="isHandled != null and isHandled != ''">#{isHandled},</if>
+            <if test="handlerId != null">#{handlerId},</if>
+            <if test="handlerName != null">#{handlerName},</if>
+            <if test="handleTime != null">#{handleTime},</if>
+            <if test="handleRemark != null">#{handleRemark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpInventoryAlert" parameterType="ErpInventoryAlert">
+        update erp_inventory_alert
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialCode != null">material_code = #{materialCode},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="warehouseCode != null">warehouse_code = #{warehouseCode},</if>
+            <if test="warehouseName != null">warehouse_name = #{warehouseName},</if>
+            <if test="alertType != null and alertType != ''">alert_type = #{alertType},</if>
+            <if test="currentQuantity != null">current_quantity = #{currentQuantity},</if>
+            <if test="thresholdQuantity != null">threshold_quantity = #{thresholdQuantity},</if>
+            <if test="alertLevel != null and alertLevel != ''">alert_level = #{alertLevel},</if>
+            <if test="alertMessage != null">alert_message = #{alertMessage},</if>
+            <if test="isHandled != null and isHandled != ''">is_handled = #{isHandled},</if>
+            <if test="handlerId != null">handler_id = #{handlerId},</if>
+            <if test="handlerName != null">handler_name = #{handlerName},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="handleRemark != null">handle_remark = #{handleRemark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="handleErpInventoryAlertByIds" parameterType="String">
+        update erp_inventory_alert 
+        set is_handled = '1', 
+            handler_id = #{handlerId}, 
+            handler_name = #{handlerName}, 
+            handle_time = now(), 
+            handle_remark = #{handleRemark}
+        where id in 
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteErpInventoryAlertById" parameterType="Long">
+        delete from erp_inventory_alert where id = #{id}
+    </delete>
+
+    <delete id="deleteErpInventoryAlertByIds" parameterType="String">
+        delete from erp_inventory_alert where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.message.mapper.MessageTemplateMapper">
+    
+    <resultMap type="MessageTemplate" id="MessageTemplateResult">
+        <result property="templateId"    column="template_id"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="templateCode"    column="template_code"    />
+        <result property="templateType"    column="template_type"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="titleTemplate"    column="title_template"    />
+        <result property="contentTemplate"    column="content_template"    />
+        <result property="messageType"    column="message_type"    />
+        <result property="messageLevel"    column="message_level"    />
+        <result property="variables"    column="variables"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectMessageTemplateVo">
+        select template_id, template_name, template_code, template_type, category_id, category_name, title_template, content_template, message_type, message_level, variables, status, create_by, create_time, update_by, update_time, remark from message_template
+    </sql>
+
+    <select id="selectMessageTemplateList" parameterType="MessageTemplate" resultMap="MessageTemplateResult">
+        <include refid="selectMessageTemplateVo"/>
+        <where>  
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="templateCode != null  and templateCode != ''"> and template_code = #{templateCode}</if>
+            <if test="templateType != null  and templateType != ''"> and template_type = #{templateType}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="messageType != null  and messageType != ''"> and message_type = #{messageType}</if>
+            <if test="messageLevel != null  and messageLevel != ''"> and message_level = #{messageLevel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectMessageTemplateByTemplateId" parameterType="Long" resultMap="MessageTemplateResult">
+        <include refid="selectMessageTemplateVo"/>
+        where template_id = #{templateId}
+    </select>
+
+    <select id="selectMessageTemplateByTemplateCode" parameterType="String" resultMap="MessageTemplateResult">
+        <include refid="selectMessageTemplateVo"/>
+        where template_code = #{templateCode}
+    </select>
+        
+    <insert id="insertMessageTemplate" parameterType="MessageTemplate" useGeneratedKeys="true" keyProperty="templateId">
+        insert into message_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateName != null and templateName != ''">template_name,</if>
+            <if test="templateCode != null and templateCode != ''">template_code,</if>
+            <if test="templateType != null and templateType != ''">template_type,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="categoryName != null and categoryName != ''">category_name,</if>
+            <if test="titleTemplate != null and titleTemplate != ''">title_template,</if>
+            <if test="contentTemplate != null and contentTemplate != ''">content_template,</if>
+            <if test="messageType != null">message_type,</if>
+            <if test="messageLevel != null">message_level,</if>
+            <if test="variables != null">variables,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateName != null and templateName != ''">#{templateName},</if>
+            <if test="templateCode != null and templateCode != ''">#{templateCode},</if>
+            <if test="templateType != null and templateType != ''">#{templateType},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+            <if test="titleTemplate != null and titleTemplate != ''">#{titleTemplate},</if>
+            <if test="contentTemplate != null and contentTemplate != ''">#{contentTemplate},</if>
+            <if test="messageType != null">#{messageType},</if>
+            <if test="messageLevel != null">#{messageLevel},</if>
+            <if test="variables != null">#{variables},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMessageTemplate" parameterType="MessageTemplate">
+        update message_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateName != null and templateName != ''">template_name = #{templateName},</if>
+            <if test="templateCode != null and templateCode != ''">template_code = #{templateCode},</if>
+            <if test="templateType != null and templateType != ''">template_type = #{templateType},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+            <if test="titleTemplate != null and titleTemplate != ''">title_template = #{titleTemplate},</if>
+            <if test="contentTemplate != null and contentTemplate != ''">content_template = #{contentTemplate},</if>
+            <if test="messageType != null">message_type = #{messageType},</if>
+            <if test="messageLevel != null">message_level = #{messageLevel},</if>
+            <if test="variables != null">variables = #{variables},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where template_id = #{templateId}
+    </update>
+
+    <delete id="deleteMessageTemplateByTemplateId" parameterType="Long">
+        delete from message_template where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteMessageTemplateByTemplateIds" parameterType="String">
+        delete from message_template where template_id in 
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+</mapper>

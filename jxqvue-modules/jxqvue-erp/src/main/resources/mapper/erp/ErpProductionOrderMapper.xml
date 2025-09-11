@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProductionOrderMapper">
+    
+    <resultMap type="ErpProductionOrder" id="ErpProductionOrderResult">
+        <result property="id"    column="id"    />
+        <result property="orderCode"    column="order_code"    />
+        <result property="orderName"    column="order_name"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="productId"    column="product_id"    />
+        <result property="bomId"    column="bom_id"    />
+        <result property="processRouteId"    column="process_route_id"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="plannedQuantity"    column="planned_quantity"    />
+        <result property="completedQuantity"    column="completed_quantity"    />
+        <result property="priority"    column="priority"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="productCode" column="product_code" />
+        <result property="productName" column="product_name" />
+        <result property="unitCode" column="unit_code" />
+        <result property="unitName" column="unit_name" />
+        <result property="bomCode" column="bom_code"/>
+        <result property="processRouteCode" column="process_route_code" />
+        <result property="processRouteName" column="process_route_name" />
+        <result property="scrappedQuantity" column="scrapped_quantity" />
+        <result property="remainingQuantity" column="remaining_quantity" />
+        <result property="plannedStartDate" column="planned_start_date" />
+        <result property="plannedEndDate" column="planned_end_date" />
+        <result property="actualStartDate" column="actual_start_date" />
+        <result property="actualEndDate" column="actual_end_date" />
+    </resultMap>
+
+    <resultMap id="ErpProductionOrderErpProductionOrderDetailResult" type="ErpProductionOrder" extends="ErpProductionOrderResult">
+        <collection property="erpProductionOrderDetailList" ofType="ErpProductionOrderDetail" column="id" select="selectErpProductionOrderDetailList" />
+        <collection property="erpProductionOrderMaterialsList" ofType="ErpProductionOrderMaterials" column="id" select="selectErpProductionOrderMaterialsList" />
+    </resultMap>
+
+    <resultMap type="ErpProductionOrderDetail" id="ErpProductionOrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processName"    column="process_name"    />
+        <result property="processOrder"    column="process_order"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="workCenterName"    column="work_center_name"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="moldName"    column="mold_name"    />
+        <result property="plannedDuration"    column="planned_duration"    />
+        <result property="actualDuration"    column="actual_duration"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="moldSetupTime"    column="mold_setup_time"    />
+        <result property="moldRemovalTime"    column="mold_removal_time"    />
+        <result property="temperatureControlTime"    column="temperature_control_time"    />
+        <result property="pressureControlTime"    column="pressure_control_time"    />
+        <result property="qualityCheckTime"    column="quality_check_time"    />
+        <result property="status"    column="status"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="ErpProductionOrderMaterials" id="ErpProductionOrderMaterialsResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialSpec"    column="material_spec"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="issuedQty"    column="issued_qty"    />
+        <result property="needQty"    column="need_qty"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="unitCode"    column="unit_code"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpProductionOrderVo">
+        select po.id, po.order_code, po.order_name, po.order_type, po.product_id, po.bom_id, po.process_route_id, po.unit_id, po.planned_quantity, po.completed_quantity, po.scrapped_quantity, po.remaining_quantity, po.planned_start_date, po.planned_end_date, po.actual_start_date, po.actual_end_date, po.priority, po.status, po.remark, po.create_by, po.create_time, po.update_by, po.update_time,
+               mm.material_code as product_code, mm.material_name as product_name,
+               bom.bom_code, bom.bom_name,
+               pr.process_route_code, pr.process_route_name,
+               u.unit_code, u.unit_name
+        from erp_production_order po
+        LEFT JOIN erp_material_master mm ON po.product_id = mm.id AND mm.is_active = '1'
+        LEFT JOIN erp_bom bom ON po.bom_id = bom.id
+        LEFT JOIN erp_process_route pr ON po.process_route_id = pr.id
+        LEFT JOIN erp_unit u ON po.unit_id = u.id AND u.status = '1'
+    </sql>
+
+    <select id="selectErpProductionOrderList" parameterType="ErpProductionOrder" resultMap="ErpProductionOrderResult">
+        <include refid="selectErpProductionOrderVo"/>
+        <where>  
+            <if test="orderCode != null  and orderCode != ''"> and po.order_code like concat('%', #{orderCode}, '%')</if>
+            <if test="orderName != null  and orderName != ''"> and po.order_name like concat('%', #{orderName}, '%')</if>
+            <if test="orderType != null  and orderType != ''"> and po.order_type = #{orderType}</if>
+            <if test="productId != null "> and po.product_id = #{productId}</if>
+            <if test="bomId != null "> and po.bom_id = #{bomId}</if>
+            <if test="processRouteId != null "> and po.process_route_id = #{processRouteId}</if>
+            <if test="unitId != null "> and po.unit_id = #{unitId}</if>
+            <if test="status != null  and status != ''"> and po.status = #{status}</if>
+            <if test="params.beginPlannedStartDate != null and params.beginPlannedStartDate != '' and params.endPlannedStartDate != null and params.endPlannedStartDate != ''"> and po.planned_start_date between #{params.beginPlannedStartDate} and #{params.endPlannedStartDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpProductionOrderById" parameterType="Long" resultMap="ErpProductionOrderErpProductionOrderDetailResult">
+        <include refid="selectErpProductionOrderVo"/>
+        where po.id = #{id}
+    </select>
+
+    <select id="selectErpProductionOrderDetailList" resultMap="ErpProductionOrderDetailResult">
+        select d.id, d.order_id, d.process_id, d.process_order, d.work_center_id, d.equipment_id, d.mold_id, d.planned_duration, d.actual_duration, d.operator_id, d.mold_setup_time, d.mold_removal_time, d.temperature_control_time, d.pressure_control_time, d.quality_check_time, d.status, d.start_time, d.end_time, d.remark, d.create_by, d.create_time, d.update_by, d.update_time,
+               p.process_name,
+               wc.work_center_name,
+               e.equipment_name,
+               m.mold_name
+        from erp_production_order_detail d
+        LEFT JOIN erp_process p ON d.process_id = p.id
+        LEFT JOIN erp_work_center wc ON d.work_center_id = wc.id
+        LEFT JOIN erp_equipment e ON d.equipment_id = e.id
+        LEFT JOIN erp_mold m ON d.mold_id = m.id
+        where d.order_id = #{id}
+        ORDER BY d.process_order ASC
+    </select>
+
+    <select id="selectErpProductionOrderMaterialsList" resultMap="ErpProductionOrderMaterialsResult">
+        select m.id, m.order_id, m.material_id, m.quantity, m.issued_qty, m.need_qty, m.unit_id, m.remark, m.create_by, m.create_time, m.update_by, m.update_time,
+               mm.material_code, mm.material_name, mm.material_spec,
+               u.unit_name
+        from erp_production_order_materials m
+        LEFT JOIN erp_material_master mm ON m.material_id = mm.id
+        LEFT JOIN erp_unit u ON m.unit_id = u.id
+        where m.order_id = #{id}
+    </select>
+
+    <insert id="insertErpProductionOrder" parameterType="ErpProductionOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_production_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderCode != null and orderCode != ''">order_code,</if>
+            <if test="orderName != null and orderName != ''">order_name,</if>
+            <if test="orderType != null and orderType != ''">order_type,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="bomId != null">bom_id,</if>
+            <if test="processRouteId != null">process_route_id,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="plannedQuantity != null">planned_quantity,</if>
+            <if test="completedQuantity != null">completed_quantity,</if>
+            <if test="scrappedQuantity != null">scrapped_quantity,</if>
+            <if test="remainingQuantity != null">remaining_quantity,</if>
+            <if test="plannedStartDate != null">planned_start_date,</if>
+            <if test="plannedEndDate != null">planned_end_date,</if>
+            <if test="actualStartDate != null">actual_start_date,</if>
+            <if test="actualEndDate != null">actual_end_date,</if>
+            <if test="priority != null">priority,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderCode != null and orderCode != ''">#{orderCode},</if>
+            <if test="orderName != null and orderName != ''">#{orderName},</if>
+            <if test="orderType != null and orderType != ''">#{orderType},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="bomId != null">#{bomId},</if>
+            <if test="processRouteId != null">#{processRouteId},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="plannedQuantity != null">#{plannedQuantity},</if>
+            <if test="completedQuantity != null">#{completedQuantity},</if>
+            <if test="scrappedQuantity != null">#{scrappedQuantity},</if>
+            <if test="remainingQuantity != null">#{remainingQuantity},</if>
+            <if test="plannedStartDate != null">#{plannedStartDate},</if>
+            <if test="plannedEndDate != null">#{plannedEndDate},</if>
+            <if test="actualStartDate != null">#{actualStartDate},</if>
+            <if test="actualEndDate != null">#{actualEndDate},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="isActive != null and isActive != ''">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProductionOrder" parameterType="ErpProductionOrder">
+        update erp_production_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderCode != null and orderCode != ''">order_code = #{orderCode},</if>
+            <if test="orderName != null and orderName != ''">order_name = #{orderName},</if>
+            <if test="orderType != null and orderType != ''">order_type = #{orderType},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="bomId != null">bom_id = #{bomId},</if>
+            <if test="processRouteId != null">process_route_id = #{processRouteId},</if>
+            <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="plannedQuantity != null">planned_quantity = #{plannedQuantity},</if>
+            <if test="completedQuantity != null">completed_quantity = #{completedQuantity},</if>
+            <if test="scrappedQuantity != null">scrapped_quantity = #{scrappedQuantity},</if>
+            <if test="remainingQuantity != null">remaining_quantity = #{remainingQuantity},</if>
+            <if test="plannedStartDate != null">planned_start_date = #{plannedStartDate},</if>
+            <if test="plannedEndDate != null">planned_end_date = #{plannedEndDate},</if>
+            <if test="actualStartDate != null">actual_start_date = #{actualStartDate},</if>
+            <if test="actualEndDate != null">actual_end_date = #{actualEndDate},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!-- 物理删除 -->
+    <delete id="deleteErpProductionOrderById" parameterType="Long">
+        delete from erp_production_order where id = #{id}
+    </delete>
+
+    <!-- 批量物理删除 -->
+    <delete id="deleteErpProductionOrderByIds" parameterType="String">
+        delete from erp_production_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteErpProductionOrderDetailByOrderIds" parameterType="String">
+        delete from erp_production_order_detail where order_id in 
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProductionOrderDetailByOrderId" parameterType="Long">
+        delete from erp_production_order_detail where order_id = #{orderId}
+    </delete>
+
+    <insert id="batchErpProductionOrderDetail">
+        insert into erp_production_order_detail( order_id, process_id, process_order, work_center_id, equipment_id, mold_id, planned_duration, actual_duration, operator_id, mold_setup_time, mold_removal_time, temperature_control_time, pressure_control_time, quality_check_time, start_time, end_time, remark, create_by, create_time, update_by, update_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.orderId}, #{item.processId}, #{item.processOrder}, #{item.workCenterId}, #{item.equipmentId}, #{item.moldId}, #{item.plannedDuration}, #{item.actualDuration}, #{item.operatorId}, #{item.moldSetupTime}, #{item.moldRemovalTime}, #{item.temperatureControlTime}, #{item.pressureControlTime}, #{item.qualityCheckTime}, #{item.startTime}, #{item.endTime}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteErpProductionOrderMaterialsByOrderIds" parameterType="String">
+        delete from erp_production_order_materials where order_id in 
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProductionOrderMaterialsByOrderId" parameterType="Long">
+        delete from erp_production_order_materials where order_id = #{orderId}
+    </delete>
+
+    <insert id="batchErpProductionOrderMaterials">
+        insert into erp_production_order_materials( order_id, material_id, quantity, issued_qty, need_qty, unit_id, remark, create_by, create_time, update_by, update_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.orderId}, #{item.materialId}, #{item.quantity}, #{item.issuedQty}, #{item.needQty}, #{item.unitId}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+    <!-- 更新生产订单状态 -->
+    <update id="updateErpProductionOrderStatus" parameterType="ErpProductionOrder">
+        update erp_production_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!-- 查询生产订单对应的工序列表 -->
+    <select id="selectOrderProcesses" parameterType="Long" resultType="java.util.Map">
+        SELECT 
+            p.id,
+            p.process_code,
+            p.process_name,
+            pod.process_order,
+            pod.work_center_id,
+            pod.equipment_id,
+            pod.mold_id,
+            pod.planned_duration,
+            pod.actual_duration,
+            pod.operator_id,
+            pod.status as detail_status,
+            wc.work_center_code,
+            wc.work_center_name,
+            e.equipment_code,
+            e.equipment_name,
+            m.mold_code,
+            m.mold_name
+        FROM erp_production_order_detail pod
+        LEFT JOIN erp_process p ON pod.process_id = p.id
+        LEFT JOIN erp_work_center wc ON pod.work_center_id = wc.id
+        LEFT JOIN erp_equipment e ON pod.equipment_id = e.id
+        LEFT JOIN erp_mold m ON pod.mold_id = m.id
+        WHERE pod.order_id = #{orderId}
+        ORDER BY pod.process_order ASC
+    </select>
+
+    <select id="selectErpProductionOrderByCode" parameterType="String" resultMap="ErpProductionOrderResult">
+        <include refid="selectErpProductionOrderVo"/>
+        WHERE po.order_code = #{orderCode}
+    </select>
+</mapper>

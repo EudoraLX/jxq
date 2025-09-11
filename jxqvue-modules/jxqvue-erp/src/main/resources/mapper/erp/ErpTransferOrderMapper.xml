@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpTransferOrderMapper">
+    
+    <resultMap type="ErpTransferOrder" id="ErpTransferOrderResult">
+        <result property="id"    column="id"    />
+        <result property="transferNo"    column="transfer_no"    />
+        <result property="transferName"    column="transfer_name"    />
+        <result property="transferType"    column="transfer_type"    />
+        <result property="fromWarehouseId"    column="from_warehouse_id"    />
+        <result property="fromWarehouseCode"    column="from_warehouse_code"    />
+        <result property="fromWarehouseName"    column="from_warehouse_name"    />
+        <result property="fromLocationId"    column="from_location_id"    />
+        <result property="fromLocationCode"    column="from_location_code"    />
+        <result property="fromLocationName"    column="from_location_name"    />
+        <result property="toWarehouseId"    column="to_warehouse_id"    />
+        <result property="toWarehouseCode"    column="to_warehouse_code"    />
+        <result property="toWarehouseName"    column="to_warehouse_name"    />
+        <result property="toLocationId"    column="to_location_id"    />
+        <result property="toLocationCode"    column="to_location_code"    />
+        <result property="toLocationName"    column="to_location_name"    />
+        <result property="plannedDate"    column="planned_date"    />
+        <result property="actualDate"    column="actual_date"    />
+        <result property="totalQuantity"    column="total_quantity"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="approverId"    column="approver_id"    />
+        <result property="approverName"    column="approver_name"    />
+        <result property="approveTime"    column="approve_time"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="operateTime"    column="operate_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpTransferOrderVo">
+        select id, transfer_no, transfer_name, transfer_type, from_warehouse_id, from_warehouse_code, from_warehouse_name, from_location_id, from_location_code, from_location_name, to_warehouse_id, to_warehouse_code, to_warehouse_name, to_location_id, to_location_code, to_location_name, planned_date, actual_date, total_quantity, approval_status, approver_id, approver_name, approve_time, operator_id, operator_name, operate_time, remark, create_by, create_time, update_by, update_time from erp_transfer_order
+    </sql>
+
+    <select id="selectErpTransferOrderList" parameterType="ErpTransferOrder" resultMap="ErpTransferOrderResult">
+        <include refid="selectErpTransferOrderVo"/>
+        <where>  
+            <if test="transferNo != null  and transferNo != ''"> and transfer_no like concat('%', #{transferNo}, '%')</if>
+            <if test="transferName != null  and transferName != ''"> and transfer_name like concat('%', #{transferName}, '%')</if>
+            <if test="transferType != null  and transferType != ''"> and transfer_type = #{transferType}</if>
+            <if test="fromWarehouseId != null "> and from_warehouse_id = #{fromWarehouseId}</if>
+            <if test="fromWarehouseCode != null  and fromWarehouseCode != ''"> and from_warehouse_code like concat('%', #{fromWarehouseCode}, '%')</if>
+            <if test="fromWarehouseName != null  and fromWarehouseName != ''"> and from_warehouse_name like concat('%', #{fromWarehouseName}, '%')</if>
+            <if test="fromLocationId != null "> and from_location_id = #{fromLocationId}</if>
+            <if test="fromLocationCode != null  and fromLocationCode != ''"> and from_location_code like concat('%', #{fromLocationCode}, '%')</if>
+            <if test="fromLocationName != null  and fromLocationName != ''"> and from_location_name like concat('%', #{fromLocationName}, '%')</if>
+            <if test="toWarehouseId != null "> and to_warehouse_id = #{toWarehouseId}</if>
+            <if test="toWarehouseCode != null  and toWarehouseCode != ''"> and to_warehouse_code like concat('%', #{toWarehouseCode}, '%')</if>
+            <if test="toWarehouseName != null  and toWarehouseName != ''"> and to_warehouse_name like concat('%', #{toWarehouseName}, '%')</if>
+            <if test="toLocationId != null "> and to_location_id = #{toLocationId}</if>
+            <if test="toLocationCode != null  and toLocationCode != ''"> and to_location_code like concat('%', #{toLocationCode}, '%')</if>
+            <if test="toLocationName != null  and toLocationName != ''"> and to_location_name like concat('%', #{toLocationName}, '%')</if>
+            <if test="plannedDate != null "> and planned_date = #{plannedDate}</if>
+            <if test="actualDate != null "> and actual_date = #{actualDate}</if>
+            <if test="totalQuantity != null "> and total_quantity = #{totalQuantity}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and approval_status = #{approvalStatus}</if>
+            <if test="approverId != null "> and approver_id = #{approverId}</if>
+            <if test="approverName != null  and approverName != ''"> and approver_name like concat('%', #{approverName}, '%')</if>
+            <if test="approveTime != null "> and approve_time = #{approveTime}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+            <if test="operatorName != null  and operatorName != ''"> and operator_name like concat('%', #{operatorName}, '%')</if>
+            <if test="operateTime != null "> and operate_time = #{operateTime}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpTransferOrderById" parameterType="Long" resultMap="ErpTransferOrderResult">
+        <include refid="selectErpTransferOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectErpTransferOrderByTransferNo" resultMap="ErpTransferOrderResult">
+        <include refid="selectErpTransferOrderVo"/>
+        where transfer_no = #{transferNo}
+    </select>
+
+    <select id="selectErpTransferOrderStatistics" parameterType="ErpTransferOrder" resultMap="ErpTransferOrderResult">
+        <include refid="selectErpTransferOrderVo"/>
+        <where>  
+            <if test="transferType != null  and transferType != ''"> and transfer_type = #{transferType}</if>
+            <if test="fromWarehouseId != null "> and from_warehouse_id = #{fromWarehouseId}</if>
+            <if test="toWarehouseId != null "> and to_warehouse_id = #{toWarehouseId}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and approval_status = #{approvalStatus}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertErpTransferOrder" parameterType="ErpTransferOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_transfer_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="transferNo != null and transferNo != ''">transfer_no,</if>
+            <if test="transferName != null and transferName != ''">transfer_name,</if>
+            <if test="transferType != null and transferType != ''">transfer_type,</if>
+            <if test="fromWarehouseId != null">from_warehouse_id,</if>
+            <if test="fromWarehouseCode != null">from_warehouse_code,</if>
+            <if test="fromWarehouseName != null">from_warehouse_name,</if>
+            <if test="fromLocationId != null">from_location_id,</if>
+            <if test="fromLocationCode != null">from_location_code,</if>
+            <if test="fromLocationName != null">from_location_name,</if>
+            <if test="toWarehouseId != null">to_warehouse_id,</if>
+            <if test="toWarehouseCode != null">to_warehouse_code,</if>
+            <if test="toWarehouseName != null">to_warehouse_name,</if>
+            <if test="toLocationId != null">to_location_id,</if>
+            <if test="toLocationCode != null">to_location_code,</if>
+            <if test="toLocationName != null">to_location_name,</if>
+            <if test="plannedDate != null">planned_date,</if>
+            <if test="actualDate != null">actual_date,</if>
+            <if test="totalQuantity != null">total_quantity,</if>
+            <if test="status != null">status,</if>
+            <if test="approverId != null">approver_id,</if>
+            <if test="approverName != null">approver_name,</if>
+            <if test="approveTime != null">approve_time,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="operatorName != null">operator_name,</if>
+            <if test="operateTime != null">operate_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="transferNo != null and transferNo != ''">#{transferNo},</if>
+            <if test="transferName != null and transferName != ''">#{transferName},</if>
+            <if test="transferType != null and transferType != ''">#{transferType},</if>
+            <if test="fromWarehouseId != null">#{fromWarehouseId},</if>
+            <if test="fromWarehouseCode != null">#{fromWarehouseCode},</if>
+            <if test="fromWarehouseName != null">#{fromWarehouseName},</if>
+            <if test="fromLocationId != null">#{fromLocationId},</if>
+            <if test="fromLocationCode != null">#{fromLocationCode},</if>
+            <if test="fromLocationName != null">#{fromLocationName},</if>
+            <if test="toWarehouseId != null">#{toWarehouseId},</if>
+            <if test="toWarehouseCode != null">#{toWarehouseCode},</if>
+            <if test="toWarehouseName != null">#{toWarehouseName},</if>
+            <if test="toLocationId != null">#{toLocationId},</if>
+            <if test="toLocationCode != null">#{toLocationCode},</if>
+            <if test="toLocationName != null">#{toLocationName},</if>
+            <if test="plannedDate != null">#{plannedDate},</if>
+            <if test="actualDate != null">#{actualDate},</if>
+            <if test="totalQuantity != null">#{totalQuantity},</if>
+            <if test="status != null">#{status},</if>
+            <if test="approverId != null">#{approverId},</if>
+            <if test="approverName != null">#{approverName},</if>
+            <if test="approveTime != null">#{approveTime},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="operatorName != null">#{operatorName},</if>
+            <if test="operateTime != null">#{operateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpTransferOrder" parameterType="ErpTransferOrder">
+        update erp_transfer_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transferNo != null and transferNo != ''">transfer_no = #{transferNo},</if>
+            <if test="transferName != null and transferName != ''">transfer_name = #{transferName},</if>
+            <if test="transferType != null and transferType != ''">transfer_type = #{transferType},</if>
+            <if test="fromWarehouseId != null">from_warehouse_id = #{fromWarehouseId},</if>
+            <if test="fromWarehouseCode != null">from_warehouse_code = #{fromWarehouseCode},</if>
+            <if test="fromWarehouseName != null">from_warehouse_name = #{fromWarehouseName},</if>
+            <if test="fromLocationId != null">from_location_id = #{fromLocationId},</if>
+            <if test="fromLocationCode != null">from_location_code = #{fromLocationCode},</if>
+            <if test="fromLocationName != null">from_location_name = #{fromLocationName},</if>
+            <if test="toWarehouseId != null">to_warehouse_id = #{toWarehouseId},</if>
+            <if test="toWarehouseCode != null">to_warehouse_code = #{toWarehouseCode},</if>
+            <if test="toWarehouseName != null">to_warehouse_name = #{toWarehouseName},</if>
+            <if test="toLocationId != null">to_location_id = #{toLocationId},</if>
+            <if test="toLocationCode != null">to_location_code = #{toLocationCode},</if>
+            <if test="toLocationName != null">to_location_name = #{toLocationName},</if>
+            <if test="plannedDate != null">planned_date = #{plannedDate},</if>
+            <if test="actualDate != null">actual_date = #{actualDate},</if>
+            <if test="totalQuantity != null">total_quantity = #{totalQuantity},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="approverId != null">approver_id = #{approverId},</if>
+            <if test="approverName != null">approver_name = #{approverName},</if>
+            <if test="approveTime != null">approve_time = #{approveTime},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="operatorName != null">operator_name = #{operatorName},</if>
+            <if test="operateTime != null">operate_time = #{operateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpTransferOrderById" parameterType="Long">
+        delete from erp_transfer_order where id = #{id}
+    </delete>
+
+    <delete id="deleteErpTransferOrderByIds" parameterType="String">
+        delete from erp_transfer_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

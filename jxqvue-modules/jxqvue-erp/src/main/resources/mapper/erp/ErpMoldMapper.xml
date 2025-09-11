@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpMoldMapper">
+    
+    <resultMap type="ErpMold" id="ErpMoldResult">
+        <result property="id"    column="id"    />
+        <result property="moldCode"    column="mold_code"    />
+        <result property="moldName"    column="mold_name"    />
+        <result property="moldType"    column="mold_type"    />
+        <result property="moldCategory"    column="mold_category"    />
+        <result property="productMaterialId"    column="product_material_id"    />
+        <result property="storageLocationId"    column="storage_location_id"    />
+        <result property="moldWeight"    column="mold_weight"    />
+        <result property="moldSize"    column="mold_size"    />
+        <result property="cavityCount"    column="cavity_count"    />
+        <result property="moldDownTime" column="mold_down_time" />
+        <result property="moldUpTime" column="mold_up_time" />
+        <result property="maxShotWeight"    column="max_shot_weight"    />
+        <result property="minShotWeight"    column="min_shot_weight"    />
+        <result property="designLife"    column="design_life"    />
+        <result property="currentUsageCount"    column="current_usage_count"    />
+        <result property="maintenanceCycle"    column="maintenance_cycle"    />
+        <result property="lastMaintenanceDate"    column="last_maintenance_date"    />
+        <result property="nextMaintenanceDate"    column="next_maintenance_date"    />
+        <result property="moldStatus"    column="mold_status"    />
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <result property="purchasePrice"    column="purchase_price"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <resultMap id="ErpMoldErpMoldDetailResult" type="ErpMold" extends="ErpMoldResult">
+        <collection property="erpMoldDetailList" ofType="ErpMoldDetail" column="id" select="selectErpMoldDetailList" />
+    </resultMap>
+
+    <resultMap type="ErpMoldDetail" id="ErpMoldDetailResult">
+        <result property="id"    column="id"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="componentCode"    column="component_code"    />
+        <result property="componentName"    column="component_name"    />
+        <result property="componentType"    column="component_type"    />
+        <result property="material"    column="material"    />
+        <result property="hardness"    column="hardness"    />
+        <result property="surfaceTreatment"    column="surface_treatment"    />
+        <result property="dimensions"    column="dimensions"    />
+        <result property="weight"    column="weight"    />
+        <result property="lifeCycle"    column="life_cycle"    />
+        <result property="currentUsageCount"    column="current_usage_count"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpMoldVo">
+        select id, mold_code, mold_name, mold_type, mold_category, product_material_id, storage_location_id, mold_weight, mold_size, cavity_count, mold_down_time, mold_up_time,
+               max_shot_weight, min_shot_weight, design_life, current_usage_count, maintenance_cycle, last_maintenance_date, next_maintenance_date, mold_status, supplier_id, purchase_date, purchase_price, is_active, remark, create_by, create_time, update_by, update_time, del_flag from erp_mold
+    </sql>
+
+    <select id="selectErpMoldList" parameterType="ErpMold" resultMap="ErpMoldResult">
+        <include refid="selectErpMoldVo"/>
+        <where>  
+            and del_flag = '0'
+            <if test="moldCode != null  and moldCode != ''"> and mold_code = #{moldCode}</if>
+            <if test="moldName != null  and moldName != ''"> and mold_name like concat('%', #{moldName}, '%')</if>
+            <if test="moldType != null  and moldType != ''"> and mold_type = #{moldType}</if>
+            <if test="moldCategory != null  and moldCategory != ''"> and mold_category = #{moldCategory}</if>
+            <if test="moldWeight != null "> and mold_weight = #{moldWeight}</if>
+            <if test="moldSize != null  and moldSize != ''"> and mold_size = #{moldSize}</if>
+            <if test="cavityCount != null "> and cavity_count = #{cavityCount}</if>
+            <if test="moldStatus != null  and moldStatus != ''"> and mold_status = #{moldStatus}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpMoldById" parameterType="Long" resultMap="ErpMoldErpMoldDetailResult">
+        select id, mold_code, mold_name, mold_type, mold_category, product_material_id, storage_location_id, mold_weight, mold_size, cavity_count, mold_down_time, mold_up_time, max_shot_weight, min_shot_weight, design_life, current_usage_count, maintenance_cycle, last_maintenance_date, next_maintenance_date, mold_status, supplier_id, purchase_date, purchase_price, is_active, remark, create_by, create_time, update_by, update_time, del_flag
+        from erp_mold
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <select id="selectErpMoldDetailList" resultMap="ErpMoldDetailResult">
+        select id, mold_id, component_code, component_name, component_type, material, hardness, surface_treatment, dimensions, weight, life_cycle, current_usage_count, status, remark, create_by, create_time, update_by, update_time, del_flag
+        from erp_mold_detail
+        where mold_id = #{mold_id} and del_flag = '0'
+    </select>
+
+    <insert id="insertErpMold" parameterType="ErpMold" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_mold
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="moldCode != null and moldCode != ''">mold_code,</if>
+            <if test="moldName != null and moldName != ''">mold_name,</if>
+            <if test="moldType != null and moldType != ''">mold_type,</if>
+            <if test="moldCategory != null and moldCategory != ''">mold_category,</if>
+            <if test="productMaterialId != null">product_material_id,</if>
+            <if test="storageLocationId != null">storage_location_id,</if>
+            <if test="moldWeight != null">mold_weight,</if>
+            <if test="moldSize != null">mold_size,</if>
+            <if test="cavityCount != null">cavity_count,</if>
+            <if test="moldDownTime != null">mold_down_time,</if>
+            <if test="moldUpTime != null">mold_up_time,</if>
+            <if test="maxShotWeight != null">max_shot_weight,</if>
+            <if test="minShotWeight != null">min_shot_weight,</if>
+            <if test="designLife != null">design_life,</if>
+            <if test="currentUsageCount != null">current_usage_count,</if>
+            <if test="maintenanceCycle != null">maintenance_cycle,</if>
+            <if test="lastMaintenanceDate != null">last_maintenance_date,</if>
+            <if test="nextMaintenanceDate != null">next_maintenance_date,</if>
+            <if test="moldStatus != null and moldStatus != ''">mold_status,</if>
+            <if test="supplierId != null">supplier_id,</if>
+            <if test="purchaseDate != null">purchase_date,</if>
+            <if test="purchasePrice != null">purchase_price,</if>
+            <if test="isActive != null and isActive != ''">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="moldCode != null and moldCode != ''">#{moldCode},</if>
+            <if test="moldName != null and moldName != ''">#{moldName},</if>
+            <if test="moldType != null and moldType != ''">#{moldType},</if>
+            <if test="moldCategory != null and moldCategory != ''">#{moldCategory},</if>
+            <if test="productMaterialId != null">#{productMaterialId},</if>
+            <if test="storageLocationId != null">#{storageLocationId},</if>
+            <if test="moldWeight != null">#{moldWeight},</if>
+            <if test="moldSize != null">#{moldSize},</if>
+            <if test="cavityCount != null">#{cavityCount},</if>
+            <if test="moldDownTime != null">#{moldDownTime},</if>
+            <if test="moldUpTime != null">#{moldUpTime},</if>
+            <if test="maxShotWeight != null">#{maxShotWeight},</if>
+            <if test="minShotWeight != null">#{minShotWeight},</if>
+            <if test="designLife != null">#{designLife},</if>
+            <if test="currentUsageCount != null">#{currentUsageCount},</if>
+            <if test="maintenanceCycle != null">#{maintenanceCycle},</if>
+            <if test="lastMaintenanceDate != null">#{lastMaintenanceDate},</if>
+            <if test="nextMaintenanceDate != null">#{nextMaintenanceDate},</if>
+            <if test="moldStatus != null and moldStatus != ''">#{moldStatus},</if>
+            <if test="supplierId != null">#{supplierId},</if>
+            <if test="purchaseDate != null">#{purchaseDate},</if>
+            <if test="purchasePrice != null">#{purchasePrice},</if>
+            <if test="isActive != null and isActive != ''">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpMold" parameterType="ErpMold">
+        update erp_mold
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="moldCode != null and moldCode != ''">mold_code = #{moldCode},</if>
+            <if test="moldName != null and moldName != ''">mold_name = #{moldName},</if>
+            <if test="moldType != null and moldType != ''">mold_type = #{moldType},</if>
+            <if test="moldCategory != null and moldCategory != ''">mold_category = #{moldCategory},</if>
+            <if test="productMaterialId != null">product_material_id = #{productMaterialId},</if>
+            <if test="storageLocationId != null">storage_location_id = #{storageLocationId},</if>
+            <if test="moldWeight != null">mold_weight = #{moldWeight},</if>
+            <if test="moldSize != null">mold_size = #{moldSize},</if>
+            <if test="cavityCount != null">cavity_count = #{cavityCount},</if>
+            <if test="moldDownTime != null">mold_down_time = #{moldDownTime},</if>
+            <if test="moldUpTime != null">mold_up_time = #{moldUpTime},</if>
+            <if test="maxShotWeight != null">max_shot_weight = #{maxShotWeight},</if>
+            <if test="minShotWeight != null">min_shot_weight = #{minShotWeight},</if>
+            <if test="designLife != null">design_life = #{designLife},</if>
+            <if test="currentUsageCount != null">current_usage_count = #{currentUsageCount},</if>
+            <if test="maintenanceCycle != null">maintenance_cycle = #{maintenanceCycle},</if>
+            <if test="lastMaintenanceDate != null">last_maintenance_date = #{lastMaintenanceDate},</if>
+            <if test="nextMaintenanceDate != null">next_maintenance_date = #{nextMaintenanceDate},</if>
+            <if test="moldStatus != null and moldStatus != ''">mold_status = #{moldStatus},</if>
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="purchaseDate != null">purchase_date = #{purchaseDate},</if>
+            <if test="purchasePrice != null">purchase_price = #{purchasePrice},</if>
+            <if test="isActive != null and isActive != ''">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 软删除：将del_flag设置为'1' -->
+    <update id="deleteErpMoldById" parameterType="Long">
+        update erp_mold set del_flag = '1' where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 批量软删除：将del_flag设置为'1' -->
+    <update id="deleteErpMoldByIds" parameterType="String">
+        update erp_mold set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '0'
+    </update>
+
+    <!-- 物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpMoldById" parameterType="Long">
+        delete from erp_mold where id = #{id}
+    </delete>
+
+    <!-- 批量物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpMoldByIds" parameterType="String">
+        delete from erp_mold where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpMoldById" parameterType="Long">
+        update erp_mold set del_flag = '0' where id = #{id} and del_flag = '1'
+    </update>
+
+    <!-- 批量恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpMoldByIds" parameterType="String">
+        update erp_mold set del_flag = '0' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '1'
+    </update>
+
+    <!-- 查询已删除的记录 -->
+    <select id="selectDeletedErpMoldList" parameterType="ErpMold" resultMap="ErpMoldResult">
+        <include refid="selectErpMoldVo"/>
+        <where>  
+            and del_flag = '1'
+            <if test="moldCode != null  and moldCode != ''"> and mold_code = #{moldCode}</if>
+            <if test="moldName != null  and moldName != ''"> and mold_name like concat('%', #{moldName}, '%')</if>
+            <if test="moldType != null  and moldType != ''"> and mold_type = #{moldType}</if>
+            <if test="moldCategory != null  and moldCategory != ''"> and mold_category = #{moldCategory}</if>
+            <if test="moldWeight != null "> and mold_weight = #{moldWeight}</if>
+            <if test="moldSize != null  and moldSize != ''"> and mold_size = #{moldSize}</if>
+            <if test="cavityCount != null "> and cavity_count = #{cavityCount}</if>
+            <if test="moldDownTime != null "> and mold_down_time = #{moldDownTime}</if>
+            <if test="moldUpTime != null "> and mold_up_time = #{moldUpTime}</if>
+            <if test="moldStatus != null  and moldStatus != ''"> and mold_status = #{moldStatus}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+
+    <!-- 查询所有记录（包括已删除的） -->
+    <select id="selectAllErpMoldList" parameterType="ErpMold" resultMap="ErpMoldResult">
+        <include refid="selectErpMoldVo"/>
+        <where>  
+            <if test="moldCode != null  and moldCode != ''"> and mold_code = #{moldCode}</if>
+            <if test="moldName != null  and moldName != ''"> and mold_name like concat('%', #{moldName}, '%')</if>
+            <if test="moldType != null  and moldType != ''"> and mold_type = #{moldType}</if>
+            <if test="moldCategory != null  and moldCategory != ''"> and mold_category = #{moldCategory}</if>
+            <if test="moldWeight != null "> and mold_weight = #{moldWeight}</if>
+            <if test="moldSize != null  and moldSize != ''"> and mold_size = #{moldSize}</if>
+            <if test="cavityCount != null "> and cavity_count = #{cavityCount}</if>
+            <if test="moldStatus != null  and moldStatus != ''"> and mold_status = #{moldStatus}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <delete id="deleteErpMoldDetailByMoldIds" parameterType="String">
+        update erp_mold_detail set del_flag = '1' where mold_id in 
+        <foreach item="moldId" collection="array" open="(" separator="," close=")">
+            #{moldId}
+        </foreach>
+        and del_flag = '0'
+    </delete>
+
+    <delete id="deleteErpMoldDetailByMoldId" parameterType="Long">
+        update erp_mold_detail set del_flag = '1' where mold_id = #{moldId} and del_flag = '0'
+    </delete>
+
+    <insert id="batchErpMoldDetail">
+        insert into erp_mold_detail( id, mold_id, component_code, component_name, component_type, material, hardness, surface_treatment, dimensions, weight, life_cycle, current_usage_count, status, remark, create_by, create_time, update_by, update_time, del_flag) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.moldId}, #{item.componentCode}, #{item.componentName}, #{item.componentType}, #{item.material}, #{item.hardness}, #{item.surfaceTreatment}, #{item.dimensions}, #{item.weight}, #{item.lifeCycle}, #{item.currentUsageCount}, #{item.status}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.delFlag})
+        </foreach>
+    </insert>
+</mapper>

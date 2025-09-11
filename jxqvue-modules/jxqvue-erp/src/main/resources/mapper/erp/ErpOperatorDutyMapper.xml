@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpOperatorDutyMapper">
+    
+    <resultMap type="ErpOperatorDuty" id="ErpOperatorDutyResult">
+        <result property="id"    column="id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="dutyType"    column="duty_type"    />
+        <result property="registerTime"    column="register_time"    />
+        <!-- 关联字段 -->
+        <result property="processName"    column="process_name"    />
+        <result property="operatorName"    column="operator_name"    />
+    </resultMap>
+
+    <sql id="selectErpOperatorDutyVo">
+        select d.id, d.process_id, d.process_code, d.operator_id, d.duty_type, d.register_time,
+               p.process_name,
+               u.nick_name as operator_name
+        from erp_operator_duty d
+        left join erp_process p on d.process_id = p.id
+        left join sys_user u on d.operator_id = u.user_id
+    </sql>
+
+    <select id="selectErpOperatorDutyList" parameterType="ErpOperatorDuty" resultMap="ErpOperatorDutyResult">
+        <include refid="selectErpOperatorDutyVo"/>
+        <where>  
+            <if test="processId != null"> and d.process_id = #{processId}</if>
+            <if test="processCode != null  and processCode != ''"> and d.process_code like concat('%', #{processCode}, '%')</if>
+            <if test="operatorId != null"> and d.operator_id = #{operatorId}</if>
+            <if test="dutyType != null  and dutyType != ''"> and d.duty_type = #{dutyType}</if>
+            <if test="registerTime != null "> and d.register_time = #{registerTime}</if>
+            <if test="params.beginRegisterTime != null and params.beginRegisterTime != ''"><!-- 开始时间检索 -->
+                and date_format(d.register_time,'%y%m%d') &gt;= date_format(#{params.beginRegisterTime},'%y%m%d')
+            </if>
+            <if test="params.endRegisterTime != null and params.endRegisterTime != ''"><!-- 结束时间检索 -->
+                and date_format(d.register_time,'%y%m%d') &lt;= date_format(#{params.endRegisterTime},'%y%m%d')
+            </if>
+        </where>
+        order by d.register_time desc
+    </select>
+    
+    <select id="selectErpOperatorDutyById" parameterType="Long" resultMap="ErpOperatorDutyResult">
+        <include refid="selectErpOperatorDutyVo"/>
+        where d.id = #{id}
+    </select>
+        
+    <insert id="insertErpOperatorDuty" parameterType="ErpOperatorDuty" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_operator_duty
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processId != null">process_id,</if>
+            <if test="processCode != null and processCode != ''">process_code,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="dutyType != null">duty_type,</if>
+            <if test="registerTime != null">register_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processId != null">#{processId},</if>
+            <if test="processCode != null and processCode != ''">#{processCode},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="dutyType != null">#{dutyType},</if>
+            <if test="registerTime != null">#{registerTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpOperatorDuty" parameterType="ErpOperatorDuty">
+        update erp_operator_duty
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="processCode != null and processCode != ''">process_code = #{processCode},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="dutyType != null">duty_type = #{dutyType},</if>
+            <if test="registerTime != null">register_time = #{registerTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpOperatorDutyById" parameterType="Long">
+        delete from erp_operator_duty where id = #{id}
+    </delete>
+
+    <delete id="deleteErpOperatorDutyByIds" parameterType="String">
+        delete from erp_operator_duty where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectLatestOperatorDutyByOperatorId" parameterType="Long" resultMap="ErpOperatorDutyResult">
+        <include refid="selectErpOperatorDutyVo"/>
+        where d.operator_id = #{operatorId}
+        order by d.register_time desc
+        limit 1
+    </select>
+
+    <select id="selectProcessByCode" parameterType="String" resultMap="ErpOperatorDutyResult">
+        select p.id as process_id, p.process_code, p.process_name
+        from erp_process p
+        where p.process_code = #{processCode}
+        and p.del_flag = '0'
+    </select>
+</mapper>

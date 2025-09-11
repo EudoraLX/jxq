@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpInventoryCountMapper">
+    
+    <resultMap type="ErpInventoryCount" id="ErpInventoryCountResult">
+        <result property="id"    column="id"    />
+        <result property="countNo"    column="count_no"    />
+        <result property="countName"    column="count_name"    />
+        <result property="countType"    column="count_type"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="warehouseName"    column="warehouse_name"    />
+        <result property="countDate"    column="count_date"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="totalItems"    column="total_items"    />
+        <result property="countedItems"    column="counted_items"    />
+        <result property="differenceItems"    column="difference_items"    />
+        <result property="totalDifferenceAmount"    column="total_difference_amount"    />
+        <result property="approverId"    column="approver_id"    />
+        <result property="approverName"    column="approver_name"    />
+        <result property="approveTime"    column="approve_time"    />
+        <result property="countTime"    column="count_time"    />
+        <result property="adjusterId"    column="adjuster_id"    />
+        <result property="adjusterName"    column="adjuster_name"    />
+        <result property="adjustTime"    column="adjust_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpInventoryCountVo">
+        select id, count_no, count_name, count_type, warehouse_id, warehouse_code, warehouse_name, count_date, approval_status, total_items, counted_items, difference_items, total_difference_amount, approver_id, approver_name, approve_time, count_time, adjuster_id, adjuster_name, adjust_time, remark, create_by, create_time, update_by, update_time from erp_inventory_count
+    </sql>
+
+    <select id="selectErpInventoryCountList" parameterType="ErpInventoryCount" resultMap="ErpInventoryCountResult">
+        <include refid="selectErpInventoryCountVo"/>
+        <where>  
+            <if test="countNo != null  and countNo != ''"> and count_no like concat('%', #{countNo}, '%')</if>
+            <if test="countName != null  and countName != ''"> and count_name like concat('%', #{countName}, '%')</if>
+            <if test="countType != null  and countType != ''"> and count_type = #{countType}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="countDate != null "> and count_date = #{countDate}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and approval_status = #{approvalStatus}</if>
+            <if test="totalItems != null "> and total_items = #{totalItems}</if>
+            <if test="countedItems != null "> and counted_items = #{countedItems}</if>
+            <if test="differenceItems != null "> and difference_items = #{differenceItems}</if>
+            <if test="totalDifferenceAmount != null "> and total_difference_amount = #{totalDifferenceAmount}</if>
+            <if test="approverId != null "> and approver_id = #{approverId}</if>
+            <if test="approverName != null  and approverName != ''"> and approver_name like concat('%', #{approverName}, '%')</if>
+            <if test="approveTime != null "> and approve_time = #{approveTime}</if>
+            <if test="countTime != null "> and count_time = #{countTime}</if>
+            <if test="adjusterId != null "> and adjuster_id = #{adjusterId}</if>
+            <if test="adjusterName != null  and adjusterName != ''"> and adjuster_name like concat('%', #{adjusterName}, '%')</if>
+            <if test="adjustTime != null "> and adjust_time = #{adjustTime}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpInventoryCountById" parameterType="Long" resultMap="ErpInventoryCountResult">
+        <include refid="selectErpInventoryCountVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectErpInventoryCountByCountNo" resultMap="ErpInventoryCountResult">
+        <include refid="selectErpInventoryCountVo"/>
+        where count_no = #{countNo}
+    </select>
+
+    <select id="selectErpInventoryCountStatistics" parameterType="ErpInventoryCount" resultMap="ErpInventoryCountResult">
+        <include refid="selectErpInventoryCountVo"/>
+        <where>  
+            <if test="countType != null  and countType != ''"> and count_type = #{countType}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and approval_status = #{approvalStatus}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <insert id="insertErpInventoryCount" parameterType="ErpInventoryCount" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_inventory_count
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="countNo != null and countNo != ''">count_no,</if>
+            <if test="countName != null and countName != ''">count_name,</if>
+            <if test="countType != null and countType != ''">count_type,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="warehouseCode != null">warehouse_code,</if>
+            <if test="warehouseName != null">warehouse_name,</if>
+            <if test="countDate != null">count_date,</if>
+            <if test="status != null">status,</if>
+            <if test="totalItems != null">total_items,</if>
+            <if test="countedItems != null">counted_items,</if>
+            <if test="differenceItems != null">difference_items,</if>
+            <if test="totalDifferenceAmount != null">total_difference_amount,</if>
+            <if test="approverId != null">approver_id,</if>
+            <if test="approverName != null">approver_name,</if>
+            <if test="approveTime != null">approve_time,</if>
+            <if test="countTime != null">count_time,</if>
+            <if test="adjusterId != null">adjuster_id,</if>
+            <if test="adjusterName != null">adjuster_name,</if>
+            <if test="adjustTime != null">adjust_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="countNo != null and countNo != ''">#{countNo},</if>
+            <if test="countName != null and countName != ''">#{countName},</if>
+            <if test="countType != null and countType != ''">#{countType},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="warehouseCode != null">#{warehouseCode},</if>
+            <if test="warehouseName != null">#{warehouseName},</if>
+            <if test="countDate != null">#{countDate},</if>
+            <if test="status != null">#{status},</if>
+            <if test="totalItems != null">#{totalItems},</if>
+            <if test="countedItems != null">#{countedItems},</if>
+            <if test="differenceItems != null">#{differenceItems},</if>
+            <if test="totalDifferenceAmount != null">#{totalDifferenceAmount},</if>
+            <if test="approverId != null">#{approverId},</if>
+            <if test="approverName != null">#{approverName},</if>
+            <if test="approveTime != null">#{approveTime},</if>
+            <if test="countTime != null">#{countTime},</if>
+            <if test="adjusterId != null">#{adjusterId},</if>
+            <if test="adjusterName != null">#{adjusterName},</if>
+            <if test="adjustTime != null">#{adjustTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpInventoryCount" parameterType="ErpInventoryCount">
+        update erp_inventory_count
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="countNo != null and countNo != ''">count_no = #{countNo},</if>
+            <if test="countName != null and countName != ''">count_name = #{countName},</if>
+            <if test="countType != null and countType != ''">count_type = #{countType},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="warehouseCode != null">warehouse_code = #{warehouseCode},</if>
+            <if test="warehouseName != null">warehouse_name = #{warehouseName},</if>
+            <if test="countDate != null">count_date = #{countDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="totalItems != null">total_items = #{totalItems},</if>
+            <if test="countedItems != null">counted_items = #{countedItems},</if>
+            <if test="differenceItems != null">difference_items = #{differenceItems},</if>
+            <if test="totalDifferenceAmount != null">total_difference_amount = #{totalDifferenceAmount},</if>
+            <if test="approverId != null">approver_id = #{approverId},</if>
+            <if test="approverName != null">approver_name = #{approverName},</if>
+            <if test="approveTime != null">approve_time = #{approveTime},</if>
+            <if test="countTime != null">count_time = #{countTime},</if>
+            <if test="adjusterId != null">adjuster_id = #{adjusterId},</if>
+            <if test="adjusterName != null">adjuster_name = #{adjusterName},</if>
+            <if test="adjustTime != null">adjust_time = #{adjustTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpInventoryCountById" parameterType="Long">
+        delete from erp_inventory_count where id = #{id}
+    </delete>
+
+    <delete id="deleteErpInventoryCountByIds" parameterType="String">
+        delete from erp_inventory_count where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 查询盘点差异列表 -->
+    <select id="selectCountDifferences" parameterType="ErpInventoryCount" resultMap="ErpInventoryCountResult">
+        <include refid="selectErpInventoryCountVo"/>
+        where status = '2' and difference_items > 0
+        <if test="warehouseId != null"> and warehouse_id = #{warehouseId}</if>
+        <if test="countType != null and countType != ''"> and count_type = #{countType}</if>
+        order by count_date desc
+    </select>
+</mapper>

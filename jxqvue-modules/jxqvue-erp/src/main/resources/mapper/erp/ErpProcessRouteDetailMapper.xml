@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProcessRouteDetailMapper">
+    
+    <resultMap type="ErpProcessRouteDetail" id="ErpProcessRouteDetailResult">
+        <result property="id"    column="id"    />
+        <result property="processRouteId"    column="process_route_id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="processName"    column="process_name"    />
+        <result property="operationSequence"    column="operation_sequence"    />
+        <result property="setupTime"    column="setup_time"    />
+        <result property="processingTime"    column="processing_time"    />
+        <result property="moveTime"    column="move_time"    />
+        <result property="queueTime"    column="queue_time"    />
+        <result property="cycleTime"    column="cycle_time"    />
+        <result property="laborHours"    column="labor_hours"    />
+        <result property="machineHours"    column="machine_hours"    />
+        <result property="isCritical"    column="is_critical"    />
+        <result property="isOptional"    column="is_optional"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpProcessRouteDetailVo">
+        select d.id, d.process_route_id, d.process_id, d.operation_sequence, 
+               d.labor_hours, d.machine_hours, d.is_critical, d.is_optional, d.remark, 
+               d.create_by, d.create_time, d.update_by, d.update_time, d.del_flag,
+               p.process_code, p.process_name
+        from erp_process_route_detail d
+        LEFT JOIN erp_process p ON d.process_id = p.id AND p.del_flag = '0'
+    </sql>
+
+    <select id="selectErpProcessRouteDetailList" parameterType="ErpProcessRouteDetail" resultMap="ErpProcessRouteDetailResult">
+        <include refid="selectErpProcessRouteDetailVo"/>
+        <where>  
+            d.del_flag = '0'
+            <if test="processRouteId != null "> and d.process_route_id = #{processRouteId}</if>
+            <if test="processId != null "> and d.process_id = #{processId}</if>
+            <if test="operationSequence != null "> and d.operation_sequence = #{operationSequence}</if>
+            <if test="workCenterId != null "> and d.work_center_id = #{workCenterId}</if>
+            <if test="equipmentId != null "> and d.equipment_id = #{equipmentId}</if>
+            <if test="moldId != null "> and d.mold_id = #{moldId}</if>
+            <if test="isCritical != null  and isCritical != ''"> and d.is_critical = #{isCritical}</if>
+            <if test="isOptional != null  and isOptional != ''"> and d.is_optional = #{isOptional}</if>
+        </where>
+        ORDER BY d.operation_sequence ASC
+    </select>
+    
+    <select id="selectErpProcessRouteDetailById" parameterType="Long" resultMap="ErpProcessRouteDetailResult">
+        <include refid="selectErpProcessRouteDetailVo"/>
+        where d.id = #{id} AND d.del_flag = '0'
+    </select>
+
+    <select id="selectErpProcessRouteDetailByRouteId" parameterType="Long" resultMap="ErpProcessRouteDetailResult">
+        <include refid="selectErpProcessRouteDetailVo"/>
+        where d.process_route_id = #{processRouteId} AND d.del_flag = '0'
+        ORDER BY d.operation_sequence ASC
+    </select>
+        
+    <insert id="insertErpProcessRouteDetail" parameterType="ErpProcessRouteDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_process_route_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processRouteId != null">process_route_id,</if>
+            <if test="processId != null">process_id,</if>
+            <if test="operationSequence != null">operation_sequence,</if>
+            <!-- <if test="setupTime != null">setup_time,</if>
+            <if test="processingTime != null">processing_time,</if>
+            <if test="moveTime != null">move_time,</if>
+            <if test="queueTime != null">queue_time,</if>
+            <if test="cycleTime != null">cycle_time,</if> -->
+            <if test="laborHours != null">labor_hours,</if>
+            <if test="machineHours != null">machine_hours,</if>
+            <if test="isCritical != null">is_critical,</if>
+            <if test="isOptional != null">is_optional,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processRouteId != null">#{processRouteId},</if>
+            <if test="processId != null">#{processId},</if>
+            <if test="operationSequence != null">#{operationSequence},</if>
+            <!-- <if test="setupTime != null">#{setupTime},</if>
+            <if test="processingTime != null">#{processingTime},</if>
+            <if test="moveTime != null">#{moveTime},</if>
+            <if test="queueTime != null">#{queueTime},</if>
+            <if test="cycleTime != null">#{cycleTime},</if> -->
+            <if test="laborHours != null">#{laborHours},</if>
+            <if test="machineHours != null">#{machineHours},</if>
+            <if test="isCritical != null">#{isCritical},</if>
+            <if test="isOptional != null">#{isOptional},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProcessRouteDetail" parameterType="ErpProcessRouteDetail">
+        update erp_process_route_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processRouteId != null">process_route_id = #{processRouteId},</if>
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="operationSequence != null">operation_sequence = #{operationSequence},</if>
+            <!-- <if test="setupTime != null">setup_time = #{setupTime},</if>
+            <if test="processingTime != null">processing_time = #{processingTime},</if>
+            <if test="moveTime != null">move_time = #{moveTime},</if>
+            <if test="queueTime != null">queue_time = #{queueTime},</if>
+            <if test="cycleTime != null">cycle_time = #{cycleTime},</if> -->
+            <if test="laborHours != null">labor_hours = #{laborHours},</if>
+            <if test="machineHours != null">machine_hours = #{machineHours},</if>
+            <if test="isCritical != null">is_critical = #{isCritical},</if>
+            <if test="isOptional != null">is_optional = #{isOptional},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProcessRouteDetailById" parameterType="Long">
+        update erp_process_route_detail set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProcessRouteDetailByIds" parameterType="String">
+        update erp_process_route_detail set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProcessRouteDetailByRouteId" parameterType="Long">
+        update erp_process_route_detail set del_flag = '1' where process_route_id = #{processRouteId}
+    </delete>
+</mapper>

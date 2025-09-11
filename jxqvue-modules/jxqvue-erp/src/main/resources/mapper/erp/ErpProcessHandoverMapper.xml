@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProcessHandoverMapper">
+    
+    <resultMap type="ErpProcessHandover" id="ErpProcessHandoverResult">
+        <result property="id"    column="id"    />
+        <result property="handoverCode"    column="handover_code"    />
+        <result property="handoverName"    column="handover_name"    />
+        <result property="productionOrderId"    column="production_order_id"    />
+        <result property="fromProcessId"    column="from_process_id"    />
+        <result property="toProcessId"    column="to_process_id"    />
+        <result property="handoverDate"    column="handover_date"    />
+        <result property="handoverTime"    column="handover_time"    />
+        <result property="productId"    column="product_id"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="handoverQuantity"    column="handover_quantity"    />
+        <result property="qualifiedQuantity"    column="qualified_quantity"    />
+        <result property="defectiveQuantity"    column="defective_quantity"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="lotNo"    column="lot_no"    />
+        <result property="fromOperatorId"    column="from_operator_id"    />
+        <result property="toOperatorId"    column="to_operator_id"    />
+        <result property="handoverType"    column="handover_type"    />
+        <result property="qualityStatus"    column="quality_status"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <!-- 关联字段 -->
+        <result property="orderCode"    column="order_code"    />
+        <result property="productCode"    column="product_code"    />
+        <result property="productName"    column="product_name"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="fromProcessCode"    column="from_process_code"    />
+        <result property="fromProcessName"    column="from_process_name"    />
+        <result property="toProcessCode"    column="to_process_code"    />
+        <result property="toProcessName"    column="to_process_name"    />
+        <result property="fromOperatorName"    column="from_operator_name"    />
+        <result property="toOperatorName"    column="to_operator_name"    />
+    </resultMap>
+
+    <sql id="selectErpProcessHandoverVo">
+        select h.id, h.handover_code, h.handover_name, h.production_order_id, h.from_process_id, h.to_process_id, 
+               h.handover_date, h.handover_time, h.product_id, h.unit_id, h.handover_quantity, h.qualified_quantity, 
+               h.defective_quantity, h.batch_no, h.lot_no, h.from_operator_id, h.to_operator_id, h.handover_type, 
+               h.quality_status, h.approval_status, h.remark, h.create_by, h.create_time, h.update_by, h.update_time,
+               po.order_code,
+               mm.material_code as product_code, mm.material_name as product_name,
+               u.unit_name,
+               fp.process_code as from_process_code, fp.process_name as from_process_name,
+               tp.process_code as to_process_code, tp.process_name as to_process_name,
+               fo.nick_name as from_operator_name,
+               tu.nick_name as to_operator_name
+        from erp_process_handover h
+        left join erp_production_order po on h.production_order_id = po.id
+        left join erp_material_master mm on h.product_id = mm.id
+        left join erp_unit u on h.unit_id = u.id
+        left join erp_process fp on h.from_process_id = fp.id
+        left join erp_process tp on h.to_process_id = tp.id
+        left join sys_user fo on h.from_operator_id = fo.user_id
+        left join sys_user tu on h.to_operator_id = tu.user_id
+    </sql>
+
+    <select id="selectErpProcessHandoverList" parameterType="ErpProcessHandover" resultMap="ErpProcessHandoverResult">
+        <include refid="selectErpProcessHandoverVo"/>
+        <where>  
+            <if test="handoverCode != null  and handoverCode != ''"> and h.handover_code like concat('%', #{handoverCode}, '%')</if>
+            <if test="handoverName != null  and handoverName != ''"> and h.handover_name like concat('%', #{handoverName}, '%')</if>
+            <if test="productionOrderId != null "> and h.production_order_id = #{productionOrderId}</if>
+            <if test="fromProcessId != null "> and h.from_process_id = #{fromProcessId}</if>
+            <if test="toProcessId != null "> and h.to_process_id = #{toProcessId}</if>
+            <if test="handoverDate != null "> and h.handover_date = #{handoverDate}</if>
+            <if test="handoverTime != null "> and h.handover_time = #{handoverTime}</if>
+            <if test="productId != null "> and h.product_id = #{productId}</if>
+            <if test="unitId != null "> and h.unit_id = #{unitId}</if>
+            <if test="handoverQuantity != null "> and h.handover_quantity = #{handoverQuantity}</if>
+            <if test="qualifiedQuantity != null "> and h.qualified_quantity = #{qualifiedQuantity}</if>
+            <if test="defectiveQuantity != null "> and h.defective_quantity = #{defectiveQuantity}</if>
+            <if test="batchNo != null  and batchNo != ''"> and h.batch_no like concat('%', #{batchNo}, '%')</if>
+            <if test="lotNo != null  and lotNo != ''"> and h.lot_no like concat('%', #{lotNo}, '%')</if>
+            <if test="fromOperatorId != null "> and h.from_operator_id = #{fromOperatorId}</if>
+            <if test="toOperatorId != null "> and h.to_operator_id = #{toOperatorId}</if>
+            <if test="handoverType != null  and handoverType != ''"> and h.handover_type = #{handoverType}</if>
+            <if test="qualityStatus != null  and qualityStatus != ''"> and h.quality_status = #{qualityStatus}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and h.approval_status = #{approvalStatus}</if>
+            <if test="params.beginHandoverDate != null and params.beginHandoverDate != ''"><!-- 开始时间检索 -->
+                and date_format(h.handover_date,'%y%m%d') &gt;= date_format(#{params.beginHandoverDate},'%y%m%d')
+            </if>
+            <if test="params.endHandoverDate != null and params.endHandoverDate != ''"><!-- 结束时间检索 -->
+                and date_format(h.handover_date,'%y%m%d') &lt;= date_format(#{params.endHandoverDate},'%y%m%d')
+            </if>
+        </where>
+        order by h.create_time desc
+    </select>
+    
+    <select id="selectErpProcessHandoverById" parameterType="Long" resultMap="ErpProcessHandoverResult">
+        <include refid="selectErpProcessHandoverVo"/>
+        where h.id = #{id}
+    </select>
+        
+    <insert id="insertErpProcessHandover" parameterType="ErpProcessHandover" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_process_handover
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="handoverCode != null and handoverCode != ''">handover_code,</if>
+            <if test="handoverName != null and handoverName != ''">handover_name,</if>
+            <if test="productionOrderId != null">production_order_id,</if>
+            <if test="fromProcessId != null">from_process_id,</if>
+            <if test="toProcessId != null">to_process_id,</if>
+            <if test="handoverDate != null">handover_date,</if>
+            <if test="handoverTime != null">handover_time,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="handoverQuantity != null">handover_quantity,</if>
+            <if test="qualifiedQuantity != null">qualified_quantity,</if>
+            <if test="defectiveQuantity != null">defective_quantity,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="lotNo != null">lot_no,</if>
+            <if test="fromOperatorId != null">from_operator_id,</if>
+            <if test="toOperatorId != null">to_operator_id,</if>
+            <if test="handoverType != null">handover_type,</if>
+            <if test="qualityStatus != null">quality_status,</if>
+            <if test="approvalStatus != null">approval_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="handoverCode != null and handoverCode != ''">#{handoverCode},</if>
+            <if test="handoverName != null and handoverName != ''">#{handoverName},</if>
+            <if test="productionOrderId != null">#{productionOrderId},</if>
+            <if test="fromProcessId != null">#{fromProcessId},</if>
+            <if test="toProcessId != null">#{toProcessId},</if>
+            <if test="handoverDate != null">#{handoverDate},</if>
+            <if test="handoverTime != null">#{handoverTime},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="handoverQuantity != null">#{handoverQuantity},</if>
+            <if test="qualifiedQuantity != null">#{qualifiedQuantity},</if>
+            <if test="defectiveQuantity != null">#{defectiveQuantity},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="lotNo != null">#{lotNo},</if>
+            <if test="fromOperatorId != null">#{fromOperatorId},</if>
+            <if test="toOperatorId != null">#{toOperatorId},</if>
+            <if test="handoverType != null">#{handoverType},</if>
+            <if test="qualityStatus != null">#{qualityStatus},</if>
+            <if test="approvalStatus != null">#{approvalStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProcessHandover" parameterType="ErpProcessHandover">
+        update erp_process_handover
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="handoverCode != null and handoverCode != ''">handover_code = #{handoverCode},</if>
+            <if test="handoverName != null and handoverName != ''">handover_name = #{handoverName},</if>
+            <if test="productionOrderId != null">production_order_id = #{productionOrderId},</if>
+            <if test="fromProcessId != null">from_process_id = #{fromProcessId},</if>
+            <if test="toProcessId != null">to_process_id = #{toProcessId},</if>
+            <if test="handoverDate != null">handover_date = #{handoverDate},</if>
+            <if test="handoverTime != null">handover_time = #{handoverTime},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="handoverQuantity != null">handover_quantity = #{handoverQuantity},</if>
+            <if test="qualifiedQuantity != null">qualified_quantity = #{qualifiedQuantity},</if>
+            <if test="defectiveQuantity != null">defective_quantity = #{defectiveQuantity},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
+            <if test="lotNo != null">lot_no = #{lotNo},</if>
+            <if test="fromOperatorId != null">from_operator_id = #{fromOperatorId},</if>
+            <if test="toOperatorId != null">to_operator_id = #{toOperatorId},</if>
+            <if test="handoverType != null">handover_type = #{handoverType},</if>
+            <if test="qualityStatus != null">quality_status = #{qualityStatus},</if>
+            <if test="approvalStatus != null">approval_status = #{approvalStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProcessHandoverById" parameterType="Long">
+        delete from erp_process_handover where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProcessHandoverByIds" parameterType="String">
+        delete from erp_process_handover where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

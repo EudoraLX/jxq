@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpLocationMapper">
+    
+    <resultMap type="ErpLocation" id="ErpLocationResult">
+        <result property="id"    column="id"    />
+        <result property="locationCode"    column="location_code"    />
+        <result property="locationName"    column="location_name"    />
+        <result property="shelfId"    column="shelf_id"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="locationType"    column="location_type"    />
+        <result property="levelNum"    column="level_num"    />
+        <result property="positionNum"    column="position_num"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="usedCapacity"    column="used_capacity"    />
+        <result property="maxWeight"    column="max_weight"    />
+        <result property="currentWeight"    column="current_weight"    />
+        <result property="isOccupied"    column="is_occupied"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpLocationVo">
+        select id, location_code, location_name, shelf_id, warehouse_id, location_type, level_num, position_num, capacity, used_capacity, max_weight, current_weight, is_occupied, is_active, remark, create_by, create_time, update_by, update_time, del_flag from erp_location
+    </sql>
+
+    <select id="selectErpLocationList" parameterType="ErpLocation" resultMap="ErpLocationResult">
+        <include refid="selectErpLocationVo"/>
+        <where>  
+            <if test="locationCode != null  and locationCode != ''"> and location_code like concat('%', #{locationCode}, '%')</if>
+            <if test="locationName != null  and locationName != ''"> and location_name like concat('%', #{locationName}, '%')</if>
+            <if test="shelfId != null "> and shelf_id = #{shelfId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="locationType != null  and locationType != ''"> and location_type = #{locationType}</if>
+            <if test="levelNum != null "> and level_num = #{levelNum}</if>
+            <if test="positionNum != null "> and position_num = #{positionNum}</if>
+            <if test="isOccupied != null  and isOccupied != ''"> and is_occupied = #{isOccupied}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+            and del_flag = '0'
+        </where>
+    </select>
+    
+    <select id="selectErpLocationById" parameterType="Long" resultMap="ErpLocationResult">
+        <include refid="selectErpLocationVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <select id="selectErpLocationListByShelfId" parameterType="Long" resultMap="ErpLocationResult">
+        <include refid="selectErpLocationVo"/>
+        where shelf_id = #{shelfId} and del_flag = '0'
+        order by level_num, position_num
+    </select>
+
+    <select id="selectErpLocationListByWarehouseId" parameterType="Long" resultMap="ErpLocationResult">
+        <include refid="selectErpLocationVo"/>
+        where warehouse_id = #{warehouseId} and del_flag = '0'
+        order by location_code
+    </select>
+
+    <select id="selectAvailableLocations" resultMap="ErpLocationResult">
+        <include refid="selectErpLocationVo"/>
+        where is_active = '1' and del_flag = '0'
+        order by location_code
+    </select>
+
+    <select id="selectFreeLocations" resultMap="ErpLocationResult">
+        <include refid="selectErpLocationVo"/>
+        where is_active = '1' and is_occupied = '0' and del_flag = '0'
+        order by location_code
+    </select>
+        
+    <insert id="insertErpLocation" parameterType="ErpLocation" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_location
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="locationCode != null and locationCode != ''">location_code,</if>
+            <if test="locationName != null and locationName != ''">location_name,</if>
+            <if test="shelfId != null">shelf_id,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="locationType != null">location_type,</if>
+            <if test="levelNum != null">level_num,</if>
+            <if test="positionNum != null">position_num,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="usedCapacity != null">used_capacity,</if>
+            <if test="maxWeight != null">max_weight,</if>
+            <if test="currentWeight != null">current_weight,</if>
+            <if test="isOccupied != null">is_occupied,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="locationCode != null and locationCode != ''">#{locationCode},</if>
+            <if test="locationName != null and locationName != ''">#{locationName},</if>
+            <if test="shelfId != null">#{shelfId},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="locationType != null">#{locationType},</if>
+            <if test="levelNum != null">#{levelNum},</if>
+            <if test="positionNum != null">#{positionNum},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="usedCapacity != null">#{usedCapacity},</if>
+            <if test="maxWeight != null">#{maxWeight},</if>
+            <if test="currentWeight != null">#{currentWeight},</if>
+            <if test="isOccupied != null">#{isOccupied},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpLocation" parameterType="ErpLocation">
+        update erp_location
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="locationCode != null and locationCode != ''">location_code = #{locationCode},</if>
+            <if test="locationName != null and locationName != ''">location_name = #{locationName},</if>
+            <if test="shelfId != null">shelf_id = #{shelfId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="locationType != null">location_type = #{locationType},</if>
+            <if test="levelNum != null">level_num = #{levelNum},</if>
+            <if test="positionNum != null">position_num = #{positionNum},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="usedCapacity != null">used_capacity = #{usedCapacity},</if>
+            <if test="maxWeight != null">max_weight = #{maxWeight},</if>
+            <if test="currentWeight != null">current_weight = #{currentWeight},</if>
+            <if test="isOccupied != null">is_occupied = #{isOccupied},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpLocationById" parameterType="Long">
+        update erp_location set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpLocationByIds" parameterType="String">
+        update erp_location set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

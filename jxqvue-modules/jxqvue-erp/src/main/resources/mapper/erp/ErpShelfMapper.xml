@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpShelfMapper">
+    
+    <resultMap type="ErpShelf" id="ErpShelfResult">
+        <result property="id"    column="id"    />
+        <result property="shelfCode"    column="shelf_code"    />
+        <result property="shelfName"    column="shelf_name"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="shelfType"    column="shelf_type"    />
+        <result property="areaCode"    column="area_code"    />
+        <result property="rowNum"    column="row_num"    />
+        <result property="columnNum"    column="column_num"    />
+        <result property="height"    column="height"    />
+        <result property="width"    column="width"    />
+        <result property="depth"    column="depth"    />
+        <result property="maxWeight"    column="max_weight"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpShelfVo">
+        select id, shelf_code, shelf_name, warehouse_id, shelf_type, area_code, row_num, column_num, height, width, depth, max_weight, is_active, remark, create_by, create_time, update_by, update_time, del_flag from erp_shelf
+    </sql>
+
+    <select id="selectErpShelfList" parameterType="ErpShelf" resultMap="ErpShelfResult">
+        <include refid="selectErpShelfVo"/>
+        <where>  
+            <if test="shelfCode != null  and shelfCode != ''"> and shelf_code like concat('%', #{shelfCode}, '%')</if>
+            <if test="shelfName != null  and shelfName != ''"> and shelf_name like concat('%', #{shelfName}, '%')</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="shelfType != null  and shelfType != ''"> and shelf_type = #{shelfType}</if>
+            <if test="areaCode != null  and areaCode != ''"> and area_code like concat('%', #{areaCode}, '%')</if>
+            <if test="rowNum != null "> and row_num = #{rowNum}</if>
+            <if test="columnNum != null "> and column_num = #{columnNum}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+            and del_flag = '0'
+        </where>
+    </select>
+    
+    <select id="selectErpShelfById" parameterType="Long" resultMap="ErpShelfResult">
+        <include refid="selectErpShelfVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <select id="selectErpShelfListByWarehouseId" parameterType="Long" resultMap="ErpShelfResult">
+        <include refid="selectErpShelfVo"/>
+        where warehouse_id = #{warehouseId} and del_flag = '0'
+        order by shelf_code
+    </select>
+
+    <select id="selectAvailableShelves" resultMap="ErpShelfResult">
+        <include refid="selectErpShelfVo"/>
+        where is_active = '1' and del_flag = '0'
+        order by shelf_code
+    </select>
+        
+    <insert id="insertErpShelf" parameterType="ErpShelf" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_shelf
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shelfCode != null and shelfCode != ''">shelf_code,</if>
+            <if test="shelfName != null and shelfName != ''">shelf_name,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="shelfType != null">shelf_type,</if>
+            <if test="areaCode != null">area_code,</if>
+            <if test="rowNum != null">row_num,</if>
+            <if test="columnNum != null">column_num,</if>
+            <if test="height != null">height,</if>
+            <if test="width != null">width,</if>
+            <if test="depth != null">depth,</if>
+            <if test="maxWeight != null">max_weight,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shelfCode != null and shelfCode != ''">#{shelfCode},</if>
+            <if test="shelfName != null and shelfName != ''">#{shelfName},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="shelfType != null">#{shelfType},</if>
+            <if test="areaCode != null">#{areaCode},</if>
+            <if test="rowNum != null">#{rowNum},</if>
+            <if test="columnNum != null">#{columnNum},</if>
+            <if test="height != null">#{height},</if>
+            <if test="width != null">#{width},</if>
+            <if test="depth != null">#{depth},</if>
+            <if test="maxWeight != null">#{maxWeight},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpShelf" parameterType="ErpShelf">
+        update erp_shelf
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shelfCode != null and shelfCode != ''">shelf_code = #{shelfCode},</if>
+            <if test="shelfName != null and shelfName != ''">shelf_name = #{shelfName},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="shelfType != null">shelf_type = #{shelfType},</if>
+            <if test="areaCode != null">area_code = #{areaCode},</if>
+            <if test="rowNum != null">row_num = #{rowNum},</if>
+            <if test="columnNum != null">column_num = #{columnNum},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="width != null">width = #{width},</if>
+            <if test="depth != null">depth = #{depth},</if>
+            <if test="maxWeight != null">max_weight = #{maxWeight},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpShelfById" parameterType="Long">
+        update erp_shelf set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpShelfByIds" parameterType="String">
+        update erp_shelf set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

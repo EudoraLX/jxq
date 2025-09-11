@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProcessMonitoringMapper">
+    
+    <resultMap type="ErpProcessMonitoring" id="ErpProcessMonitoringResult">
+        <result property="id"    column="id"    />
+        <result property="productionOrderId"    column="production_order_id"    />
+        <result property="productionOrderCode"    column="production_order_code"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productCode"    column="product_code"    />
+        <result property="productName"    column="product_name"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="processName"    column="process_name"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="workCenterCode"    column="work_center_code"    />
+        <result property="workCenterName"    column="work_center_name"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="moldCode"    column="mold_code"    />
+        <result property="moldName"    column="mold_name"    />
+        <result property="monitoringTime"    column="monitoring_time"    />
+        <result property="inspectorId"    column="inspector_id"    />
+        <result property="inspectorName"    column="inspector_name"    />
+        <result property="parameterId"    column="parameter_id"    />
+        <result property="parameterCode"    column="parameter_code"    />
+        <result property="parameterName"    column="parameter_name"    />
+        <result property="parameterUnit"    column="parameter_unit"    />
+        <result property="standardValue"    column="standard_value"    />
+        <result property="actualValue"    column="actual_value"    />
+        <result property="minValue"    column="min_value"    />
+        <result property="maxValue"    column="max_value"    />
+        <result property="deviation"    column="deviation"    />
+        <result property="deviationRate"    column="deviation_rate"    />
+        <result property="isNormal"    column="is_normal"    />
+        <result property="alarmLevel"    column="alarm_level"    />
+        <result property="alarmMessage"    column="alarm_message"    />
+        <result property="controlMethod"    column="control_method"    />
+        <result property="adjustmentAction"    column="adjustment_action"    />
+        <result property="nextMonitoringTime"    column="next_monitoring_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpProcessMonitoringVo">
+        select m.id, m.production_order_id, m.process_id, m.work_center_id, m.equipment_id, m.mold_id,
+               m.monitoring_time, m.inspector_id, m.parameter_id, m.standard_value, m.actual_value,
+               m.min_value, m.max_value, m.deviation, m.deviation_rate, m.is_normal, m.alarm_level,
+               m.alarm_message, m.control_method, m.adjustment_action, m.next_monitoring_time, m.remark,
+               m.create_by, m.create_time, m.update_by, m.update_time,
+               o.order_code as production_order_code,
+               o.product_id, p.material_code as product_code, p.material_name as product_name,
+               pr.process_code, pr.process_name,
+               w.work_center_code, w.work_center_name,
+               e.equipment_code, e.equipment_name,
+               mo.mold_code, mo.mold_name,
+               u.nick_name as inspector_name,
+               pp.parameter_code, pp.parameter_name, pp.parameter_unit
+        from erp_process_monitoring m
+        left join erp_production_order o on m.production_order_id = o.id
+        left join erp_material_master p on o.product_id = p.id
+        left join erp_process pr on m.process_id = pr.id
+        left join erp_work_center w on m.work_center_id = w.id
+        left join erp_equipment e on m.equipment_id = e.id
+        left join erp_mold mo on m.mold_id = mo.id
+        left join sys_user u on m.inspector_id = u.user_id
+        left join erp_process_para pp on m.parameter_id = pp.id
+    </sql>
+
+    <select id="selectErpProcessMonitoringList" parameterType="ErpProcessMonitoring" resultMap="ErpProcessMonitoringResult">
+        <include refid="selectErpProcessMonitoringVo"/>
+        <where>  
+            <if test="productionOrderId != null "> and m.production_order_id = #{productionOrderId}</if>
+            <if test="processId != null "> and m.process_id = #{processId}</if>
+            <if test="workCenterId != null "> and m.work_center_id = #{workCenterId}</if>
+            <if test="equipmentId != null "> and m.equipment_id = #{equipmentId}</if>
+            <if test="moldId != null "> and m.mold_id = #{moldId}</if>
+            <if test="monitoringTime != null "> and date_format(m.monitoring_time,'%y%m%d') = date_format(#{monitoringTime},'%y%m%d')</if>
+            <if test="inspectorId != null "> and m.inspector_id = #{inspectorId}</if>
+            <if test="parameterId != null  and parameterId != ''"> and m.parameter_id = #{parameterId}</if>
+            <if test="isNormal != null  and isNormal != ''"> and m.is_normal = #{isNormal}</if>
+            <if test="alarmLevel != null  and alarmLevel != ''"> and m.alarm_level = #{alarmLevel}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(m.monitoring_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(m.monitoring_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by m.monitoring_time desc, m.id desc
+    </select>
+    
+    <select id="selectErpProcessMonitoringById" parameterType="Long" resultMap="ErpProcessMonitoringResult">
+        <include refid="selectErpProcessMonitoringVo"/>
+        where m.id = #{id}
+    </select>
+
+    <select id="getProcessParametersByProcessId" parameterType="Long" resultMap="ErpProcessMonitoringResult">
+        select pp.id as parameter_id, pp.parameter_code, pp.parameter_name, pp.parameter_unit,
+               pp.standard_value, pp.min_value, pp.max_value, pp.control_method
+        from erp_process_para pp
+        where pp.process_id = #{processId}
+        and pp.is_monitored = '1'
+        order by pp.sort_order
+    </select>
+
+    <select id="getWorkCenterInfoByOrderAndProcess" resultMap="ErpProcessMonitoringResult">
+        select d.work_center_id, d.equipment_id, d.mold_id,
+               w.work_center_code, w.work_center_name,
+               e.equipment_code, e.equipment_name,
+               mo.mold_code, mo.mold_name
+        from erp_production_order_detail d
+        left join erp_work_center w on d.work_center_id = w.id
+        left join erp_equipment e on d.equipment_id = e.id
+        left join erp_mold mo on d.mold_id = mo.id
+        where d.order_id = #{productionOrderId}
+        and d.process_id = #{processId}
+        limit 1
+    </select>
+
+    <select id="getProcessRouteDetailsByOrderId" resultMap="ErpProcessMonitoringResult">
+        select d.process_id, d.work_center_id, d.equipment_id, d.mold_id,
+               p.process_code, p.process_name,
+               w.work_center_code, w.work_center_name,
+               e.equipment_code, e.equipment_name,
+               mo.mold_code, mo.mold_name
+        from erp_production_order_detail d
+        left join erp_process p on d.process_id = p.id
+        left join erp_work_center w on d.work_center_id = w.id
+        left join erp_equipment e on d.equipment_id = e.id
+        left join erp_mold mo on d.mold_id = mo.id
+        where d.order_id = #{productionOrderId}
+        and d.del_flag = '0'
+        order by d.process_order
+    </select>
+        
+    <insert id="insertErpProcessMonitoring" parameterType="ErpProcessMonitoring" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_process_monitoring
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productionOrderId != null">production_order_id,</if>
+            <if test="processId != null">process_id,</if>
+            <if test="workCenterId != null">work_center_id,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="moldId != null">mold_id,</if>
+            <if test="monitoringTime != null">monitoring_time,</if>
+            <if test="inspectorId != null">inspector_id,</if>
+            <if test="parameterId != null">parameter_id,</if>
+            <if test="standardValue != null">standard_value,</if>
+            <if test="actualValue != null">actual_value,</if>
+            <if test="minValue != null">min_value,</if>
+            <if test="maxValue != null">max_value,</if>
+            <if test="deviation != null">deviation,</if>
+            <if test="deviationRate != null">deviation_rate,</if>
+            <if test="isNormal != null">is_normal,</if>
+            <if test="alarmLevel != null">alarm_level,</if>
+            <if test="alarmMessage != null">alarm_message,</if>
+            <if test="controlMethod != null">control_method,</if>
+            <if test="adjustmentAction != null">adjustment_action,</if>
+            <if test="nextMonitoringTime != null">next_monitoring_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productionOrderId != null">#{productionOrderId},</if>
+            <if test="processId != null">#{processId},</if>
+            <if test="workCenterId != null">#{workCenterId},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="moldId != null">#{moldId},</if>
+            <if test="monitoringTime != null">#{monitoringTime},</if>
+            <if test="inspectorId != null">#{inspectorId},</if>
+            <if test="parameterId != null">#{parameterId},</if>
+            <if test="standardValue != null">#{standardValue},</if>
+            <if test="actualValue != null">#{actualValue},</if>
+            <if test="minValue != null">#{minValue},</if>
+            <if test="maxValue != null">#{maxValue},</if>
+            <if test="deviation != null">#{deviation},</if>
+            <if test="deviationRate != null">#{deviationRate},</if>
+            <if test="isNormal != null">#{isNormal},</if>
+            <if test="alarmLevel != null">#{alarmLevel},</if>
+            <if test="alarmMessage != null">#{alarmMessage},</if>
+            <if test="controlMethod != null">#{controlMethod},</if>
+            <if test="adjustmentAction != null">#{adjustmentAction},</if>
+            <if test="nextMonitoringTime != null">#{nextMonitoringTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProcessMonitoring" parameterType="ErpProcessMonitoring">
+        update erp_process_monitoring
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productionOrderId != null">production_order_id = #{productionOrderId},</if>
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="workCenterId != null">work_center_id = #{workCenterId},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="moldId != null">mold_id = #{moldId},</if>
+            <if test="monitoringTime != null">monitoring_time = #{monitoringTime},</if>
+            <if test="inspectorId != null">inspector_id = #{inspectorId},</if>
+            <if test="parameterId != null">parameter_id = #{parameterId},</if>
+            <if test="standardValue != null">standard_value = #{standardValue},</if>
+            <if test="actualValue != null">actual_value = #{actualValue},</if>
+            <if test="minValue != null">min_value = #{minValue},</if>
+            <if test="maxValue != null">max_value = #{maxValue},</if>
+            <if test="deviation != null">deviation = #{deviation},</if>
+            <if test="deviationRate != null">deviation_rate = #{deviationRate},</if>
+            <if test="isNormal != null">is_normal = #{isNormal},</if>
+            <if test="alarmLevel != null">alarm_level = #{alarmLevel},</if>
+            <if test="alarmMessage != null">alarm_message = #{alarmMessage},</if>
+            <if test="controlMethod != null">control_method = #{controlMethod},</if>
+            <if test="adjustmentAction != null">adjustment_action = #{adjustmentAction},</if>
+            <if test="nextMonitoringTime != null">next_monitoring_time = #{nextMonitoringTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProcessMonitoringById" parameterType="Long">
+        delete from erp_process_monitoring where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProcessMonitoringByIds" parameterType="String">
+        delete from erp_process_monitoring where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

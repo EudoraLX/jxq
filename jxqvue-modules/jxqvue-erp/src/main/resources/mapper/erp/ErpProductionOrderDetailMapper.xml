@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProductionOrderDetailMapper">
+    
+    <resultMap type="ErpProductionOrderDetail" id="ErpProductionOrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processOrder"    column="process_order"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="plannedDuration"    column="planned_duration"    />
+        <result property="actualDuration"    column="actual_duration"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="moldSetupTime"    column="mold_setup_time"    />
+        <result property="moldRemovalTime"    column="mold_removal_time"    />
+        <result property="temperatureControlTime"    column="temperature_control_time"    />
+        <result property="pressureControlTime"    column="pressure_control_time"    />
+        <result property="qualityCheckTime"    column="quality_check_time"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpProductionOrderDetailVo">
+        select id, order_id, process_id, process_order, work_center_id, equipment_id,
+               mold_id, planned_duration, actual_duration, operator_id, mold_setup_time,
+               mold_removal_time, temperature_control_time, pressure_control_time, quality_check_time, start_time, end_time, remark, create_by, create_time, update_by, update_time, del_flag from erp_production_order_detail
+    </sql>
+
+    <select id="selectErpProductionOrderDetailList" parameterType="ErpProductionOrderDetail" resultMap="ErpProductionOrderDetailResult">
+        <include refid="selectErpProductionOrderDetailVo"/>
+        <where>  
+            del_flag = '0'
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="processId != null "> and process_id = #{processId}</if>
+            <if test="processOrder != null "> and process_order = #{processOrder}</if>
+            <if test="workCenterId != null "> and work_center_id = #{workCenterId}</if>
+            <if test="equipmentId != null "> and equipment_id = #{equipmentId}</if>
+            <if test="moldId != null "> and mold_id = #{moldId}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+        </where>
+        ORDER BY process_order ASC
+    </select>
+    
+    <select id="selectErpProductionOrderDetailById" parameterType="Long" resultMap="ErpProductionOrderDetailResult">
+        <include refid="selectErpProductionOrderDetailVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <select id="selectErpProductionOrderDetailByOrderId" parameterType="Long" resultMap="ErpProductionOrderDetailResult">
+        <include refid="selectErpProductionOrderDetailVo"/>
+        where order_id = #{orderId} and del_flag = '0'
+        ORDER BY process_order ASC
+    </select>
+        
+    <insert id="insertErpProductionOrderDetail" parameterType="ErpProductionOrderDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_production_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="processId != null">process_id,</if>
+            <if test="processOrder != null">process_order,</if>
+            <if test="workCenterId != null">work_center_id,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="moldId != null">mold_id,</if>
+            <if test="plannedDuration != null">planned_duration,</if>
+            <if test="actualDuration != null">actual_duration,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="moldSetupTime != null">mold_setup_time,</if>
+            <if test="moldRemovalTime != null">mold_removal_time,</if>
+            <if test="temperatureControlTime != null">temperature_control_time,</if>
+            <if test="pressureControlTime != null">pressure_control_time,</if>
+            <if test="qualityCheckTime != null">quality_check_time,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="processId != null">#{processId},</if>
+            <if test="processOrder != null">#{processOrder},</if>
+            <if test="workCenterId != null">#{workCenterId},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="moldId != null">#{moldId},</if>
+            <if test="plannedDuration != null">#{plannedDuration},</if>
+            <if test="actualDuration != null">#{actualDuration},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="moldSetupTime != null">#{moldSetupTime},</if>
+            <if test="moldRemovalTime != null">#{moldRemovalTime},</if>
+            <if test="temperatureControlTime != null">#{temperatureControlTime},</if>
+            <if test="pressureControlTime != null">#{pressureControlTime},</if>
+            <if test="qualityCheckTime != null">#{qualityCheckTime},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProductionOrderDetail" parameterType="ErpProductionOrderDetail">
+        update erp_production_order_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="processOrder != null">process_order = #{processOrder},</if>
+            <if test="workCenterId != null">work_center_id = #{workCenterId},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="moldId != null">mold_id = #{moldId},</if>
+            <if test="plannedDuration != null">planned_duration = #{plannedDuration},</if>
+            <if test="actualDuration != null">actual_duration = #{actualDuration},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="moldSetupTime != null">mold_setup_time = #{moldSetupTime},</if>
+            <if test="moldRemovalTime != null">mold_removal_time = #{moldRemovalTime},</if>
+            <if test="temperatureControlTime != null">temperature_control_time = #{temperatureControlTime},</if>
+            <if test="pressureControlTime != null">pressure_control_time = #{pressureControlTime},</if>
+            <if test="qualityCheckTime != null">quality_check_time = #{qualityCheckTime},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProductionOrderDetailById" parameterType="Long">
+        update erp_production_order_detail set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProductionOrderDetailByIds" parameterType="String">
+        update erp_production_order_detail set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProductionOrderDetailByOrderId" parameterType="Long">
+        update erp_production_order_detail set del_flag = '1' where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteErpProductionOrderDetailByOrderIds" parameterType="String">
+        update erp_production_order_detail set del_flag = '1' where order_id in 
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+
+    <insert id="batchErpProductionOrderDetail" parameterType="java.util.List">
+        insert into erp_production_order_detail(order_id, process_id, process_order, work_center_id, equipment_id, mold_id, planned_duration, actual_duration, operator_id, mold_setup_time, mold_removal_time, temperature_control_time, pressure_control_time, quality_check_time, start_time, end_time, remark, create_by, create_time, del_flag) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.orderId}, #{item.processId}, #{item.processOrder}, #{item.workCenterId}, #{item.equipmentId}, #{item.moldId}, #{item.plannedDuration}, #{item.actualDuration}, #{item.operatorId}, #{item.moldSetupTime}, #{item.moldRemovalTime}, #{item.temperatureControlTime}, #{item.pressureControlTime}, #{item.qualityCheckTime}, #{item.startTime}, #{item.endTime}, #{item.remark}, #{item.createBy}, #{item.createTime}, '0')
+        </foreach>
+    </insert>
+</mapper>

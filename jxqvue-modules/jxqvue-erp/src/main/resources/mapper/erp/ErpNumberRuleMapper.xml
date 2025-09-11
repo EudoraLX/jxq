@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpNumberRuleMapper">
+    
+    <resultMap type="ErpNumberRule" id="ErpNumberRuleResult">
+        <result property="ruleId"           column="rule_id"           />
+        <result property="ruleCode"         column="rule_code"         />
+        <result property="ruleName"         column="rule_name"         />
+        <result property="businessType"     column="business_type"     />
+        <result property="prefix"           column="prefix"            />
+        <result property="dateFormat"       column="date_format"       />
+        <result property="sequenceLength"   column="sequence_length"   />
+        <result property="currentSequence"  column="current_sequence"  />
+        <result property="resetType"        column="reset_type"        />
+        <result property="lastResetDate"    column="last_reset_date"   />
+        <result property="needApproval"     column="need_approval"     />
+        <result property="remark"           column="remark"            />
+        <result property="createBy"         column="create_by"         />
+        <result property="createTime"       column="create_time"       />
+        <result property="updateBy"         column="update_by"         />
+        <result property="updateTime"       column="update_time"       />
+    </resultMap>
+
+    <sql id="selectErpNumberRuleVo">
+        select rule_id, rule_code, rule_name, business_type, prefix, date_format, sequence_length, current_sequence, reset_type, last_reset_date, need_approval, remark, create_by, create_time, update_by, update_time from erp_number_rule
+    </sql>
+
+    <select id="selectErpNumberRuleList" parameterType="ErpNumberRule" resultMap="ErpNumberRuleResult">
+        <include refid="selectErpNumberRuleVo"/>
+        <where>  
+            <if test="ruleCode != null  and ruleCode != ''"> and rule_code like concat('%', #{ruleCode}, '%')</if>
+            <if test="ruleName != null  and ruleName != ''"> and rule_name like concat('%', #{ruleName}, '%')</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+            <if test="prefix != null  and prefix != ''"> and prefix like concat('%', #{prefix}, '%')</if>
+            <if test="resetType != null  and resetType != ''"> and reset_type = #{resetType}</if>
+            <if test="needApproval != null  and needApproval != ''"> and need_approval = #{needApproval}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectErpNumberRuleByRuleId" parameterType="Long" resultMap="ErpNumberRuleResult">
+        <include refid="selectErpNumberRuleVo"/>
+        where rule_id = #{ruleId}
+    </select>
+        
+    <insert id="insertErpNumberRule" parameterType="ErpNumberRule" useGeneratedKeys="true" keyProperty="ruleId">
+        insert into erp_number_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ruleCode != null and ruleCode != ''">rule_code,</if>
+            <if test="ruleName != null and ruleName != ''">rule_name,</if>
+            <if test="businessType != null and businessType != ''">business_type,</if>
+            <if test="prefix != null">prefix,</if>
+            <if test="dateFormat != null">date_format,</if>
+            <if test="sequenceLength != null">sequence_length,</if>
+            <if test="currentSequence != null">current_sequence,</if>
+            <if test="resetType != null and resetType != ''">reset_type,</if>
+            <if test="lastResetDate != null">last_reset_date,</if>
+            <if test="needApproval != null and needApproval != ''">need_approval,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ruleCode != null and ruleCode != ''">#{ruleCode},</if>
+            <if test="ruleName != null and ruleName != ''">#{ruleName},</if>
+            <if test="businessType != null and businessType != ''">#{businessType},</if>
+            <if test="prefix != null">#{prefix},</if>
+            <if test="dateFormat != null">#{dateFormat},</if>
+            <if test="sequenceLength != null">#{sequenceLength},</if>
+            <if test="currentSequence != null">#{currentSequence},</if>
+            <if test="resetType != null and resetType != ''">#{resetType},</if>
+            <if test="lastResetDate != null">#{lastResetDate},</if>
+            <if test="needApproval != null and needApproval != ''">#{needApproval},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpNumberRule" parameterType="ErpNumberRule">
+        update erp_number_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ruleCode != null and ruleCode != ''">rule_code = #{ruleCode},</if>
+            <if test="ruleName != null and ruleName != ''">rule_name = #{ruleName},</if>
+            <if test="businessType != null and businessType != ''">business_type = #{businessType},</if>
+            <if test="prefix != null">prefix = #{prefix},</if>
+            <if test="dateFormat != null">date_format = #{dateFormat},</if>
+            <if test="sequenceLength != null">sequence_length = #{sequenceLength},</if>
+            <if test="currentSequence != null">current_sequence = #{currentSequence},</if>
+            <if test="resetType != null and resetType != ''">reset_type = #{resetType},</if>
+            <if test="lastResetDate != null">last_reset_date = #{lastResetDate},</if>
+            <if test="needApproval != null and needApproval != ''">need_approval = #{needApproval},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where rule_id = #{ruleId}
+    </update>
+
+    <delete id="deleteErpNumberRuleByRuleId" parameterType="Long">
+        delete from erp_number_rule where rule_id = #{ruleId}
+    </delete>
+
+    <delete id="deleteErpNumberRuleByRuleIds" parameterType="Long[]">
+        delete from erp_number_rule where rule_id in 
+        <foreach item="ruleId" collection="array" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </delete>
+
+    <!-- 根据业务类型生成编号 -->
+    <select id="generateNumberByBusinessType" resultType="String">
+        SELECT 
+            CONCAT(
+                CASE 
+                    WHEN nr.prefix IS NOT NULL AND nr.prefix != '' THEN nr.prefix
+                    ELSE ''
+                END,
+                CASE 
+                    WHEN nr.date_format IS NOT NULL AND nr.date_format != '' 
+                    THEN DATE_FORMAT(#{businessDate}, nr.date_format)
+                    ELSE ''
+                END,
+                LPAD(nr.current_sequence, nr.sequence_length, '0')
+            ) as generated_number
+        FROM erp_number_rule nr
+        WHERE nr.business_type = #{businessType}
+        LIMIT 1
+    </select>
+
+    <!-- 更新编号规则的当前序号 -->
+    <update id="updateCurrentSequence">
+        UPDATE erp_number_rule 
+        SET current_sequence = current_sequence + 1,
+            update_time = NOW()
+        WHERE business_type = #{businessType}
+    </update>
+
+    <!-- 根据业务类型获取need_approval字段值 -->
+    <select id="getNeedApprovalByBusinessType" parameterType="String" resultType="String">
+        SELECT need_approval 
+        FROM erp_number_rule 
+        WHERE business_type = #{businessType} 
+        AND status = '0'
+        LIMIT 1
+    </select>
+</mapper>

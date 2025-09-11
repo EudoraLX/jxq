@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProcessParaMapper">
+    
+    <resultMap type="ErpProcessPara" id="ErpProcessParaResult">
+        <result property="id"    column="id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="parameterType"    column="parameter_type"    />
+        <result property="parameterName"    column="parameter_name"    />
+        <result property="parameterCode"    column="parameter_code"    />
+        <result property="parameterUnit"    column="parameter_unit"    />
+        <result property="standardValue"    column="standard_value"    />
+        <result property="minValue"    column="min_value"    />
+        <result property="maxValue"    column="max_value"    />
+        <result property="tolerance"    column="tolerance"    />
+        <result property="controlMethod"    column="control_method"    />
+        <result property="monitoringPoint"    column="monitoring_point"    />
+        <result property="alarmUpper"    column="alarm_upper"    />
+        <result property="alarmLower"    column="alarm_lower"    />
+        <result property="isCritical"    column="is_critical"    />
+        <result property="isMonitored"    column="is_monitored"    />
+        <result property="sortOrder"    column="sort_order"    />
+        <result property="monitoringInterval"    column="monitoring_interval"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpProcessParaVo">
+        select id, process_id, parameter_type, parameter_name, parameter_code, parameter_unit, standard_value, min_value, max_value, tolerance, control_method, monitoring_point, alarm_upper, alarm_lower, is_critical, is_monitored, sort_order, monitoring_interval, remark, create_by, create_time, update_by, update_time, del_flag from erp_process_para
+    </sql>
+
+    <select id="selectErpProcessParaList" parameterType="ErpProcessPara" resultMap="ErpProcessParaResult">
+        <include refid="selectErpProcessParaVo"/>
+        <where>  
+            <if test="processId != null "> and process_id = #{processId}</if>
+            <if test="parameterType != null  and parameterType != ''"> and parameter_type = #{parameterType}</if>
+            <if test="parameterName != null  and parameterName != ''"> and parameter_name like concat('%', #{parameterName}, '%')</if>
+            <if test="parameterCode != null  and parameterCode != ''"> and parameter_code like concat('%', #{parameterCode}, '%')</if>
+            <if test="parameterUnit != null  and parameterUnit != ''"> and parameter_unit = #{parameterUnit}</if>
+            <if test="standardValue != null "> and standard_value = #{standardValue}</if>
+            <if test="minValue != null "> and min_value = #{minValue}</if>
+            <if test="maxValue != null "> and max_value = #{maxValue}</if>
+            <if test="tolerance != null "> and tolerance = #{tolerance}</if>
+            <if test="controlMethod != null  and controlMethod != ''"> and control_method like concat('%', #{controlMethod}, '%')</if>
+            <if test="monitoringPoint != null  and monitoringPoint != ''"> and monitoring_point like concat('%', #{monitoringPoint}, '%')</if>
+            <if test="alarmUpper != null "> and alarm_upper = #{alarmUpper}</if>
+            <if test="alarmLower != null "> and alarm_lower = #{alarmLower}</if>
+            <if test="isCritical != null  and isCritical != ''"> and is_critical = #{isCritical}</if>
+            <if test="isMonitored != null  and isMonitored != ''"> and is_monitored = #{isMonitored}</if>
+            <if test="sortOrder != null "> and sort_order = #{sortOrder}</if>
+            <if test="monitoringInterval != null "> and monitoring_interval = #{monitoringInterval}</if>
+            and del_flag = '0'
+        </where>
+        ORDER BY sort_order ASC, id ASC
+    </select>
+    
+    <select id="selectErpProcessParaById" parameterType="Long" resultMap="ErpProcessParaResult">
+        <include refid="selectErpProcessParaVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <select id="selectErpProcessParaListByProcessId" parameterType="Long" resultMap="ErpProcessParaResult">
+        <include refid="selectErpProcessParaVo"/>
+        where process_id = #{processId} and del_flag = '0'
+        ORDER BY sort_order ASC, id ASC
+    </select>
+        
+    <insert id="insertErpProcessPara" parameterType="ErpProcessPara" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_process_para
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processId != null">process_id,</if>
+            <if test="parameterType != null and parameterType != ''">parameter_type,</if>
+            <if test="parameterName != null and parameterName != ''">parameter_name,</if>
+            <if test="parameterCode != null and parameterCode != ''">parameter_code,</if>
+            <if test="parameterUnit != null">parameter_unit,</if>
+            <if test="standardValue != null">standard_value,</if>
+            <if test="minValue != null">min_value,</if>
+            <if test="maxValue != null">max_value,</if>
+            <if test="tolerance != null">tolerance,</if>
+            <if test="controlMethod != null">control_method,</if>
+            <if test="monitoringPoint != null">monitoring_point,</if>
+            <if test="alarmUpper != null">alarm_upper,</if>
+            <if test="alarmLower != null">alarm_lower,</if>
+            <if test="isCritical != null">is_critical,</if>
+            <if test="isMonitored != null">is_monitored,</if>
+            <if test="sortOrder != null">sort_order,</if>
+            <if test="monitoringInterval != null">monitoring_interval,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processId != null">#{processId},</if>
+            <if test="parameterType != null and parameterType != ''">#{parameterType},</if>
+            <if test="parameterName != null and parameterName != ''">#{parameterName},</if>
+            <if test="parameterCode != null and parameterCode != ''">#{parameterCode},</if>
+            <if test="parameterUnit != null">#{parameterUnit},</if>
+            <if test="standardValue != null">#{standardValue},</if>
+            <if test="minValue != null">#{minValue},</if>
+            <if test="maxValue != null">#{maxValue},</if>
+            <if test="tolerance != null">#{tolerance},</if>
+            <if test="controlMethod != null">#{controlMethod},</if>
+            <if test="monitoringPoint != null">#{monitoringPoint},</if>
+            <if test="alarmUpper != null">#{alarmUpper},</if>
+            <if test="alarmLower != null">#{alarmLower},</if>
+            <if test="isCritical != null">#{isCritical},</if>
+            <if test="isMonitored != null">#{isMonitored},</if>
+            <if test="sortOrder != null">#{sortOrder},</if>
+            <if test="monitoringInterval != null">#{monitoringInterval},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProcessPara" parameterType="ErpProcessPara">
+        update erp_process_para
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="parameterType != null and parameterType != ''">parameter_type = #{parameterType},</if>
+            <if test="parameterName != null and parameterName != ''">parameter_name = #{parameterName},</if>
+            <if test="parameterCode != null and parameterCode != ''">parameter_code = #{parameterCode},</if>
+            <if test="parameterUnit != null">parameter_unit = #{parameterUnit},</if>
+            <if test="standardValue != null">standard_value = #{standardValue},</if>
+            <if test="minValue != null">min_value = #{minValue},</if>
+            <if test="maxValue != null">max_value = #{maxValue},</if>
+            <if test="tolerance != null">tolerance = #{tolerance},</if>
+            <if test="controlMethod != null">control_method = #{controlMethod},</if>
+            <if test="monitoringPoint != null">monitoring_point = #{monitoringPoint},</if>
+            <if test="alarmUpper != null">alarm_upper = #{alarmUpper},</if>
+            <if test="alarmLower != null">alarm_lower = #{alarmLower},</if>
+            <if test="isCritical != null">is_critical = #{isCritical},</if>
+            <if test="isMonitored != null">is_monitored = #{isMonitored},</if>
+            <if test="sortOrder != null">sort_order = #{sortOrder},</if>
+            <if test="monitoringInterval != null">monitoring_interval = #{monitoringInterval},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProcessParaById" parameterType="Long">
+        update erp_process_para set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProcessParaByIds" parameterType="String">
+        update erp_process_para set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProcessParaByProcessId" parameterType="Long">
+        update erp_process_para set del_flag = '1' where process_id = #{processId}
+    </delete>
+</mapper>

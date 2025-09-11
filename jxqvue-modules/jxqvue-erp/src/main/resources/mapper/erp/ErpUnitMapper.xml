@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpUnitMapper">
+    
+    <resultMap type="ErpUnit" id="ErpUnitResult">
+        <result property="id"    column="id"    />
+        <result property="unitCode"    column="unit_code"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="unitSymbol"    column="unit_symbol"    />
+        <result property="isBaseUnit"    column="is_base_unit"    />
+        <result property="conversionRate"    column="conversion_rate"    />
+        <result property="baseUnitId"    column="base_unit_id"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+
+    </resultMap>
+
+    <sql id="selectErpUnitVo">
+        select id, unit_code, unit_name, unit_symbol, is_base_unit, conversion_rate, base_unit_id, status, create_by, create_time, update_by, update_time from erp_unit
+    </sql>
+
+    <select id="selectErpUnitList" parameterType="ErpUnit" resultMap="ErpUnitResult">
+        <include refid="selectErpUnitVo"/>
+        <where>  
+            <if test="unitCode != null  and unitCode != ''"> and unit_code = #{unitCode}</if>
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="unitSymbol != null  and unitSymbol != ''"> and unit_symbol = #{unitSymbol}</if>
+            <if test="isBaseUnit != null  and isBaseUnit != ''"> and is_base_unit = #{isBaseUnit}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpUnitById" parameterType="Long" resultMap="ErpUnitResult">
+        <include refid="selectErpUnitVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertErpUnit" parameterType="ErpUnit" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_unit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitCode != null and unitCode != ''">unit_code,</if>
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="unitSymbol != null">unit_symbol,</if>
+            <if test="isBaseUnit != null">is_base_unit,</if>
+            <if test="conversionRate != null">conversion_rate,</if>
+            <if test="baseUnitId != null">base_unit_id,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitCode != null and unitCode != ''">#{unitCode},</if>
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="unitSymbol != null">#{unitSymbol},</if>
+            <if test="isBaseUnit != null">#{isBaseUnit},</if>
+            <if test="conversionRate != null">#{conversionRate},</if>
+            <if test="baseUnitId != null">#{baseUnitId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+
+         </trim>
+    </insert>
+
+    <update id="updateErpUnit" parameterType="ErpUnit">
+        update erp_unit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitCode != null and unitCode != ''">unit_code = #{unitCode},</if>
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="unitSymbol != null">unit_symbol = #{unitSymbol},</if>
+            <if test="isBaseUnit != null">is_base_unit = #{isBaseUnit},</if>
+            <if test="conversionRate != null">conversion_rate = #{conversionRate},</if>
+            <if test="baseUnitId != null">base_unit_id = #{baseUnitId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpUnitById" parameterType="Long">
+        delete from erp_unit where id = #{id}
+    </delete>
+
+    <delete id="deleteErpUnitByIds" parameterType="String">
+        delete from erp_unit where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

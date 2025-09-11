@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpInventoryTransactionMapper">
+    
+    <resultMap type="ErpInventoryTransaction" id="ErpInventoryTransactionResult">
+        <result property="id"    column="id"    />
+        <result property="transactionNo"    column="transaction_no"    />
+        <result property="transactionType"    column="transaction_type"    />
+        <result property="transactionSubType"    column="transaction_sub_type"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="warehouseName"    column="warehouse_name"    />
+        <result property="shelfId"    column="shelf_id"    />
+        <result property="shelfCode"    column="shelf_code"    />
+        <result property="shelfName"    column="shelf_name"    />
+        <result property="locationId"    column="location_id"    />
+        <result property="locationCode"    column="location_code"    />
+        <result property="locationName"    column="location_name"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="lotNo"    column="lot_no"    />
+        <result property="serialNo"    column="serial_no"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="unitCost"    column="unit_cost"    />
+        <result property="totalCost"    column="total_cost"    />
+        <result property="beforeQuantity"    column="before_quantity"    />
+        <result property="afterQuantity"    column="after_quantity"    />
+        <result property="referenceType"    column="reference_type"    />
+        <result property="referenceId"    column="reference_id"    />
+        <result property="referenceNo"    column="reference_no"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="transactionDate"    column="transaction_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpInventoryTransactionVo">
+        select id, transaction_no, transaction_type, transaction_sub_type, material_id, material_code, material_name, warehouse_id, warehouse_code, warehouse_name, shelf_id, shelf_code, shelf_name, location_id, location_code, location_name, batch_no, lot_no, serial_no, quantity, unit_cost, total_cost, before_quantity, after_quantity, reference_type, reference_id, reference_no, operator_id, operator_name, transaction_date, create_by, create_time, update_by, update_time from erp_inventory_transaction
+    </sql>
+
+    <select id="selectErpInventoryTransactionList" parameterType="ErpInventoryTransaction" resultMap="ErpInventoryTransactionResult">
+        <include refid="selectErpInventoryTransactionVo"/>
+        <where>  
+            <if test="transactionNo != null  and transactionNo != ''"> and transaction_no like concat('%', #{transactionNo}, '%')</if>
+            <if test="transactionType != null  and transactionType != ''"> and transaction_type = #{transactionType}</if>
+            <if test="transactionSubType != null  and transactionSubType != ''"> and transaction_sub_type = #{transactionSubType}</if>
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="materialCode != null  and materialCode != ''"> and material_code like concat('%', #{materialCode}, '%')</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="shelfId != null "> and shelf_id = #{shelfId}</if>
+            <if test="shelfCode != null  and shelfCode != ''"> and shelf_code like concat('%', #{shelfCode}, '%')</if>
+            <if test="shelfName != null  and shelfName != ''"> and shelf_name like concat('%', #{shelfName}, '%')</if>
+            <if test="locationId != null "> and location_id = #{locationId}</if>
+            <if test="locationCode != null  and locationCode != ''"> and location_code like concat('%', #{locationCode}, '%')</if>
+            <if test="locationName != null  and locationName != ''"> and location_name like concat('%', #{locationName}, '%')</if>
+            <if test="batchNo != null  and batchNo != ''"> and batch_no like concat('%', #{batchNo}, '%')</if>
+            <if test="lotNo != null  and lotNo != ''"> and lot_no like concat('%', #{lotNo}, '%')</if>
+            <if test="serialNo != null  and serialNo != ''"> and serial_no like concat('%', #{serialNo}, '%')</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="unitCost != null "> and unit_cost = #{unitCost}</if>
+            <if test="totalCost != null "> and total_cost = #{totalCost}</if>
+            <if test="beforeQuantity != null "> and before_quantity = #{beforeQuantity}</if>
+            <if test="afterQuantity != null "> and after_quantity = #{afterQuantity}</if>
+            <if test="referenceType != null  and referenceType != ''"> and reference_type = #{referenceType}</if>
+            <if test="referenceId != null "> and reference_id = #{referenceId}</if>
+            <if test="referenceNo != null  and referenceNo != ''"> and reference_no like concat('%', #{referenceNo}, '%')</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+            <if test="operatorName != null  and operatorName != ''"> and operator_name like concat('%', #{operatorName}, '%')</if>
+            <if test="transactionDate != null "> and transaction_date = #{transactionDate}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+        order by transaction_date desc
+    </select>
+    
+    <select id="selectErpInventoryTransactionById" parameterType="Long" resultMap="ErpInventoryTransactionResult">
+        <include refid="selectErpInventoryTransactionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertErpInventoryTransaction" parameterType="ErpInventoryTransaction" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_inventory_transaction
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="transactionNo != null and transactionNo != ''">transaction_no,</if>
+            <if test="transactionType != null and transactionType != ''">transaction_type,</if>
+            <if test="transactionSubType != null and transactionSubType != ''">transaction_sub_type,</if>
+            <if test="materialId != null">material_id,</if>
+            <if test="materialCode != null">material_code,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="warehouseCode != null">warehouse_code,</if>
+            <if test="warehouseName != null">warehouse_name,</if>
+            <if test="shelfId != null">shelf_id,</if>
+            <if test="shelfCode != null">shelf_code,</if>
+            <if test="shelfName != null">shelf_name,</if>
+            <if test="locationId != null">location_id,</if>
+            <if test="locationCode != null">location_code,</if>
+            <if test="locationName != null">location_name,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="lotNo != null">lot_no,</if>
+            <if test="serialNo != null">serial_no,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="unitCost != null">unit_cost,</if>
+            <if test="totalCost != null">total_cost,</if>
+            <if test="beforeQuantity != null">before_quantity,</if>
+            <if test="afterQuantity != null">after_quantity,</if>
+            <if test="referenceType != null">reference_type,</if>
+            <if test="referenceId != null">reference_id,</if>
+            <if test="referenceNo != null">reference_no,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="operatorName != null">operator_name,</if>
+            <if test="transactionDate != null">transaction_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="transactionNo != null and transactionNo != ''">#{transactionNo},</if>
+            <if test="transactionType != null and transactionType != ''">#{transactionType},</if>
+            <if test="transactionSubType != null and transactionSubType != ''">#{transactionSubType},</if>
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialCode != null">#{materialCode},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="warehouseCode != null">#{warehouseCode},</if>
+            <if test="warehouseName != null">#{warehouseName},</if>
+            <if test="shelfId != null">#{shelfId},</if>
+            <if test="shelfCode != null">#{shelfCode},</if>
+            <if test="shelfName != null">#{shelfName},</if>
+            <if test="locationId != null">#{locationId},</if>
+            <if test="locationCode != null">#{locationCode},</if>
+            <if test="locationName != null">#{locationName},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="lotNo != null">#{lotNo},</if>
+            <if test="serialNo != null">#{serialNo},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="unitCost != null">#{unitCost},</if>
+            <if test="totalCost != null">#{totalCost},</if>
+            <if test="beforeQuantity != null">#{beforeQuantity},</if>
+            <if test="afterQuantity != null">#{afterQuantity},</if>
+            <if test="referenceType != null">#{referenceType},</if>
+            <if test="referenceId != null">#{referenceId},</if>
+            <if test="referenceNo != null">#{referenceNo},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="operatorName != null">#{operatorName},</if>
+            <if test="transactionDate != null">#{transactionDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpInventoryTransaction" parameterType="ErpInventoryTransaction">
+        update erp_inventory_transaction
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transactionNo != null and transactionNo != ''">transaction_no = #{transactionNo},</if>
+            <if test="transactionType != null and transactionType != ''">transaction_type = #{transactionType},</if>
+            <if test="transactionSubType != null and transactionSubType != ''">transaction_sub_type = #{transactionSubType},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialCode != null">material_code = #{materialCode},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="warehouseCode != null">warehouse_code = #{warehouseCode},</if>
+            <if test="warehouseName != null">warehouse_name = #{warehouseName},</if>
+            <if test="shelfId != null">shelf_id = #{shelfId},</if>
+            <if test="shelfCode != null">shelf_code = #{shelfCode},</if>
+            <if test="shelfName != null">shelf_name = #{shelfName},</if>
+            <if test="locationId != null">location_id = #{locationId},</if>
+            <if test="locationCode != null">location_code = #{locationCode},</if>
+            <if test="locationName != null">location_name = #{locationName},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
+            <if test="lotNo != null">lot_no = #{lotNo},</if>
+            <if test="serialNo != null">serial_no = #{serialNo},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="unitCost != null">unit_cost = #{unitCost},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="beforeQuantity != null">before_quantity = #{beforeQuantity},</if>
+            <if test="afterQuantity != null">after_quantity = #{afterQuantity},</if>
+            <if test="referenceType != null">reference_type = #{referenceType},</if>
+            <if test="referenceId != null">reference_id = #{referenceId},</if>
+            <if test="referenceNo != null">reference_no = #{referenceNo},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="operatorName != null">operator_name = #{operatorName},</if>
+            <if test="transactionDate != null">transaction_date = #{transactionDate},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpInventoryTransactionById" parameterType="Long">
+        delete from erp_inventory_transaction where id = #{id}
+    </delete>
+
+    <delete id="deleteErpInventoryTransactionByIds" parameterType="String">
+        delete from erp_inventory_transaction where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

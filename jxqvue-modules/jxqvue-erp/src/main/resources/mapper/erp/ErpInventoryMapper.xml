@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpInventoryMapper">
+    
+    <resultMap type="ErpInventory" id="ErpInventoryResult">
+        <result property="id"    column="id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="warehouseCode"    column="warehouse_code"    />
+        <result property="warehouseName"    column="warehouse_name"    />
+        <result property="totalQuantity"    column="total_quantity"    />
+        <result property="availableQuantity"    column="available_quantity"    />
+        <result property="allocatedQuantity"    column="allocated_quantity"    />
+        <result property="frozenQuantity"    column="frozen_quantity"    />
+        <result property="onOrderQuantity"    column="on_order_quantity"    />
+        <result property="unitCost"    column="unit_cost"    />
+        <result property="totalCost"    column="total_cost"    />
+        <result property="safetyStock"    column="safety_stock"    />
+        <result property="maxStock"    column="max_stock"    />
+        <result property="minStock"    column="min_stock"    />
+        <result property="lastInDate"    column="last_in_date"    />
+        <result property="lastOutDate"    column="last_out_date"    />
+        <result property="lastCountDate"    column="last_count_date"    />
+        <result property="shelfLife"    column="shelf_life"    />
+        <result property="expiryDate"    column="expiry_date"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpInventoryVo">
+        select id, material_id, warehouse_id, warehouse_code, warehouse_name, total_quantity, available_quantity, allocated_quantity, frozen_quantity, on_order_quantity, unit_cost, total_cost, safety_stock, max_stock, min_stock, last_in_date, last_out_date, last_count_date, shelf_life, expiry_date, is_active, remark, create_by, create_time, update_by, update_time from erp_inventory
+    </sql>
+
+    <select id="selectErpInventoryList" parameterType="ErpInventory" resultMap="ErpInventoryResult">
+        <include refid="selectErpInventoryVo"/>
+        <where>  
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code like concat('%', #{warehouseCode}, '%')</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="totalQuantity != null "> and total_quantity = #{totalQuantity}</if>
+            <if test="availableQuantity != null "> and available_quantity = #{availableQuantity}</if>
+            <if test="allocatedQuantity != null "> and allocated_quantity = #{allocatedQuantity}</if>
+            <if test="frozenQuantity != null "> and frozen_quantity = #{frozenQuantity}</if>
+            <if test="onOrderQuantity != null "> and on_order_quantity = #{onOrderQuantity}</if>
+            <if test="unitCost != null "> and unit_cost = #{unitCost}</if>
+            <if test="totalCost != null "> and total_cost = #{totalCost}</if>
+            <if test="safetyStock != null "> and safety_stock = #{safetyStock}</if>
+            <if test="maxStock != null "> and max_stock = #{maxStock}</if>
+            <if test="minStock != null "> and min_stock = #{minStock}</if>
+            <if test="lastInDate != null "> and last_in_date = #{lastInDate}</if>
+            <if test="lastOutDate != null "> and last_out_date = #{lastOutDate}</if>
+            <if test="lastCountDate != null "> and last_count_date = #{lastCountDate}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpInventoryById" parameterType="Long" resultMap="ErpInventoryResult">
+        <include refid="selectErpInventoryVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectErpInventoryByMaterialAndWarehouse" resultMap="ErpInventoryResult">
+        <include refid="selectErpInventoryVo"/>
+        where material_id = #{arg0} and warehouse_id = #{arg1}
+    </select>
+
+    <select id="selectErpInventoryAlertList" parameterType="ErpInventory" resultMap="ErpInventoryResult">
+        <include refid="selectErpInventoryVo"/>
+        <where>  
+            and (available_quantity &lt; safety_stock or available_quantity &gt; max_stock)
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+        </where>
+        order by available_quantity asc
+    </select>
+
+    <insert id="insertErpInventory" parameterType="ErpInventory" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="warehouseCode != null">warehouse_code,</if>
+            <if test="warehouseName != null">warehouse_name,</if>
+            <if test="totalQuantity != null">total_quantity,</if>
+            <if test="availableQuantity != null">available_quantity,</if>
+            <if test="allocatedQuantity != null">allocated_quantity,</if>
+            <if test="frozenQuantity != null">frozen_quantity,</if>
+            <if test="onOrderQuantity != null">on_order_quantity,</if>
+            <if test="unitCost != null">unit_cost,</if>
+            <if test="totalCost != null">total_cost,</if>
+            <if test="safetyStock != null">safety_stock,</if>
+            <if test="maxStock != null">max_stock,</if>
+            <if test="minStock != null">min_stock,</if>
+            <if test="lastInDate != null">last_in_date,</if>
+            <if test="lastOutDate != null">last_out_date,</if>
+            <if test="lastCountDate != null">last_count_date,</if>
+            <if test="shelfLife != null">shelf_life,</if>
+            <if test="expiryDate != null">expiry_date,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="warehouseCode != null">#{warehouseCode},</if>
+            <if test="warehouseName != null">#{warehouseName},</if>
+            <if test="totalQuantity != null">#{totalQuantity},</if>
+            <if test="availableQuantity != null">#{availableQuantity},</if>
+            <if test="allocatedQuantity != null">#{allocatedQuantity},</if>
+            <if test="frozenQuantity != null">#{frozenQuantity},</if>
+            <if test="onOrderQuantity != null">#{onOrderQuantity},</if>
+            <if test="unitCost != null">#{unitCost},</if>
+            <if test="totalCost != null">#{totalCost},</if>
+            <if test="safetyStock != null">#{safetyStock},</if>
+            <if test="maxStock != null">#{maxStock},</if>
+            <if test="minStock != null">#{minStock},</if>
+            <if test="lastInDate != null">#{lastInDate},</if>
+            <if test="lastOutDate != null">#{lastOutDate},</if>
+            <if test="lastCountDate != null">#{lastCountDate},</if>
+            <if test="shelfLife != null">#{shelfLife},</if>
+            <if test="expiryDate != null">#{expiryDate},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpInventory" parameterType="ErpInventory">
+        update erp_inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="warehouseCode != null">warehouse_code = #{warehouseCode},</if>
+            <if test="warehouseName != null">warehouse_name = #{warehouseName},</if>
+            <if test="totalQuantity != null">total_quantity = #{totalQuantity},</if>
+            <if test="availableQuantity != null">available_quantity = #{availableQuantity},</if>
+            <if test="allocatedQuantity != null">allocated_quantity = #{allocatedQuantity},</if>
+            <if test="frozenQuantity != null">frozen_quantity = #{frozenQuantity},</if>
+            <if test="onOrderQuantity != null">on_order_quantity = #{onOrderQuantity},</if>
+            <if test="unitCost != null">unit_cost = #{unitCost},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="safetyStock != null">safety_stock = #{safetyStock},</if>
+            <if test="maxStock != null">max_stock = #{maxStock},</if>
+            <if test="minStock != null">min_stock = #{minStock},</if>
+            <if test="lastInDate != null">last_in_date = #{lastInDate},</if>
+            <if test="lastOutDate != null">last_out_date = #{lastOutDate},</if>
+            <if test="lastCountDate != null">last_count_date = #{lastCountDate},</if>
+            <if test="shelfLife != null">shelf_life = #{shelfLife},</if>
+            <if test="expiryDate != null">expiry_date = #{expiryDate},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpInventoryById" parameterType="Long">
+        delete from erp_inventory where id = #{id}
+    </delete>
+
+    <delete id="deleteErpInventoryByIds" parameterType="String">
+        delete from erp_inventory where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

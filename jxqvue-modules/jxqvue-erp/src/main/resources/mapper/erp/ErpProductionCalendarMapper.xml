@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProductionCalendarMapper">
+    
+    <resultMap type="ErpProductionCalendar" id="ErpProductionCalendarResult">
+        <result property="id"    column="id"    />
+        <result property="calendarCode"    column="calendar_code"    />
+        <result property="calendarName"    column="calendar_name"    />
+        <result property="calendarType"    column="calendar_type"    />
+        <result property="productionLineId"    column="production_line_id"    />
+        <result property="productionLineName"    column="production_line_name"    />
+        <result property="year"    column="year"    />
+        <result property="month"    column="month"    />
+        <result property="week"    column="week"    />
+        <result property="effectiveStartDate"    column="effective_start_date"    />
+        <result property="effectiveEndDate"    column="effective_end_date"    />
+        <result property="totalWorkDays"    column="total_work_days"    />
+        <result property="totalWorkHours"    column="total_work_hours"    />
+        <result property="status"    column="status"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <resultMap id="ErpProductionCalendarErpProductionCalendarDetailResult" type="ErpProductionCalendar" extends="ErpProductionCalendarResult">
+        <collection property="erpProductionCalendarDetailList" ofType="ErpProductionCalendarDetail" column="id" select="selectErpProductionCalendarDetailList" />
+    </resultMap>
+
+    <resultMap type="ErpProductionCalendarDetail" id="ErpProductionCalendarDetailResult">
+        <result property="id"    column="id"    />
+        <result property="calendarId"    column="calendar_id"    />
+        <result property="workDate"    column="work_date"    />
+        <result property="dayOfWeek"    column="day_of_week"    />
+        <result property="shiftType"    column="shift_type"    />
+        <result property="shiftStartTime"    column="shift_start_time"    />
+        <result property="shiftEndTime"    column="shift_end_time"    />
+        <result property="workHours"    column="work_hours"    />
+        <result property="breakHours"    column="break_hours"    />
+        <result property="workEfficiency"    column="work_efficiency"    />
+        <result property="isWorkDay"    column="is_work_day"    />
+        <result property="temperatureControl"    column="temperature_control"    />
+        <result property="pressureControl"    column="pressure_control"    />
+        <result property="moldMaintenance"    column="mold_maintenance"    />
+        <result property="equipmentMaintenance"    column="equipment_maintenance"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpProductionCalendarVo">
+        select pc.id, pc.calendar_code, pc.calendar_name, pc.calendar_type, pc.production_line_id, pc.year, pc.month, pc.week, pc.effective_start_date, pc.effective_end_date, pc.total_work_days, pc.total_work_hours, pc.status, pc.is_active, pc.remark, pc.create_by, pc.create_time, pc.update_by, pc.update_time, pc.del_flag,
+               pl.line_name as production_line_name
+        from erp_production_calendar pc
+        LEFT JOIN erp_production_line pl ON pc.production_line_id = pl.id AND pl.del_flag = '0'
+    </sql>
+
+    <select id="selectErpProductionCalendarList" parameterType="ErpProductionCalendar" resultMap="ErpProductionCalendarResult">
+        <include refid="selectErpProductionCalendarVo"/>
+        <where>  
+            and pc.del_flag = '0'
+            <if test="calendarCode != null  and calendarCode != ''"> and pc.calendar_code like concat('%', #{calendarCode}, '%')</if>
+            <if test="calendarName != null  and calendarName != ''"> and pc.calendar_name like concat('%', #{calendarName}, '%')</if>
+            <if test="calendarType != null  and calendarType != ''"> and pc.calendar_type = #{calendarType}</if>
+            <if test="productionLineId != null "> and pc.production_line_id = #{productionLineId}</if>
+            <if test="year != null "> and pc.year = #{year}</if>
+            <if test="month != null "> and pc.month = #{month}</if>
+            <if test="week != null "> and pc.week = #{week}</if>
+            <if test="status != null  and status != ''"> and pc.status = #{status}</if>
+            <if test="isActive != null  and isActive != ''"> and pc.is_active = #{isActive}</if>
+            <if test="params.beginEffectiveStartDate != null and params.beginEffectiveStartDate != '' and params.endEffectiveStartDate != null and params.endEffectiveStartDate != ''"> and pc.effective_start_date between #{params.beginEffectiveStartDate} and #{params.endEffectiveStartDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpProductionCalendarById" parameterType="Long" resultMap="ErpProductionCalendarErpProductionCalendarDetailResult">
+        <include refid="selectErpProductionCalendarVo"/>
+        where pc.id = #{id} and pc.del_flag = '0'
+    </select>
+
+    <select id="selectErpProductionCalendarByLineId" parameterType="Long" resultMap="ErpProductionCalendarResult">
+        <include refid="selectErpProductionCalendarVo"/>
+        where pc.production_line_id = #{productionLineId} and pc.del_flag = '0'
+    </select>
+
+    <select id="selectErpProductionCalendarByDateRange" resultMap="ErpProductionCalendarResult">
+        <include refid="selectErpProductionCalendarVo"/>
+        where pc.del_flag = '0'
+        and pc.effective_start_date &lt;= #{endDate}
+        and pc.effective_end_date &gt;= #{startDate}
+    </select>
+
+    <select id="selectErpProductionCalendarDetailList" resultMap="ErpProductionCalendarDetailResult">
+        select id, calendar_id, work_date, day_of_week, shift_type, shift_start_time, shift_end_time, work_hours, break_hours, work_efficiency, is_work_day, temperature_control, pressure_control, mold_maintenance, equipment_maintenance, remark, create_by, create_time, update_by, update_time, del_flag from erp_production_calendar_detail
+        where calendar_id = #{id} and del_flag = '0'
+    </select>
+        
+    <insert id="insertErpProductionCalendar" parameterType="ErpProductionCalendar" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_production_calendar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="calendarCode != null and calendarCode != ''">calendar_code,</if>
+            <if test="calendarName != null and calendarName != ''">calendar_name,</if>
+            <if test="calendarType != null">calendar_type,</if>
+            <if test="productionLineId != null">production_line_id,</if>
+            <if test="year != null">year,</if>
+            <if test="month != null">month,</if>
+            <if test="week != null">week,</if>
+            <if test="effectiveStartDate != null">effective_start_date,</if>
+            <if test="effectiveEndDate != null">effective_end_date,</if>
+            <if test="totalWorkDays != null">total_work_days,</if>
+            <if test="totalWorkHours != null">total_work_hours,</if>
+            <if test="status != null">status,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="calendarCode != null and calendarCode != ''">#{calendarCode},</if>
+            <if test="calendarName != null and calendarName != ''">#{calendarName},</if>
+            <if test="calendarType != null">#{calendarType},</if>
+            <if test="productionLineId != null">#{productionLineId},</if>
+            <if test="year != null">#{year},</if>
+            <if test="month != null">#{month},</if>
+            <if test="week != null">#{week},</if>
+            <if test="effectiveStartDate != null">#{effectiveStartDate},</if>
+            <if test="effectiveEndDate != null">#{effectiveEndDate},</if>
+            <if test="totalWorkDays != null">#{totalWorkDays},</if>
+            <if test="totalWorkHours != null">#{totalWorkHours},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProductionCalendar" parameterType="ErpProductionCalendar">
+        update erp_production_calendar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="calendarCode != null and calendarCode != ''">calendar_code = #{calendarCode},</if>
+            <if test="calendarName != null and calendarName != ''">calendar_name = #{calendarName},</if>
+            <if test="calendarType != null">calendar_type = #{calendarType},</if>
+            <if test="productionLineId != null">production_line_id = #{productionLineId},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="month != null">month = #{month},</if>
+            <if test="week != null">week = #{week},</if>
+            <if test="effectiveStartDate != null">effective_start_date = #{effectiveStartDate},</if>
+            <if test="effectiveEndDate != null">effective_end_date = #{effectiveEndDate},</if>
+            <if test="totalWorkDays != null">total_work_days = #{totalWorkDays},</if>
+            <if test="totalWorkHours != null">total_work_hours = #{totalWorkHours},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProductionCalendarById" parameterType="Long">
+        update erp_production_calendar set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProductionCalendarByIds" parameterType="String">
+        update erp_production_calendar set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProductionCalendarDetailByCalendarIds" parameterType="String">
+        update erp_production_calendar_detail set del_flag = '1' where calendar_id in 
+        <foreach item="calendarId" collection="array" open="(" separator="," close=")">
+            #{calendarId}
+        </foreach>
+    </delete>
+
+    <insert id="batchErpProductionCalendarDetail">
+        insert into erp_production_calendar_detail( calendar_id, work_date, day_of_week, shift_type, shift_start_time, shift_end_time, work_hours, break_hours, work_efficiency, is_work_day, temperature_control, pressure_control, mold_maintenance, equipment_maintenance, remark, create_by, create_time, update_by, update_time, del_flag) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.calendarId}, #{item.workDate}, #{item.dayOfWeek}, #{item.shiftType}, #{item.shiftStartTime}, #{item.shiftEndTime}, #{item.workHours}, #{item.breakHours}, #{item.workEfficiency}, #{item.isWorkDay}, #{item.temperatureControl}, #{item.pressureControl}, #{item.moldMaintenance}, #{item.equipmentMaintenance}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.delFlag})
+        </foreach>
+    </insert>
+
+    <delete id="deleteErpProductionCalendarDetailByCalendarId" parameterType="Long">
+        update erp_production_calendar_detail set del_flag = '1' where calendar_id = #{calendarId}
+    </delete>
+</mapper>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProcessRouteMapper">
+    
+    <resultMap type="ErpProcessRoute" id="ErpProcessRouteResult">
+        <result property="id"    column="id"    />
+        <result property="processRouteCode"    column="process_route_code"    />
+        <result property="processRouteName"    column="process_route_name"    />
+
+        <result property="version"    column="version"    />
+        <result property="effectiveDate"    column="effective_date"    />
+        <result property="expiryDate"    column="expiry_date"    />
+        <result property="status"    column="status"    />
+        <result property="isDefault"    column="is_default"    />
+        <result property="totalCycleTime"    column="total_cycle_time"    />
+        <result property="totalSetupTime"    column="total_setup_time"    />
+        <result property="totalProcessingTime"    column="total_processing_time"    />
+        <result property="totalMoveTime"    column="total_move_time"    />
+        <result property="totalQueueTime"    column="total_queue_time"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <collection property="erpProcessRouteDetailList" ofType="ErpProcessRouteDetail" resultMap="ErpProcessRouteDetailResult" />
+    </resultMap>
+
+    <resultMap type="ErpProcessRouteDetail" id="ErpProcessRouteDetailResult">
+        <result property="id"    column="detail_id"    />
+        <result property="processRouteId"    column="detail_process_route_id"    />
+        <result property="processId"    column="detail_process_id"    />
+        <result property="operationSequence"    column="detail_operation_sequence"    />
+        <result property="laborHours"    column="detail_labor_hours"    />
+        <result property="machineHours"    column="detail_machine_hours"    />
+        <result property="isCritical"    column="detail_is_critical"    />
+        <result property="isOptional"    column="detail_is_optional"    />
+        <result property="remark"    column="detail_remark"    />
+        <result property="createBy"    column="detail_create_by"    />
+        <result property="createTime"    column="detail_create_time"    />
+        <result property="updateBy"    column="detail_update_by"    />
+        <result property="updateTime"    column="detail_update_time"    />
+        <result property="delFlag"    column="detail_del_flag"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="processName"    column="process_name"    />
+    </resultMap>
+
+    <sql id="selectErpProcessRouteVo">
+        select id, process_route_code, process_route_name, version, effective_date, expiry_date, status, is_default, total_cycle_time, total_setup_time, total_processing_time, total_move_time, total_queue_time, is_active, remark, create_by, create_time, update_by, update_time, del_flag from erp_process_route
+    </sql>
+
+    <select id="selectErpProcessRouteList" parameterType="ErpProcessRoute" resultMap="ErpProcessRouteResult">
+        <include refid="selectErpProcessRouteVo"/>
+        <where>  
+            <if test="processRouteCode != null  and processRouteCode != ''"> and process_route_code like concat('%', #{processRouteCode}, '%')</if>
+            <if test="processRouteName != null  and processRouteName != ''"> and process_route_name like concat('%', #{processRouteName}, '%')</if>
+
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="effectiveDate != null "> and effective_date = #{effectiveDate}</if>
+            <if test="expiryDate != null "> and expiry_date = #{expiryDate}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="isDefault != null  and isDefault != ''"> and is_default = #{isDefault}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpProcessRouteById" parameterType="Long" resultMap="ErpProcessRouteResult">
+        select 
+            pr.id, pr.process_route_code, pr.process_route_name, pr.version, pr.effective_date, pr.expiry_date, 
+            pr.status, pr.is_default, pr.total_cycle_time, pr.total_setup_time, pr.total_processing_time, 
+            pr.total_move_time, pr.total_queue_time, pr.is_active, pr.remark, pr.create_by, pr.create_time, 
+            pr.update_by, pr.update_time, pr.del_flag,
+            prd.id as detail_id, prd.process_route_id as detail_process_route_id, prd.process_id as detail_process_id,
+            prd.operation_sequence as detail_operation_sequence,
+            prd.labor_hours as detail_labor_hours, prd.machine_hours as detail_machine_hours,
+            prd.is_critical as detail_is_critical, prd.is_optional as detail_is_optional, prd.remark as detail_remark,
+            prd.create_by as detail_create_by, prd.create_time as detail_create_time, prd.update_by as detail_update_by,
+            prd.update_time as detail_update_time, prd.del_flag as detail_del_flag,
+            p.process_code as process_code, p.process_name as process_name
+        from erp_process_route pr
+        left join erp_process_route_detail prd on pr.id = prd.process_route_id and prd.del_flag = '0'
+        left join erp_process p on prd.process_id = p.id and p.del_flag = '0'
+        where pr.id = #{id} and pr.del_flag = '0'
+        order by prd.operation_sequence
+    </select>
+        
+    <insert id="insertErpProcessRoute" parameterType="ErpProcessRoute" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_process_route
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processRouteCode != null and processRouteCode != ''">process_route_code,</if>
+            <if test="processRouteName != null and processRouteName != ''">process_route_name,</if>
+
+            <if test="version != null and version != ''">version,</if>
+            <if test="effectiveDate != null">effective_date,</if>
+            <if test="expiryDate != null">expiry_date,</if>
+            <if test="status != null">status,</if>
+            <if test="isDefault != null">is_default,</if>
+            <if test="totalCycleTime != null">total_cycle_time,</if>
+            <if test="totalSetupTime != null">total_setup_time,</if>
+            <if test="totalProcessingTime != null">total_processing_time,</if>
+            <if test="totalMoveTime != null">total_move_time,</if>
+            <if test="totalQueueTime != null">total_queue_time,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processRouteCode != null and processRouteCode != ''">#{processRouteCode},</if>
+            <if test="processRouteName != null and processRouteName != ''">#{processRouteName},</if>
+
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="effectiveDate != null">#{effectiveDate},</if>
+            <if test="expiryDate != null">#{expiryDate},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isDefault != null">#{isDefault},</if>
+            <if test="totalCycleTime != null">#{totalCycleTime},</if>
+            <if test="totalSetupTime != null">#{totalSetupTime},</if>
+            <if test="totalProcessingTime != null">#{totalProcessingTime},</if>
+            <if test="totalMoveTime != null">#{totalMoveTime},</if>
+            <if test="totalQueueTime != null">#{totalQueueTime},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProcessRoute" parameterType="ErpProcessRoute">
+        update erp_process_route
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processRouteCode != null and processRouteCode != ''">process_route_code = #{processRouteCode},</if>
+            <if test="processRouteName != null and processRouteName != ''">process_route_name = #{processRouteName},</if>
+
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="effectiveDate != null">effective_date = #{effectiveDate},</if>
+            <if test="expiryDate != null">expiry_date = #{expiryDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            <if test="totalCycleTime != null">total_cycle_time = #{totalCycleTime},</if>
+            <if test="totalSetupTime != null">total_setup_time = #{totalSetupTime},</if>
+            <if test="totalProcessingTime != null">total_processing_time = #{totalProcessingTime},</if>
+            <if test="totalMoveTime != null">total_move_time = #{totalMoveTime},</if>
+            <if test="totalQueueTime != null">total_queue_time = #{totalQueueTime},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProcessRouteById" parameterType="Long">
+        delete from erp_process_route where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProcessRouteByIds" parameterType="String">
+        delete from erp_process_route where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProcessRouteDetailByProcessRouteIds" parameterType="String">
+        delete from erp_process_route_detail where process_route_id in 
+        <foreach item="processRouteId" collection="array" open="(" separator="," close=")">
+            #{processRouteId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpProcessRouteDetailByProcessRouteId" parameterType="Long">
+        delete from erp_process_route_detail where process_route_id = #{processRouteId}
+    </delete>
+
+    <insert id="batchErpProcessRouteDetail">
+        insert into erp_process_route_detail( process_route_id, process_id, operation_sequence, labor_hours, machine_hours, is_critical, is_optional, remark, create_by, create_time, update_by, update_time, del_flag) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.processRouteId}, #{item.processId}, #{item.operationSequence}, #{item.laborHours}, #{item.machineHours}, #{item.isCritical}, #{item.isOptional}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.delFlag})
+		</foreach>
+    </insert>
+</mapper>

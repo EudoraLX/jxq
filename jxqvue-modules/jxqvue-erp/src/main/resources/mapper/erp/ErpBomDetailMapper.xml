@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpBomDetailMapper">
+    
+    <resultMap type="ErpBomDetail" id="ErpBomDetailResult">
+        <result property="id"    column="id"    />
+        <result property="bomId"    column="bom_id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialSpec"    column="material_spec"    />
+        <result property="materialUnitId"    column="material_unit_id"    />
+        <result property="materialUnitName"    column="material_unit_name"    />
+        <result property="quantityPerUnit"    column="quantity_per_unit"    />
+        <result property="lossRate"    column="loss_rate"    />
+        <result property="effectiveQuantity"    column="effective_quantity"    />
+        <result property="position"    column="position"    />
+        <result property="operationSequence"    column="operation_sequence"    />
+        <result property="isCritical"    column="is_critical"    />
+        <result property="isOptional"    column="is_optional"    />
+        <result property="unitCost"    column="unit_cost"    />
+        <result property="totalCost"    column="total_cost"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpBomDetailVo">
+        select bd.id, bd.bom_id, bd.material_id, bd.material_unit_id, bd.quantity_per_unit, bd.loss_rate,
+               bd.effective_quantity, bd.position, bd.operation_sequence, bd.is_critical, bd.is_optional,
+               bd.unit_cost, bd.total_cost, bd.remark, bd.create_by, bd.create_time, bd.update_by, bd.update_time,
+               m.material_code, m.material_name, m.material_spec, u.unit_name as material_unit_name
+        from erp_bom_detail bd
+        left join erp_material_master m on bd.material_id = m.id
+        left join erp_unit u on bd.material_unit_id = u.id
+    </sql>
+
+    <select id="selectErpBomDetailList" parameterType="ErpBomDetail" resultMap="ErpBomDetailResult">
+        <include refid="selectErpBomDetailVo"/>
+        <where>  
+            <if test="bomId != null "> and bd.bom_id = #{bomId}</if>
+            <if test="materialId != null "> and bd.material_id = #{materialId}</if>
+            <if test="position != null  and position != ''"> and bd.position like concat('%', #{position}, '%')</if>
+            <if test="isCritical != null  and isCritical != ''"> and bd.is_critical = #{isCritical}</if>
+            <if test="isOptional != null  and isOptional != ''"> and bd.is_optional = #{isOptional}</if>
+        </where>
+        order by bd.operation_sequence, bd.id
+    </select>
+    
+    <select id="selectErpBomDetailById" parameterType="Long" resultMap="ErpBomDetailResult">
+        <include refid="selectErpBomDetailVo"/>
+        where bd.id = #{id}
+    </select>
+
+    <insert id="insertErpBomDetail" parameterType="ErpBomDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_bom_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bomId != null">bom_id,</if>
+            <if test="materialId != null">material_id,</if>
+            <if test="materialUnitId != null">material_unit_id,</if>
+            <if test="quantityPerUnit != null">quantity_per_unit,</if>
+            <if test="lossRate != null">loss_rate,</if>
+            <if test="effectiveQuantity != null">effective_quantity,</if>
+            <if test="position != null">position,</if>
+            <if test="operationSequence != null">operation_sequence,</if>
+            <if test="isCritical != null and isCritical != ''">is_critical,</if>
+            <if test="isOptional != null and isOptional != ''">is_optional,</if>
+            <if test="unitCost != null">unit_cost,</if>
+            <if test="totalCost != null">total_cost,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bomId != null">#{bomId},</if>
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialUnitId != null">#{materialUnitId},</if>
+            <if test="quantityPerUnit != null">#{quantityPerUnit},</if>
+            <if test="lossRate != null">#{lossRate},</if>
+            <if test="effectiveQuantity != null">#{effectiveQuantity},</if>
+            <if test="position != null">#{position},</if>
+            <if test="operationSequence != null">#{operationSequence},</if>
+            <if test="isCritical != null and isCritical != ''">#{isCritical},</if>
+            <if test="isOptional != null and isOptional != ''">#{isOptional},</if>
+            <if test="unitCost != null">#{unitCost},</if>
+            <if test="totalCost != null">#{totalCost},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpBomDetail" parameterType="ErpBomDetail">
+        update erp_bom_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bomId != null">bom_id = #{bomId},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialUnitId != null">material_unit_id = #{materialUnitId},</if>
+            <if test="quantityPerUnit != null">quantity_per_unit = #{quantityPerUnit},</if>
+            <if test="lossRate != null">loss_rate = #{lossRate},</if>
+            <if test="effectiveQuantity != null">effective_quantity = #{effectiveQuantity},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="operationSequence != null">operation_sequence = #{operationSequence},</if>
+            <if test="isCritical != null and isCritical != ''">is_critical = #{isCritical},</if>
+            <if test="isOptional != null and isOptional != ''">is_optional = #{isOptional},</if>
+            <if test="unitCost != null">unit_cost = #{unitCost},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpBomDetailById" parameterType="Long">
+        update erp_bom_detail set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpBomDetailByIds" parameterType="String">
+        update erp_bom_detail set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

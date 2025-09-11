@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpBomRouteDetailMapper">
+    
+    <resultMap type="ErpBomRouteDetail" id="ErpBomRouteDetailResult">
+        <result property="id"    column="id"    />
+        <result property="bomId"    column="bom_id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="processName"    column="process_name"    />
+        <result property="operationSequence"    column="operation_sequence"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="workCenterCode"    column="work_center_code"    />
+        <result property="workCenterName"    column="work_center_name"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="moldCode"    column="mold_code"    />
+        <result property="moldName"    column="mold_name"    />
+        <result property="setupTime"    column="setup_time"    />
+        <result property="processingTime"    column="processing_time"    />
+        <result property="moveTime"    column="move_time"    />
+        <result property="queueTime"    column="queue_time"    />
+        <result property="cycleTime"    column="cycle_time"    />
+        <result property="laborHours"    column="labor_hours"    />
+        <result property="machineHours"    column="machine_hours"    />
+        <result property="isCritical"    column="is_critical"    />
+        <result property="isOptional"    column="is_optional"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpBomRouteDetailVo">
+        select brd.id, brd.bom_id, brd.process_id, brd.operation_sequence, brd.work_center_id, brd.equipment_id, brd.mold_id,
+               brd.setup_time, brd.processing_time, brd.move_time, brd.queue_time, brd.cycle_time, brd.labor_hours, brd.machine_hours,
+               brd.is_critical, brd.is_optional, brd.remark, brd.create_by, brd.create_time, brd.update_by, brd.update_time,
+               p.process_code, p.process_name, wc.work_center_code, wc.work_center_name,
+               e.equipment_code, e.equipment_name, m.mold_code, m.mold_name
+        from erp_bom_route_detail brd
+        left join erp_process p on brd.process_id = p.id and p.del_flag = '0'
+        left join erp_work_center wc on brd.work_center_id = wc.id and wc.del_flag = '0'
+        left join erp_equipment e on brd.equipment_id = e.id and e.del_flag = '0'
+        left join erp_mold m on brd.mold_id = m.id and m.del_flag = '0'
+    </sql>
+
+    <select id="selectErpBomRouteDetailList" parameterType="ErpBomRouteDetail" resultMap="ErpBomRouteDetailResult">
+        <include refid="selectErpBomRouteDetailVo"/>
+        <where>  
+            <if test="bomId != null "> and brd.bom_id = #{bomId}</if>
+            <if test="processId != null "> and brd.process_id = #{processId}</if>
+            <if test="workCenterId != null "> and brd.work_center_id = #{workCenterId}</if>
+            <if test="equipmentId != null "> and brd.equipment_id = #{equipmentId}</if>
+            <if test="moldId != null "> and brd.mold_id = #{moldId}</if>
+            <if test="isCritical != null  and isCritical != ''"> and brd.is_critical = #{isCritical}</if>
+            <if test="isOptional != null  and isOptional != ''"> and brd.is_optional = #{isOptional}</if>
+        </where>
+        order by brd.operation_sequence, brd.id
+    </select>
+    
+    <select id="selectErpBomRouteDetailById" parameterType="Long" resultMap="ErpBomRouteDetailResult">
+        <include refid="selectErpBomRouteDetailVo"/>
+        where brd.id = #{id}
+    </select>
+
+    <insert id="insertErpBomRouteDetail" parameterType="ErpBomRouteDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_bom_route_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bomId != null">bom_id,</if>
+            <if test="processId != null">process_id,</if>
+            <if test="operationSequence != null">operation_sequence,</if>
+            <if test="workCenterId != null">work_center_id,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="moldId != null">mold_id,</if>
+            <if test="setupTime != null">setup_time,</if>
+            <if test="processingTime != null">processing_time,</if>
+            <if test="moveTime != null">move_time,</if>
+            <if test="queueTime != null">queue_time,</if>
+            <if test="cycleTime != null">cycle_time,</if>
+            <if test="laborHours != null">labor_hours,</if>
+            <if test="machineHours != null">machine_hours,</if>
+            <if test="isCritical != null and isCritical != ''">is_critical,</if>
+            <if test="isOptional != null and isOptional != ''">is_optional,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bomId != null">#{bomId},</if>
+            <if test="processId != null">#{processId},</if>
+            <if test="operationSequence != null">#{operationSequence},</if>
+            <if test="workCenterId != null">#{workCenterId},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="moldId != null">#{moldId},</if>
+            <if test="setupTime != null">#{setupTime},</if>
+            <if test="processingTime != null">#{processingTime},</if>
+            <if test="moveTime != null">#{moveTime},</if>
+            <if test="queueTime != null">#{queueTime},</if>
+            <if test="cycleTime != null">#{cycleTime},</if>
+            <if test="laborHours != null">#{laborHours},</if>
+            <if test="machineHours != null">#{machineHours},</if>
+            <if test="isCritical != null and isCritical != ''">#{isCritical},</if>
+            <if test="isOptional != null and isOptional != ''">#{isOptional},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpBomRouteDetail" parameterType="ErpBomRouteDetail">
+        update erp_bom_route_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bomId != null">bom_id = #{bomId},</if>
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="operationSequence != null">operation_sequence = #{operationSequence},</if>
+            <if test="workCenterId != null">work_center_id = #{workCenterId},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="moldId != null">mold_id = #{moldId},</if>
+            <if test="setupTime != null">setup_time = #{setupTime},</if>
+            <if test="processingTime != null">processing_time = #{processingTime},</if>
+            <if test="moveTime != null">move_time = #{moveTime},</if>
+            <if test="queueTime != null">queue_time = #{queueTime},</if>
+            <if test="cycleTime != null">cycle_time = #{cycleTime},</if>
+            <if test="laborHours != null">labor_hours = #{laborHours},</if>
+            <if test="machineHours != null">machine_hours = #{machineHours},</if>
+            <if test="isCritical != null and isCritical != ''">is_critical = #{isCritical},</if>
+            <if test="isOptional != null and isOptional != ''">is_optional = #{isOptional},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpBomRouteDetailById" parameterType="Long">
+        update erp_bom_route_detail set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpBomRouteDetailByIds" parameterType="String">
+        update erp_bom_route_detail set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

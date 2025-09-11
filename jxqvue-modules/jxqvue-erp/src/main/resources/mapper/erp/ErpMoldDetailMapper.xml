@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpMoldDetailMapper">
+    
+    <resultMap type="ErpMoldDetail" id="ErpMoldDetailResult">
+        <result property="id"    column="id"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="componentCode"    column="component_code"    />
+        <result property="componentName"    column="component_name"    />
+        <result property="componentType"    column="component_type"    />
+        <result property="material"    column="material"    />
+        <result property="hardness"    column="hardness"    />
+        <result property="surfaceTreatment"    column="surface_treatment"    />
+        <result property="dimensions"    column="dimensions"    />
+        <result property="weight"    column="weight"    />
+        <result property="lifeCycle"    column="life_cycle"    />
+        <result property="currentUsageCount"    column="current_usage_count"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpMoldDetailVo">
+        select id, mold_id, component_code, component_name, component_type, material, hardness, surface_treatment, dimensions, weight, life_cycle, current_usage_count, status, remark, create_by, create_time, update_by, update_time, del_flag from erp_mold_detail
+    </sql>
+
+    <select id="selectErpMoldDetailList" parameterType="ErpMoldDetail" resultMap="ErpMoldDetailResult">
+        <include refid="selectErpMoldDetailVo"/>
+        <where>  
+            and del_flag = '0'
+            <if test="componentCode != null  and componentCode != ''"> and component_code = #{componentCode}</if>
+            <if test="componentName != null  and componentName != ''"> and component_name like concat('%', #{componentName}, '%')</if>
+            <if test="componentType != null  and componentType != ''"> and component_type = #{componentType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpMoldDetailById" parameterType="Long" resultMap="ErpMoldDetailResult">
+        <include refid="selectErpMoldDetailVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <insert id="insertErpMoldDetail" parameterType="ErpMoldDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_mold_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="moldId != null">mold_id,</if>
+            <if test="componentCode != null and componentCode != ''">component_code,</if>
+            <if test="componentName != null and componentName != ''">component_name,</if>
+            <if test="componentType != null and componentType != ''">component_type,</if>
+            <if test="material != null">material,</if>
+            <if test="hardness != null">hardness,</if>
+            <if test="surfaceTreatment != null">surface_treatment,</if>
+            <if test="dimensions != null">dimensions,</if>
+            <if test="weight != null">weight,</if>
+            <if test="lifeCycle != null">life_cycle,</if>
+            <if test="currentUsageCount != null">current_usage_count,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="moldId != null">#{moldId},</if>
+            <if test="componentCode != null and componentCode != ''">#{componentCode},</if>
+            <if test="componentName != null and componentName != ''">#{componentName},</if>
+            <if test="componentType != null and componentType != ''">#{componentType},</if>
+            <if test="material != null">#{material},</if>
+            <if test="hardness != null">#{hardness},</if>
+            <if test="surfaceTreatment != null">#{surfaceTreatment},</if>
+            <if test="dimensions != null">#{dimensions},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="lifeCycle != null">#{lifeCycle},</if>
+            <if test="currentUsageCount != null">#{currentUsageCount},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpMoldDetail" parameterType="ErpMoldDetail">
+        update erp_mold_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="moldId != null">mold_id = #{moldId},</if>
+            <if test="componentCode != null and componentCode != ''">component_code = #{componentCode},</if>
+            <if test="componentName != null and componentName != ''">component_name = #{componentName},</if>
+            <if test="componentType != null and componentType != ''">component_type = #{componentType},</if>
+            <if test="material != null">material = #{material},</if>
+            <if test="hardness != null">hardness = #{hardness},</if>
+            <if test="surfaceTreatment != null">surface_treatment = #{surfaceTreatment},</if>
+            <if test="dimensions != null">dimensions = #{dimensions},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="lifeCycle != null">life_cycle = #{lifeCycle},</if>
+            <if test="currentUsageCount != null">current_usage_count = #{currentUsageCount},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 软删除：将del_flag设置为'1' -->
+    <update id="deleteErpMoldDetailById" parameterType="Long">
+        update erp_mold_detail set del_flag = '1' where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 批量软删除：将del_flag设置为'1' -->
+    <update id="deleteErpMoldDetailByIds" parameterType="String">
+        update erp_mold_detail set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '0'
+    </update>
+
+    <!-- 物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpMoldDetailById" parameterType="Long">
+        delete from erp_mold_detail where id = #{id}
+    </delete>
+
+    <!-- 批量物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpMoldDetailByIds" parameterType="String">
+        delete from erp_mold_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpMoldDetailById" parameterType="Long">
+        update erp_mold_detail set del_flag = '0' where id = #{id} and del_flag = '1'
+    </update>
+
+    <!-- 批量恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpMoldDetailByIds" parameterType="String">
+        update erp_mold_detail set del_flag = '0' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '1'
+    </update>
+
+    <!-- 查询已删除的记录 -->
+    <select id="selectDeletedErpMoldDetailList" parameterType="ErpMoldDetail" resultMap="ErpMoldDetailResult">
+        <include refid="selectErpMoldDetailVo"/>
+        <where>  
+            and del_flag = '1'
+            <if test="componentCode != null  and componentCode != ''"> and component_code = #{componentCode}</if>
+            <if test="componentName != null  and componentName != ''"> and component_name like concat('%', #{componentName}, '%')</if>
+            <if test="componentType != null  and componentType != ''"> and component_type = #{componentType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <!-- 查询所有记录（包括已删除的） -->
+    <select id="selectAllErpMoldDetailList" parameterType="ErpMoldDetail" resultMap="ErpMoldDetailResult">
+        <include refid="selectErpMoldDetailVo"/>
+        <where>  
+            <if test="componentCode != null  and componentCode != ''"> and component_code = #{componentCode}</if>
+            <if test="componentName != null  and componentName != ''"> and component_name like concat('%', #{componentName}, '%')</if>
+            <if test="componentType != null  and componentType != ''"> and component_type = #{componentType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+</mapper>

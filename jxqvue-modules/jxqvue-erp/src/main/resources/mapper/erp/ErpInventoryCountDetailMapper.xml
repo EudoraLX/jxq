@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpInventoryCountDetailMapper">
+    
+    <resultMap type="ErpInventoryCountDetail" id="ErpInventoryCountDetailResult">
+        <result property="id"    column="id"    />
+        <result property="countId"    column="count_id"    />
+        <result property="countNo"    column="count_no"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialSpec"    column="material_spec"    />
+        <result property="materialModel"    column="material_model"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitCode"    column="unit_code"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="bookQuantity"    column="book_quantity"    />
+        <result property="countQuantity"    column="count_quantity"    />
+        <result property="differenceQuantity"    column="difference_quantity"    />
+        <result property="unitCost"    column="unit_cost"    />
+        <result property="bookAmount"    column="book_amount"    />
+        <result property="countAmount"    column="count_amount"    />
+        <result property="differenceAmount"    column="difference_amount"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="lotNo"    column="lot_no"    />
+        <result property="serialNo"    column="serial_no"    />
+        <result property="countStatus"    column="count_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpInventoryCountDetailVo">
+        select id, count_id, count_no, material_id, material_code, material_name, material_spec, material_model, unit_id, unit_code, unit_name, shelf_id, shelf_code, shelf_name, location_id, location_code, location_name, batch_no, lot_no, serial_no, book_quantity, count_quantity, difference_quantity, unit_cost, difference_amount, difference_reason, adjust_quantity, adjust_amount, adjust_reason, status, counter_id, counter_name, count_time, remark, create_by, create_time, update_by, update_time from erp_inventory_count_detail
+    </sql>
+
+    <select id="selectErpInventoryCountDetailList" parameterType="ErpInventoryCountDetail" resultMap="ErpInventoryCountDetailResult">
+        <include refid="selectErpInventoryCountDetailVo"/>
+        <where>  
+            <if test="countId != null "> and count_id = #{countId}</if>
+            <if test="countNo != null  and countNo != ''"> and count_no like concat('%', #{countNo}, '%')</if>
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="materialCode != null  and materialCode != ''"> and material_code like concat('%', #{materialCode}, '%')</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialSpec != null  and materialSpec != ''"> and material_spec like concat('%', #{materialSpec}, '%')</if>
+            <if test="materialModel != null  and materialModel != ''"> and material_model like concat('%', #{materialModel}, '%')</if>
+            <if test="unitId != null "> and unit_id = #{unitId}</if>
+            <if test="unitCode != null  and unitCode != ''"> and unit_code like concat('%', #{unitCode}, '%')</if>
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="bookQuantity != null "> and book_quantity = #{bookQuantity}</if>
+            <if test="countQuantity != null "> and count_quantity = #{countQuantity}</if>
+            <if test="differenceQuantity != null "> and difference_quantity = #{differenceQuantity}</if>
+            <if test="unitCost != null "> and unit_cost = #{unitCost}</if>
+            <if test="bookAmount != null "> and book_amount = #{bookAmount}</if>
+            <if test="countAmount != null "> and count_amount = #{countAmount}</if>
+            <if test="differenceAmount != null "> and difference_amount = #{differenceAmount}</if>
+            <if test="batchNo != null  and batchNo != ''"> and batch_no like concat('%', #{batchNo}, '%')</if>
+            <if test="lotNo != null  and lotNo != ''"> and lot_no like concat('%', #{lotNo}, '%')</if>
+            <if test="serialNo != null  and serialNo != ''"> and serial_no like concat('%', #{serialNo}, '%')</if>
+            <if test="shelfId != null "> and shelf_id = #{shelfId}</if>
+            <if test="shelfCode != null  and shelfCode != ''"> and shelf_code like concat('%', #{shelfCode}, '%')</if>
+            <if test="shelfName != null  and shelfName != ''"> and shelf_name like concat('%', #{shelfName}, '%')</if>
+            <if test="locationId != null "> and location_id = #{locationId}</if>
+            <if test="locationCode != null  and locationCode != ''"> and location_code like concat('%', #{locationCode}, '%')</if>
+            <if test="locationName != null  and locationName != ''"> and location_name like concat('%', #{locationName}, '%')</if>
+            <if test="countStatus != null  and countStatus != ''"> and count_status = #{countStatus}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpInventoryCountDetailById" parameterType="Long" resultMap="ErpInventoryCountDetailResult">
+        <include refid="selectErpInventoryCountDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertErpInventoryCountDetail" parameterType="ErpInventoryCountDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_inventory_count_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="countId != null">count_id,</if>
+            <if test="countNo != null and countNo != ''">count_no,</if>
+            <if test="materialId != null">material_id,</if>
+            <if test="materialCode != null">material_code,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="materialSpec != null">material_spec,</if>
+            <if test="materialModel != null">material_model,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="unitCode != null and unitCode != ''">unit_code,</if>
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="bookQuantity != null">book_quantity,</if>
+            <if test="countQuantity != null">count_quantity,</if>
+            <if test="differenceQuantity != null">difference_quantity,</if>
+            <if test="unitCost != null">unit_cost,</if>
+            <if test="bookAmount != null">book_amount,</if>
+            <if test="countAmount != null">count_amount,</if>
+            <if test="differenceAmount != null">difference_amount,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="lotNo != null">lot_no,</if>
+            <if test="serialNo != null">serial_no,</if>
+            <if test="shelfId != null">shelf_id,</if>
+            <if test="shelfCode != null and shelfCode != ''">shelf_code,</if>
+            <if test="shelfName != null and shelfName != ''">shelf_name,</if>
+            <if test="locationId != null">location_id,</if>
+            <if test="locationCode != null and locationCode != ''">location_code,</if>
+            <if test="locationName != null and locationName != ''">location_name,</if>
+            <if test="countStatus != null and countStatus != ''">count_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="countId != null">#{countId},</if>
+            <if test="countNo != null and countNo != ''">#{countNo},</if>
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialCode != null">#{materialCode},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="materialSpec != null">#{materialSpec},</if>
+            <if test="materialModel != null">#{materialModel},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="unitCode != null and unitCode != ''">#{unitCode},</if>
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="bookQuantity != null">#{bookQuantity},</if>
+            <if test="countQuantity != null">#{countQuantity},</if>
+            <if test="differenceQuantity != null">#{differenceQuantity},</if>
+            <if test="unitCost != null">#{unitCost},</if>
+            <if test="bookAmount != null">#{bookAmount},</if>
+            <if test="countAmount != null">#{countAmount},</if>
+            <if test="differenceAmount != null">#{differenceAmount},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="lotNo != null">#{lotNo},</if>
+            <if test="serialNo != null">#{serialNo},</if>
+            <if test="shelfId != null">#{shelfId},</if>
+            <if test="shelfCode != null and shelfCode != ''">#{shelfCode},</if>
+            <if test="shelfName != null and shelfName != ''">#{shelfName},</if>
+            <if test="locationId != null">#{locationId},</if>
+            <if test="locationCode != null and locationCode != ''">#{locationCode},</if>
+            <if test="locationName != null and locationName != ''">#{locationName},</if>
+            <if test="countStatus != null and countStatus != ''">#{countStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpInventoryCountDetail" parameterType="ErpInventoryCountDetail">
+        update erp_inventory_count_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="countId != null">count_id = #{countId},</if>
+            <if test="countNo != null and countNo != ''">count_no = #{countNo},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialCode != null">material_code = #{materialCode},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="materialSpec != null">material_spec = #{materialSpec},</if>
+            <if test="materialModel != null">material_model = #{materialModel},</if>
+            <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="unitCode != null and unitCode != ''">unit_code = #{unitCode},</if>
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="bookQuantity != null">book_quantity = #{bookQuantity},</if>
+            <if test="countQuantity != null">count_quantity = #{countQuantity},</if>
+            <if test="differenceQuantity != null">difference_quantity = #{differenceQuantity},</if>
+            <if test="unitCost != null">unit_cost = #{unitCost},</if>
+            <if test="bookAmount != null">book_amount = #{bookAmount},</if>
+            <if test="countAmount != null">count_amount = #{countAmount},</if>
+            <if test="differenceAmount != null">difference_amount = #{differenceAmount},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
+            <if test="lotNo != null">lot_no = #{lotNo},</if>
+            <if test="serialNo != null">serial_no = #{serialNo},</if>
+            <if test="shelfId != null">shelf_id = #{shelfId},</if>
+            <if test="shelfCode != null and shelfCode != ''">shelf_code = #{shelfCode},</if>
+            <if test="shelfName != null and shelfName != ''">shelf_name = #{shelfName},</if>
+            <if test="locationId != null">location_id = #{locationId},</if>
+            <if test="locationCode != null and locationCode != ''">location_code = #{locationCode},</if>
+            <if test="locationName != null and locationName != ''">location_name = #{locationName},</if>
+            <if test="countStatus != null and countStatus != ''">count_status = #{countStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpInventoryCountDetailById" parameterType="Long">
+        delete from erp_inventory_count_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteErpInventoryCountDetailByIds" parameterType="String">
+        delete from erp_inventory_count_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteErpInventoryCountDetailByCountId" parameterType="Long">
+        delete from erp_inventory_count_detail where count_id = #{countId}
+    </delete>
+</mapper>

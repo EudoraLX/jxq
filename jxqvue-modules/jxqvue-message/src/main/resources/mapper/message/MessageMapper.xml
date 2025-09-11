@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.message.mapper.MessageMapper">
+    
+    <resultMap type="Message" id="MessageResult">
+        <result property="messageId"    column="message_id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="messageType"    column="message_type"    />
+        <result property="messageLevel"    column="message_level"    />
+        <result property="senderId"    column="sender_id"    />
+        <result property="senderName"    column="sender_name"    />
+        <result property="readStatus"    column="read_status"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="pushStatus"    column="push_status"    />
+        <result property="pushTime"    column="push_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="receiverNames"    column="receiver_names"    />
+    </resultMap>
+
+    <sql id="selectMessageVo">
+        select message_id, title, content, message_type, message_level, sender_id, sender_name, 
+        read_status, business_type, business_id, push_status, push_time, create_by, create_time, update_by, update_time, remark from message
+    </sql>
+
+    <select id="selectMessageList" parameterType="Message" resultMap="MessageResult">
+        select m.message_id, m.title, m.content, m.message_type, m.message_level, 
+               m.sender_id, m.sender_name, m.read_status, m.business_type, 
+               m.business_id, m.push_status, m.push_time, m.create_by, m.create_time, 
+               m.update_by, m.update_time, m.remark,
+               GROUP_CONCAT(u.nick_name SEPARATOR ', ') as receiver_names
+        from message m
+        left join message_receiver mr on m.message_id = mr.message_id
+        left join sys_user u on mr.receiver_id = u.user_id
+        <where>  
+            <if test="title != null  and title != ''"> and m.title like concat('%', #{title}, '%')</if>
+            <if test="messageType != null  and messageType != ''"> and m.message_type = #{messageType}</if>
+            <if test="messageLevel != null  and messageLevel != ''"> and m.message_level = #{messageLevel}</if>
+            <if test="senderId != null "> and m.sender_id = #{senderId}</if>
+            <if test="readStatus != null  and readStatus != ''"> and m.read_status = #{readStatus}</if>
+            <if test="businessType != null  and businessType != ''"> and m.business_type = #{businessType}</if>
+            <if test="pushStatus != null  and pushStatus != ''"> and m.push_status = #{pushStatus}</if>
+        </where>
+        group by m.message_id
+        order by m.create_time desc
+    </select>
+    
+    <select id="selectMessageByMessageId" parameterType="Long" resultMap="MessageResult">
+        select m.message_id, m.title, m.content, m.message_type, m.message_level, 
+               m.sender_id, m.sender_name, m.read_status, m.business_type, 
+               m.business_id, m.push_status, m.push_time, m.create_by, m.create_time, 
+               m.update_by, m.update_time, m.remark,
+               GROUP_CONCAT(u.nick_name SEPARATOR ', ') as receiver_names
+        from message m
+        left join message_receiver mr on m.message_id = mr.message_id
+        left join sys_user u on mr.receiver_id = u.user_id
+        where m.message_id = #{messageId}
+        group by m.message_id
+    </select>
+
+    <select id="selectUserMessageList" parameterType="Message" resultMap="MessageResult">
+        <include refid="selectMessageVo"/>
+        <where>
+            <if test="readStatus != null  and readStatus != ''"> and read_status = #{readStatus}</if>
+            <if test="messageType != null  and messageType != ''"> and message_type = #{messageType}</if>
+            <if test="messageLevel != null  and messageLevel != ''"> and message_level = #{messageLevel}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectUnreadCount" parameterType="Long" resultType="int">
+        select count(1) from message_receiver 
+        where receiver_id = #{userId} and read_status = '0'
+    </select>
+        
+    <insert id="insertMessage" parameterType="Message" useGeneratedKeys="true" keyProperty="messageId">
+        insert into message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="messageType != null">message_type,</if>
+            <if test="messageLevel != null">message_level,</if>
+            <if test="senderId != null">sender_id,</if>
+            <if test="senderName != null and senderName != ''">sender_name,</if>
+            <if test="readStatus != null">read_status,</if>
+            <if test="businessType != null and businessType != ''">business_type,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="pushStatus != null">push_status,</if>
+            <if test="pushTime != null">push_time,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="messageType != null">#{messageType},</if>
+            <if test="messageLevel != null">#{messageLevel},</if>
+            <if test="senderId != null">#{senderId},</if>
+            <if test="senderName != null and senderName != ''">#{senderName},</if>
+            <if test="readStatus != null">#{readStatus},</if>
+            <if test="businessType != null and businessType != ''">#{businessType},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="pushStatus != null">#{pushStatus},</if>
+            <if test="pushTime != null">#{pushTime},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMessage" parameterType="Message">
+        update message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="messageType != null">message_type = #{messageType},</if>
+            <if test="messageLevel != null">message_level = #{messageLevel},</if>
+            <if test="senderId != null">sender_id = #{senderId},</if>
+            <if test="senderName != null and senderName != ''">sender_name = #{senderName},</if>
+            <if test="readStatus != null">read_status = #{readStatus},</if>
+            <if test="businessType != null and businessType != ''">business_type = #{businessType},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+            <if test="pushStatus != null">push_status = #{pushStatus},</if>
+            <if test="pushTime != null">push_time = #{pushTime},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where message_id = #{messageId}
+    </update>
+
+    <update id="markAsRead" parameterType="Long">
+        update message_receiver set read_status = '1', read_time = now() where message_id = #{messageId}
+    </update>
+
+    <update id="markAsReadBatch" parameterType="Long[]">
+        update message_receiver set read_status = '1', read_time = now() 
+        where message_id in
+        <foreach collection="array" item="messageId" open="(" separator="," close=")">
+            #{messageId}
+        </foreach>
+    </update>
+
+    <delete id="deleteMessageByMessageId" parameterType="Long">
+        delete from message where message_id = #{messageId}
+    </delete>
+
+    <delete id="deleteMessageByMessageIds" parameterType="String">
+        delete from message where message_id in 
+        <foreach item="messageId" collection="array" open="(" separator="," close=")">
+            #{messageId}
+        </foreach>
+    </delete>
+
+    <select id="selectUserMessageListByUserId" parameterType="Long" resultMap="MessageResult">
+        select m.message_id, m.title, m.content, m.message_type, m.message_level, 
+               m.sender_id, m.sender_name, mr.read_status, m.business_type, 
+               m.business_id, m.push_status, m.push_time, m.create_by, m.create_time, 
+               m.update_by, m.update_time, m.remark
+        from message m
+        inner join message_receiver mr on m.message_id = mr.message_id
+        where mr.receiver_id = #{userId}
+        order by m.create_time desc
+    </select>
+
+    <select id="selectUserMessageDetailByUserIdAndMessageId" resultMap="MessageResult">
+        select m.message_id, m.title, m.content, m.message_type, m.message_level, 
+               m.sender_id, m.sender_name, mr.read_status, m.business_type, 
+               m.business_id, m.push_status, m.push_time, m.create_by, m.create_time, 
+               m.update_by, m.update_time, m.remark
+        from message m
+        inner join message_receiver mr on m.message_id = mr.message_id
+        where mr.receiver_id = #{param1} and m.message_id = #{param2}
+        limit 1
+    </select>
+
+    <!-- 统计相关SQL -->
+    <select id="countTotalMessages" resultType="java.lang.Long">
+        select count(*) from message where del_flag = '0'
+    </select>
+
+    <select id="countTodayMessages" resultType="java.lang.Long">
+        select count(*) from message 
+        where del_flag = '0' and date(create_time) = curdate()
+    </select>
+
+    <select id="countWeekMessages" resultType="java.lang.Long">
+        select count(*) from message 
+        where del_flag = '0' and yearweek(create_time) = yearweek(now())
+    </select>
+
+    <select id="selectMessageStatisticsList" parameterType="MessageStatistics" resultType="MessageStatistics">
+        select 
+            date(m.create_time) as statistics_date,
+            m.message_type,
+            m.message_level,
+            count(m.message_id) as message_count,
+            sum(case when mr.read_status = '0' then 1 else 0 end) as unread_count,
+            sum(case when mr.read_status = '1' then 1 else 0 end) as read_count
+        from message m
+        left join message_receiver mr on m.message_id = mr.message_id
+        where m.del_flag = '0'
+        <if test="messageType != null and messageType != ''">
+            and m.message_type = #{messageType}
+        </if>
+        <if test="messageLevel != null and messageLevel != ''">
+            and m.message_level = #{messageLevel}
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''">
+            and date(m.create_time) &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''">
+            and date(m.create_time) &lt;= #{params.endTime}
+        </if>
+        group by date(create_time), message_type, message_level
+        order by statistics_date desc
+    </select>
+
+    <select id="getMessageTypeStatistics" resultType="java.util.Map">
+        select 
+            message_type as name,
+            count(*) as value
+        from message 
+        where del_flag = '0'
+        group by message_type
+        order by value desc
+    </select>
+
+    <select id="getMessageLevelStatistics" resultType="java.util.Map">
+        select 
+            message_level as name,
+            count(*) as value
+        from message 
+        where del_flag = '0'
+        group by message_level
+        order by value desc
+    </select>
+
+    <select id="getMessageTrendStatistics" resultType="java.util.Map">
+        select 
+            date(create_time) as date,
+            count(*) as count
+        from message 
+        where del_flag = '0' 
+        and create_time >= date_sub(now(), interval 30 day)
+        group by date(create_time)
+        order by date asc
+    </select>
+
+    <select id="selectMyMessageListByUserId" resultMap="MessageResult">
+        select m.message_id, m.title, m.content, m.message_type, m.message_level, 
+               m.sender_id, m.sender_name, mr.read_status as read_status, mr.read_time,
+               m.business_type, m.business_id, m.push_status, m.push_time, 
+               m.create_by, m.create_time, m.update_by, m.update_time, m.remark
+        from message m
+        inner join message_receiver mr on m.message_id = mr.message_id
+        where mr.receiver_id = #{param1} and m.del_flag = '0'
+        <if test="param2.title != null and param2.title != ''">
+            and m.title like concat('%', #{param2.title}, '%')
+        </if>
+        <if test="param2.messageType != null and param2.messageType != ''">
+            and m.message_type = #{param2.messageType}
+        </if>
+        <if test="param2.messageLevel != null and param2.messageLevel != ''">
+            and m.message_level = #{param2.messageLevel}
+        </if>
+        <if test="param2.readStatus != null and param2.readStatus != ''">
+            and mr.read_status = #{param2.readStatus}
+        </if>
+        order by m.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpWorkCenterMapper">
+    
+    <resultMap type="ErpWorkCenter" id="ErpWorkCenterResult">
+        <result property="id"    column="id"    />
+        <result property="workCenterCode"    column="work_center_code"    />
+        <result property="workCenterName"    column="work_center_name"    />
+        <result property="workCenterType"    column="work_center_type"    />
+        <result property="departmentId"    column="department_id"    />
+        <result property="location"    column="location"    />
+        <result property="capacityType"    column="capacity_type"    />
+        <result property="standardCapacity"    column="standard_capacity"    />
+        <result property="capacityUnit"    column="capacity_unit"    />
+        <result property="efficiencyRate"    column="efficiency_rate"    />
+        <result property="availableCapacity"    column="available_capacity"    />
+        <result property="costCenter"    column="cost_center"    />
+        <result property="costPerHour"    column="cost_per_hour"    />
+        <result property="setupTime"    column="setup_time"    />
+        <result property="processingTime" column="processing_time" />
+        <result property="moveTime" column="move_time" />
+        <result property="queueTime" column="queue_time" />
+        <result property="cycleTime" column="cycle_time" />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectErpWorkCenterVo">
+        select id, work_center_code, work_center_name, work_center_type, department_id, location,
+               capacity_type, standard_capacity, capacity_unit, efficiency_rate, available_capacity, cost_center, cost_per_hour,
+               setup_time, processing_time, move_time, queue_time, cycle_time,
+               is_active, remark, create_by, create_time, update_by, update_time, del_flag from erp_work_center
+    </sql>
+
+    <select id="selectErpWorkCenterList" parameterType="ErpWorkCenter" resultMap="ErpWorkCenterResult">
+        <include refid="selectErpWorkCenterVo"/>
+        <where>  
+            and del_flag = '0'
+            <if test="workCenterCode != null  and workCenterCode != ''"> and work_center_code = #{workCenterCode}</if>
+            <if test="workCenterName != null  and workCenterName != ''"> and work_center_name like concat('%', #{workCenterName}, '%')</if>
+            <if test="workCenterType != null  and workCenterType != ''"> and work_center_type = #{workCenterType}</if>
+            <if test="departmentId != null "> and department_id = #{departmentId}</if>
+            <if test="capacityType != null  and capacityType != ''"> and capacity_type = #{capacityType}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpWorkCenterById" parameterType="Long" resultMap="ErpWorkCenterResult">
+        <include refid="selectErpWorkCenterVo"/>
+        where id = #{id} and del_flag = '0'
+    </select>
+
+    <insert id="insertErpWorkCenter" parameterType="ErpWorkCenter" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_work_center
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workCenterCode != null and workCenterCode != ''">work_center_code,</if>
+            <if test="workCenterName != null and workCenterName != ''">work_center_name,</if>
+            <if test="workCenterType != null">work_center_type,</if>
+            <if test="departmentId != null">department_id,</if>
+            <if test="location != null">location,</if>
+            <if test="capacityType != null">capacity_type,</if>
+            <if test="standardCapacity != null">standard_capacity,</if>
+            <if test="capacityUnit != null">capacity_unit,</if>
+            <if test="efficiencyRate != null">efficiency_rate,</if>
+            <if test="availableCapacity != null">available_capacity,</if>
+            <if test="costCenter != null">cost_center,</if>
+            <if test="costPerHour != null">cost_per_hour,</if>
+            <if test="setupTime != null">setup_time,</if>
+            <if test="processingTime != null">processing_time,</if>
+            <if test="moveTime != null">move_time,</if>
+            <if test="queueTime != null">queue_time,</if>
+            <if test="cycleTime != null">cycle_time,</if>
+            <if test="isActive != null and isActive != ''">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workCenterCode != null and workCenterCode != ''">#{workCenterCode},</if>
+            <if test="workCenterName != null and workCenterName != ''">#{workCenterName},</if>
+            <if test="workCenterType != null">#{workCenterType},</if>
+            <if test="departmentId != null">#{departmentId},</if>
+            <if test="location != null">#{location},</if>
+            <if test="capacityType != null">#{capacityType},</if>
+            <if test="standardCapacity != null">#{standardCapacity},</if>
+            <if test="capacityUnit != null">#{capacityUnit},</if>
+            <if test="efficiencyRate != null">#{efficiencyRate},</if>
+            <if test="availableCapacity != null">#{availableCapacity},</if>
+            <if test="costCenter != null">#{costCenter},</if>
+            <if test="costPerHour != null">#{costPerHour},</if>
+            <if test="setupTime != null">#{setupTime},</if>
+            <if test="processingTime != null">#{processingTime},</if>
+            <if test="moveTime != null">#{moveTime},</if>
+            <if test="queueTime != null">#{queueTime},</if>
+            <if test="cycleTime != null">#{cycleTime},</if>
+            <if test="isActive != null and isActive != ''">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpWorkCenter" parameterType="ErpWorkCenter">
+        update erp_work_center
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workCenterCode != null and workCenterCode != ''">work_center_code = #{workCenterCode},</if>
+            <if test="workCenterName != null and workCenterName != ''">work_center_name = #{workCenterName},</if>
+            <if test="workCenterType != null">work_center_type = #{workCenterType},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="capacityType != null">capacity_type = #{capacityType},</if>
+            <if test="standardCapacity != null">standard_capacity = #{standardCapacity},</if>
+            <if test="capacityUnit != null">capacity_unit = #{capacityUnit},</if>
+            <if test="efficiencyRate != null">efficiency_rate = #{efficiencyRate},</if>
+            <if test="availableCapacity != null">available_capacity = #{availableCapacity},</if>
+            <if test="costCenter != null">cost_center = #{costCenter},</if>
+            <if test="costPerHour != null">cost_per_hour = #{costPerHour},</if>
+            <if test="setupTime != null">setup_time = #{setupTime},</if>
+            <if test="processingTime != null">processing_time = #{processingTime},</if>
+            <if test="moveTime != null">move_time = #{moveTime},</if>
+            <if test="queueTime != null">queue_time = #{queueTime},</if>
+            <if test="cycleTime != null">cycle_time = #{cycleTime},</if>
+            <if test="isActive != null and isActive != ''">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 软删除：将del_flag设置为'1' -->
+    <update id="deleteErpWorkCenterById" parameterType="Long">
+        update erp_work_center set del_flag = '1' where id = #{id} and del_flag = '0'
+    </update>
+
+    <!-- 批量软删除：将del_flag设置为'1' -->
+    <update id="deleteErpWorkCenterByIds" parameterType="String">
+        update erp_work_center set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '0'
+    </update>
+
+    <!-- 物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpWorkCenterById" parameterType="Long">
+        delete from erp_work_center where id = #{id}
+    </delete>
+
+    <!-- 批量物理删除：真正从数据库中删除记录 -->
+    <delete id="physicalDeleteErpWorkCenterByIds" parameterType="String">
+        delete from erp_work_center where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpWorkCenterById" parameterType="Long">
+        update erp_work_center set del_flag = '0' where id = #{id} and del_flag = '1'
+    </update>
+
+    <!-- 批量恢复删除：将del_flag设置为'0' -->
+    <update id="restoreErpWorkCenterByIds" parameterType="String">
+        update erp_work_center set del_flag = '0' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and del_flag = '1'
+    </update>
+
+    <!-- 查询已删除的记录 -->
+    <select id="selectDeletedErpWorkCenterList" parameterType="ErpWorkCenter" resultMap="ErpWorkCenterResult">
+        <include refid="selectErpWorkCenterVo"/>
+        <where>  
+            and del_flag = '1'
+            <if test="workCenterCode != null  and workCenterCode != ''"> and work_center_code = #{workCenterCode}</if>
+            <if test="workCenterName != null  and workCenterName != ''"> and work_center_name like concat('%', #{workCenterName}, '%')</if>
+            <if test="workCenterType != null  and workCenterType != ''"> and work_center_type = #{workCenterType}</if>
+            <if test="departmentId != null "> and department_id = #{departmentId}</if>
+            <if test="capacityType != null  and capacityType != ''"> and capacity_type = #{capacityType}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+
+    <!-- 查询所有记录（包括已删除的） -->
+    <select id="selectAllErpWorkCenterList" parameterType="ErpWorkCenter" resultMap="ErpWorkCenterResult">
+        <include refid="selectErpWorkCenterVo"/>
+        <where>  
+            <if test="workCenterCode != null  and workCenterCode != ''"> and work_center_code = #{workCenterCode}</if>
+            <if test="workCenterName != null  and workCenterName != ''"> and work_center_name like concat('%', #{workCenterName}, '%')</if>
+            <if test="workCenterType != null  and workCenterType != ''"> and work_center_type = #{workCenterType}</if>
+            <if test="departmentId != null "> and department_id = #{departmentId}</if>
+            <if test="capacityType != null  and capacityType != ''"> and capacity_type = #{capacityType}</if>
+            <if test="isActive != null  and isActive != ''"> and is_active = #{isActive}</if>
+        </where>
+    </select>
+
+    <!-- 查询工作中心配置列表 -->
+    <select id="selectErpWorkCenterConfigByWorkCenterId" parameterType="Long" resultType="com.jxqvue.erp.domain.ErpWorkCenterConfig">
+        select c.id, c.work_center_id, c.equipment_id, c.mold_id, c.capacity_type, c.standard_capacity, 
+               c.capacity_unit, c.efficiency_rate, c.available_capacity, c.setup_time, c.processing_time,c.move_time, c.queue_time, c.cycle_time,
+               c.is_primary, c.remark,
+               e.equipment_code, e.equipment_name,
+               m.mold_code, m.mold_name
+        from erp_work_center_config c
+        left join erp_equipment e on c.equipment_id = e.id
+        left join erp_mold m on c.mold_id = m.id
+        where c.work_center_id = #{workCenterId}
+        order by c.is_primary desc, c.id asc
+    </select>
+
+    <!-- 查询工作中心的首选配置 -->
+    <select id="selectPrimaryConfigByWorkCenterId" parameterType="Long" resultType="com.jxqvue.erp.domain.ErpWorkCenterConfig">
+        select c.id, c.work_center_id, c.equipment_id, c.mold_id, c.capacity_type, c.standard_capacity, 
+               c.capacity_unit, c.efficiency_rate, c.available_capacity, c.setup_time, c.processing_time,c.move_time, c.queue_time, c.cycle_time,
+               c.is_primary, c.remark,
+               e.equipment_code, e.equipment_name,
+               m.mold_code, m.mold_name
+        from erp_work_center_config c
+        left join erp_equipment e on c.equipment_id = e.id
+        left join erp_mold m on c.mold_id = m.id
+        where c.work_center_id = #{workCenterId} and c.is_primary = '1'
+        limit 1
+    </select>
+
+    <!-- 获取工作中心关联的设备和模具（首选配置） -->
+    <select id="getWorkCenterEquipmentAndMold" parameterType="Long" resultType="java.util.Map">
+        select 
+            e.id as equipment_id,
+            e.equipment_code,
+            e.equipment_name,
+            m.id as mold_id,
+            m.mold_code,
+            m.mold_name
+        from erp_work_center_config c
+        left join erp_equipment e on c.equipment_id = e.id and e.del_flag = '0'
+        left join erp_mold m on c.mold_id = m.id and m.del_flag = '0'
+        where c.work_center_id = #{id} and c.is_primary = '1'
+        limit 1
+    </select>
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpInventoryDetailMapper">
+    
+    <resultMap type="ErpInventoryDetail" id="ErpInventoryDetailResult">
+        <result property="id"    column="id"    />
+        <result property="inventoryId"    column="inventory_id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="warehouseId"    column="warehouse_id"    />
+        <result property="shelfId"    column="shelf_id"    />
+        <result property="locationId"    column="location_id"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="lotNo"    column="lot_no"    />
+        <result property="serialNo"    column="serial_no"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="availableQuantity"    column="available_quantity"    />
+        <result property="allocatedQuantity"    column="allocated_quantity"    />
+        <result property="frozenQuantity"    column="frozen_quantity"    />
+        <result property="unitCost"    column="unit_cost"    />
+        <result property="totalCost"    column="total_cost"    />
+        <result property="productionDate"    column="production_date"    />
+        <result property="expiryDate"    column="expiry_date"    />
+        <result property="qualityStatus"    column="quality_status"    />
+        <result property="qualityLevel"    column="quality_level"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpInventoryDetailVo">
+        select id, inventory_id, material_id, warehouse_id, shelf_id, location_id, batch_no, lot_no, serial_no, quantity, available_quantity, allocated_quantity, frozen_quantity, unit_cost, total_cost, production_date, expiry_date, quality_status, quality_level, create_by, create_time, update_by, update_time from erp_inventory_detail
+    </sql>
+
+    <select id="selectErpInventoryDetailList" parameterType="ErpInventoryDetail" resultMap="ErpInventoryDetailResult">
+        <include refid="selectErpInventoryDetailVo"/>
+        <where>  
+            <if test="inventoryId != null "> and inventory_id = #{inventoryId}</if>
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
+            <if test="shelfId != null "> and shelf_id = #{shelfId}</if>
+            <if test="locationId != null "> and location_id = #{locationId}</if>
+            <if test="batchNo != null  and batchNo != ''"> and batch_no like concat('%', #{batchNo}, '%')</if>
+            <if test="lotNo != null  and lotNo != ''"> and lot_no like concat('%', #{lotNo}, '%')</if>
+            <if test="serialNo != null  and serialNo != ''"> and serial_no like concat('%', #{serialNo}, '%')</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="availableQuantity != null "> and available_quantity = #{availableQuantity}</if>
+            <if test="allocatedQuantity != null "> and allocated_quantity = #{allocatedQuantity}</if>
+            <if test="frozenQuantity != null "> and frozen_quantity = #{frozenQuantity}</if>
+            <if test="unitCost != null "> and unit_cost = #{unitCost}</if>
+            <if test="totalCost != null "> and total_cost = #{totalCost}</if>
+            <if test="productionDate != null "> and production_date = #{productionDate}</if>
+            <if test="expiryDate != null "> and expiry_date = #{expiryDate}</if>
+            <if test="qualityStatus != null  and qualityStatus != ''"> and quality_status = #{qualityStatus}</if>
+            <if test="qualityLevel != null  and qualityLevel != ''"> and quality_level = #{qualityLevel}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpInventoryDetailById" parameterType="Long" resultMap="ErpInventoryDetailResult">
+        <include refid="selectErpInventoryDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectErpInventoryDetailByMaterialAndWarehouse" resultMap="ErpInventoryDetailResult">
+        <include refid="selectErpInventoryDetailVo"/>
+        where material_id = #{arg0} and warehouse_id = #{arg1}
+    </select>
+
+    <select id="selectErpInventoryDetailByMaterialAndWarehouseAndLocation" resultMap="ErpInventoryDetailResult">
+        <include refid="selectErpInventoryDetailVo"/>
+        where material_id = #{arg0} and warehouse_id = #{arg1} and location_id = #{arg2}
+    </select>
+
+    <insert id="insertErpInventoryDetail" parameterType="ErpInventoryDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_inventory_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inventoryId != null">inventory_id,</if>
+            <if test="materialId != null">material_id,</if>
+            <if test="warehouseId != null">warehouse_id,</if>
+            <if test="shelfId != null">shelf_id,</if>
+            <if test="locationId != null">location_id,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="lotNo != null">lot_no,</if>
+            <if test="serialNo != null">serial_no,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="availableQuantity != null">available_quantity,</if>
+            <if test="allocatedQuantity != null">allocated_quantity,</if>
+            <if test="frozenQuantity != null">frozen_quantity,</if>
+            <if test="unitCost != null">unit_cost,</if>
+            <if test="totalCost != null">total_cost,</if>
+            <if test="productionDate != null">production_date,</if>
+            <if test="expiryDate != null">expiry_date,</if>
+            <if test="qualityStatus != null and qualityStatus != ''">quality_status,</if>
+            <if test="qualityLevel != null and qualityLevel != ''">quality_level,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inventoryId != null">#{inventoryId},</if>
+            <if test="materialId != null">#{materialId},</if>
+            <if test="warehouseId != null">#{warehouseId},</if>
+            <if test="shelfId != null">#{shelfId},</if>
+            <if test="locationId != null">#{locationId},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="lotNo != null">#{lotNo},</if>
+            <if test="serialNo != null">#{serialNo},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="availableQuantity != null">#{availableQuantity},</if>
+            <if test="allocatedQuantity != null">#{allocatedQuantity},</if>
+            <if test="frozenQuantity != null">#{frozenQuantity},</if>
+            <if test="unitCost != null">#{unitCost},</if>
+            <if test="totalCost != null">#{totalCost},</if>
+            <if test="productionDate != null">#{productionDate},</if>
+            <if test="expiryDate != null">#{expiryDate},</if>
+            <if test="qualityStatus != null and qualityStatus != ''">#{qualityStatus},</if>
+            <if test="qualityLevel != null and qualityLevel != ''">#{qualityLevel},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpInventoryDetail" parameterType="ErpInventoryDetail">
+        update erp_inventory_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inventoryId != null">inventory_id = #{inventoryId},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="warehouseId != null">warehouse_id = #{warehouseId},</if>
+            <if test="shelfId != null">shelf_id = #{shelfId},</if>
+            <if test="locationId != null">location_id = #{locationId},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
+            <if test="lotNo != null">lot_no = #{lotNo},</if>
+            <if test="serialNo != null">serial_no = #{serialNo},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="availableQuantity != null">available_quantity = #{availableQuantity},</if>
+            <if test="allocatedQuantity != null">allocated_quantity = #{allocatedQuantity},</if>
+            <if test="frozenQuantity != null">frozen_quantity = #{frozenQuantity},</if>
+            <if test="unitCost != null">unit_cost = #{unitCost},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="productionDate != null">production_date = #{productionDate},</if>
+            <if test="expiryDate != null">expiry_date = #{expiryDate},</if>
+            <if test="qualityStatus != null and qualityStatus != ''">quality_status = #{qualityStatus},</if>
+            <if test="qualityLevel != null and qualityLevel != ''">quality_level = #{qualityLevel},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpInventoryDetailById" parameterType="Long">
+        delete from erp_inventory_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteErpInventoryDetailByIds" parameterType="String">
+        delete from erp_inventory_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectExpiringInventory" parameterType="Integer" resultMap="ErpInventoryDetailResult">
+        <include refid="selectErpInventoryDetailVo"/>
+        where expiry_date IS NOT NULL 
+          AND expiry_date &lt;= DATE_ADD(CURDATE(), INTERVAL #{days} DAY)
+        order by expiry_date ASC
+    </select>
+</mapper>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpBomMapper">
+    
+    <resultMap type="ErpBom" id="ErpBomResult">
+        <result property="id"    column="id"    />
+        <result property="bomCode"    column="bom_code"    />
+        <result property="bomName"    column="bom_name"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productCode"    column="product_code"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productSpec"    column="product_spec"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="version"    column="version"    />
+        <result property="processRouteId"    column="process_route_id"    />
+        <result property="processRouteCode"    column="process_route_code"    />
+        <result property="processRouteName"    column="process_route_name"    />
+        <result property="effectiveDate"    column="effective_date"    />
+        <result property="expiryDate"    column="expiry_date"    />
+        <result property="approvalStatus"    column="approval_status"    />
+        <result property="isDefault"    column="is_default"    />
+        <result property="totalCost"    column="total_cost"    />
+        <result property="laborCost"    column="labor_cost"    />
+        <result property="materialCost"    column="material_cost"    />
+        <result property="overheadCost"    column="overhead_cost"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap id="ErpBomResultWithDetails" type="ErpBom" extends="ErpBomResult">
+        <collection property="erpBomDetailList" notNullColumn="sub_id" javaType="java.util.List" resultMap="ErpBomDetailResult" />
+        <collection property="erpBomRouteDetailList" notNullColumn="route_id" javaType="java.util.List" resultMap="ErpBomRouteDetailResult" />
+    </resultMap>
+
+    <resultMap type="ErpBomDetail" id="ErpBomDetailResult">
+        <result property="id"    column="sub_id"    />
+        <result property="bomId"    column="sub_bom_id"    />
+        <result property="materialId"    column="sub_material_id"    />
+        <result property="materialCode"    column="sub_material_code"    />
+        <result property="materialName"    column="sub_material_name"    />
+        <result property="materialSpec"    column="sub_material_spec"    />
+        <result property="materialUnitId"    column="sub_material_unit_id"    />
+        <result property="materialUnitName"    column="sub_material_unit_name"    />
+        <result property="quantityPerUnit"    column="sub_quantity_per_unit"    />
+        <result property="lossRate"    column="sub_loss_rate"    />
+        <result property="effectiveQuantity"    column="sub_effective_quantity"    />
+        <result property="position"    column="sub_position"    />
+        <result property="operationSequence"    column="sub_operation_sequence"    />
+        <result property="isCritical"    column="sub_is_critical"    />
+        <result property="isOptional"    column="sub_is_optional"    />
+        <result property="unitCost"    column="sub_unit_cost"    />
+        <result property="totalCost"    column="sub_total_cost"    />
+        <result property="remark"    column="sub_remark"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+    </resultMap>
+
+    <resultMap type="ErpBomRouteDetail" id="ErpBomRouteDetailResult">
+        <result property="id"    column="route_id"    />
+        <result property="bomId"    column="route_bom_id"    />
+        <result property="processId"    column="route_process_id"    />
+        <result property="processCode"    column="route_process_code"    />
+        <result property="processName"    column="route_process_name"    />
+        <result property="operationSequence"    column="route_operation_sequence"    />
+        <result property="workCenterId"    column="route_work_center_id"    />
+        <result property="workCenterCode"    column="route_work_center_code"    />
+        <result property="workCenterName"    column="route_work_center_name"    />
+        <result property="equipmentId"    column="route_equipment_id"    />
+        <result property="equipmentCode"    column="route_equipment_code"    />
+        <result property="equipmentName"    column="route_equipment_name"    />
+        <result property="moldId"    column="route_mold_id"    />
+        <result property="moldCode"    column="route_mold_code"    />
+        <result property="moldName"    column="route_mold_name"    />
+        <result property="setupTime"    column="route_setup_time"    />
+        <result property="processingTime"    column="route_processing_time"    />
+        <result property="moveTime"    column="route_move_time"    />
+        <result property="queueTime"    column="route_queue_time"    />
+        <result property="cycleTime"    column="route_cycle_time"    />
+        <result property="laborHours"    column="route_labor_hours"    />
+        <result property="machineHours"    column="route_machine_hours"    />
+        <result property="isCritical"    column="route_is_critical"    />
+        <result property="isOptional"    column="route_is_optional"    />
+        <result property="remark"    column="route_remark"    />
+        <result property="createBy"    column="route_create_by"    />
+        <result property="createTime"    column="route_create_time"    />
+        <result property="updateBy"    column="route_update_by"    />
+        <result property="updateTime"    column="route_update_time"    />
+    </resultMap>
+
+    <sql id="selectErpBomVo">
+        select b.id, b.bom_code, b.bom_name, b.product_id, b.unit_id, b.version, b.process_route_id,
+               b.effective_date, b.expiry_date, b.approval_status, b.is_default, b.total_cost, b.labor_cost,
+               b.material_cost, b.overhead_cost, b.is_active, b.remark, b.create_by, b.create_time, b.update_by, b.update_time,
+               m.material_code as product_code, m.material_name as product_name, m.material_spec as product_spec,
+               u.unit_name, pr.process_route_code, pr.process_route_name
+        from erp_bom b 
+        left join erp_material_master m on b.product_id = m.id
+        left join erp_unit u on b.unit_id = u.id
+        left join erp_process_route pr on b.process_route_id = pr.id and pr.del_flag = '0'
+    </sql>
+
+    <select id="selectErpBomList" parameterType="ErpBom" resultMap="ErpBomResult">
+        <include refid="selectErpBomVo"/>
+        <where>  
+            <if test="bomCode != null  and bomCode != ''"> and b.bom_code like concat('%', #{bomCode}, '%')</if>
+            <if test="bomName != null  and bomName != ''"> and b.bom_name like concat('%', #{bomName}, '%')</if>
+            <if test="productId != null "> and b.product_id = #{productId}</if>
+            <if test="version != null  and version != ''"> and b.version = #{version}</if>
+            <if test="processRouteId != null "> and b.process_route_id = #{processRouteId}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''"> and b.approval_status = #{approvalStatus}</if>
+            <if test="isDefault != null  and isDefault != ''"> and b.is_default = #{isDefault}</if>
+            <if test="isActive != null  and isActive != ''"> and b.is_active = #{isActive}</if>
+            <if test="effectiveDate != null "> and b.effective_date = #{effectiveDate}</if>
+            <if test="expiryDate != null "> and b.expiry_date = #{expiryDate}</if>
+        </where>
+        order by b.create_time desc
+    </select>
+    
+    <select id="selectErpBomById" parameterType="Long" resultMap="ErpBomResultWithDetails">
+        select b.id, b.bom_code, b.bom_name, b.product_id, b.unit_id, b.version, b.process_route_id,
+               b.effective_date, b.expiry_date, b.approval_status, b.is_default, b.total_cost, b.labor_cost,
+               b.material_cost, b.overhead_cost, b.is_active, b.remark, b.create_by, b.create_time, b.update_by, b.update_time,
+               m.material_code as product_code, m.material_name as product_name, m.material_spec as product_spec,
+               u.unit_name, pr.process_route_code, pr.process_route_name,
+               bd.id as sub_id, bd.bom_id as sub_bom_id, bd.material_id as sub_material_id,
+               mm.material_code as sub_material_code, mm.material_name as sub_material_name, mm.material_spec as sub_material_spec,
+               bd.material_unit_id as sub_material_unit_id, mu.unit_name as sub_material_unit_name,
+               bd.quantity_per_unit as sub_quantity_per_unit, bd.loss_rate as sub_loss_rate, bd.effective_quantity as sub_effective_quantity,
+               bd.position as sub_position, bd.operation_sequence as sub_operation_sequence,
+               bd.is_critical as sub_is_critical, bd.is_optional as sub_is_optional,
+               bd.unit_cost as sub_unit_cost, bd.total_cost as sub_total_cost, bd.remark as sub_remark,
+               bd.create_by as sub_create_by, bd.create_time as sub_create_time, bd.update_by as sub_update_by, bd.update_time as sub_update_time,
+               brd.id as route_id, brd.bom_id as route_bom_id, brd.process_id as route_process_id,
+               p.process_code as route_process_code, p.process_name as route_process_name,
+               brd.operation_sequence as route_operation_sequence,
+               brd.work_center_id as route_work_center_id, wc.work_center_code as route_work_center_code, wc.work_center_name as route_work_center_name,
+               brd.equipment_id as route_equipment_id, e.equipment_code as route_equipment_code, e.equipment_name as route_equipment_name,
+               brd.mold_id as route_mold_id, mold.mold_code as route_mold_code, mold.mold_name as route_mold_name,
+               brd.setup_time as route_setup_time, brd.processing_time as route_processing_time, brd.move_time as route_move_time,
+               brd.queue_time as route_queue_time, brd.cycle_time as route_cycle_time,
+               brd.labor_hours as route_labor_hours, brd.machine_hours as route_machine_hours,
+               brd.is_critical as route_is_critical, brd.is_optional as route_is_optional, brd.remark as route_remark,
+               brd.create_by as route_create_by, brd.create_time as route_create_time, brd.update_by as route_update_by, brd.update_time as route_update_time
+        from erp_bom b 
+        left join erp_material_master m on b.product_id = m.id
+        left join erp_unit u on b.unit_id = u.id
+        left join erp_process_route pr on b.process_route_id = pr.id and pr.del_flag = '0'
+        left join erp_bom_detail bd on b.id = bd.bom_id and bd.del_flag = '0'
+        left join erp_material_master mm on bd.material_id = mm.id
+        left join erp_unit mu on bd.material_unit_id = mu.id
+        left join erp_bom_route_detail brd on b.id = brd.bom_id and brd.del_flag = '0'
+        left join erp_process p on brd.process_id = p.id and p.del_flag = '0'
+        left join erp_work_center wc on brd.work_center_id = wc.id and wc.del_flag = '0'
+        left join erp_equipment e on brd.equipment_id = e.id and e.del_flag = '0'
+        left join erp_mold mold on brd.mold_id = mold.id and mold.del_flag = '0'
+        where b.id = #{id}
+    </select>
+
+    <insert id="insertErpBom" parameterType="ErpBom" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_bom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bomCode != null and bomCode != ''">bom_code,</if>
+            <if test="bomName != null and bomName != ''">bom_name,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="processRouteId != null">process_route_id,</if>
+            <if test="effectiveDate != null">effective_date,</if>
+            <if test="expiryDate != null">expiry_date,</if>
+            <if test="approvalStatus != null and approvalStatus != ''">approval_status,</if>
+            <if test="isDefault != null and isDefault != ''">is_default,</if>
+            <if test="totalCost != null">total_cost,</if>
+            <if test="laborCost != null">labor_cost,</if>
+            <if test="materialCost != null">material_cost,</if>
+            <if test="overheadCost != null">overhead_cost,</if>
+            <if test="isActive != null and isActive != ''">is_active,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bomCode != null and bomCode != ''">#{bomCode},</if>
+            <if test="bomName != null and bomName != ''">#{bomName},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="processRouteId != null">#{processRouteId},</if>
+            <if test="effectiveDate != null">#{effectiveDate},</if>
+            <if test="expiryDate != null">#{expiryDate},</if>
+            <if test="approvalStatus != null and approvalStatus != ''">#{approvalStatus},</if>
+            <if test="isDefault != null and isDefault != ''">#{isDefault},</if>
+            <if test="totalCost != null">#{totalCost},</if>
+            <if test="laborCost != null">#{laborCost},</if>
+            <if test="materialCost != null">#{materialCost},</if>
+            <if test="overheadCost != null">#{overheadCost},</if>
+            <if test="isActive != null and isActive != ''">#{isActive},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpBom" parameterType="ErpBom">
+        update erp_bom
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bomCode != null and bomCode != ''">bom_code = #{bomCode},</if>
+            <if test="bomName != null and bomName != ''">bom_name = #{bomName},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="processRouteId != null">process_route_id = #{processRouteId},</if>
+            <if test="effectiveDate != null">effective_date = #{effectiveDate},</if>
+            <if test="expiryDate != null">expiry_date = #{expiryDate},</if>
+            <if test="approvalStatus != null and approvalStatus != ''">approval_status = #{approvalStatus},</if>
+            <if test="isDefault != null and isDefault != ''">is_default = #{isDefault},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="laborCost != null">labor_cost = #{laborCost},</if>
+            <if test="materialCost != null">material_cost = #{materialCost},</if>
+            <if test="overheadCost != null">overhead_cost = #{overheadCost},</if>
+            <if test="isActive != null and isActive != ''">is_active = #{isActive},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpBomById" parameterType="Long">
+        update erp_bom set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteErpBomByIds" parameterType="String">
+        update erp_bom set del_flag = '1' where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchErpBomDetail">
+        insert into erp_bom_detail( bom_id, material_id, material_unit_id, quantity_per_unit, loss_rate, effective_quantity, position, operation_sequence, is_critical, is_optional, unit_cost, total_cost, remark, create_by, create_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+        (#{item.bomId}, #{item.materialId}, #{item.materialUnitId}, #{item.quantityPerUnit}, #{item.lossRate}, #{item.effectiveQuantity}, #{item.position}, #{item.operationSequence}, #{item.isCritical}, #{item.isOptional}, #{item.unitCost}, #{item.totalCost}, #{item.remark}, #{item.createBy}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteErpBomDetailByBomId" parameterType="Long">
+        update erp_bom_detail set del_flag = '1' where bom_id = #{bomId}
+    </delete>
+
+    <delete id="deleteErpBomDetailByBomIds" parameterType="String">
+        update erp_bom_detail set del_flag = '1' where bom_id in 
+        <foreach item="bomId" collection="array" open="(" separator="," close=")">
+            #{bomId}
+        </foreach>
+    </delete>
+
+    <insert id="batchErpBomRouteDetail">
+        insert into erp_bom_route_detail( bom_id, process_id, operation_sequence, work_center_id, equipment_id, mold_id, setup_time, processing_time, move_time, queue_time, cycle_time, labor_hours, machine_hours, is_critical, is_optional, remark, create_by, create_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+        (#{item.bomId}, #{item.processId}, #{item.operationSequence}, #{item.workCenterId}, #{item.equipmentId}, #{item.moldId}, #{item.setupTime}, #{item.processingTime}, #{item.moveTime}, #{item.queueTime}, #{item.cycleTime}, #{item.laborHours}, #{item.machineHours}, #{item.isCritical}, #{item.isOptional}, #{item.remark}, #{item.createBy}, #{item.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteErpBomRouteDetailByBomId" parameterType="Long">
+        update erp_bom_route_detail set del_flag = '1' where bom_id = #{bomId}
+    </delete>
+
+    <delete id="deleteErpBomRouteDetailByBomIds" parameterType="String">
+        update erp_bom_route_detail set del_flag = '1' where bom_id in 
+        <foreach item="bomId" collection="array" open="(" separator="," close=")">
+            #{bomId}
+        </foreach>
+    </delete>
+
+    <!-- 检查BOM冲突 -->
+    <select id="checkBomConflict" resultMap="ErpBomResult">
+        <include refid="selectErpBomVo"/>
+        where b.product_id = #{param1}
+          and b.effective_date = #{param2}
+          and b.approval_status = '2'  <!-- 已审批状态 -->
+          and b.del_flag = '0'
+          <if test="param3 != null">
+          and b.id != #{param3}
+          </if>
+        order by b.create_time desc
+    </select>
+
+    <!-- 发现BOM有冲突时，更新旧BOM失效日期及审批状态为作废 -->
+    <update id="updateBomExpiryDate">
+        update erp_bom 
+        set expiry_date = #{param2}, approval_status = '3',
+            update_time = now()
+        where id = #{param1}
+    </update>
+
+    <!-- 审批BOM -->
+    <update id="approveBom">
+        update erp_bom 
+        set approval_status = '2',  <!-- 已审批状态 -->
+            update_time = now()
+        where id = #{param1}
+    </update>
+</mapper>

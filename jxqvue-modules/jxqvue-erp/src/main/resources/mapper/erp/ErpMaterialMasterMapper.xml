@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpMaterialMasterMapper">
+    
+    <resultMap type="ErpMaterialMaster" id="ErpMaterialMasterResult">
+        <result property="id"    column="id"    />
+        <result property="materialCode"    column="material_code"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialSpec"    column="material_spec"    />
+        <result property="materialModel"    column="material_model"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="unitId"    column="unit_id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="minStock"    column="min_stock"    />
+        <result property="maxStock"    column="max_stock"    />
+        <result property="safetyStock"    column="safety_stock"    />
+        <result property="leadTime"    column="lead_time"    />
+        <result property="shelfLife"    column="shelf_life"    />
+        <result property="isPurchased"    column="is_purchased"    />
+        <result property="isManufactured"    column="is_manufactured"    />
+        <result property="isSales"    column="is_sales"    />
+        <result property="isInventory"    column="is_inventory"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="processRouteId"    column="process_route_id"    />
+        <result property="processRouteCode"    column="process_route_code"    />
+        <result property="processRouteName"    column="process_route_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpMaterialMasterVo">
+        select u.id, u.material_code, u.material_name, u.material_spec, u.material_model, u.category_id, u.unit_id,
+               w.unit_name, u.unit_price, u.min_stock, u.max_stock, u.safety_stock, u.lead_time, u.shelf_life,
+               u.is_purchased, u.is_manufactured, u.is_sales, u.is_inventory, u.is_active, u.process_route_id,
+               pr.process_route_code, pr.process_route_name, u.remark, u.create_by, u.create_time, u.update_by, u.update_time
+        from erp_material_master u left join erp_material_category v on u.category_id = v.id
+        left join erp_unit w on u.unit_id = w.id
+        left join erp_process_route pr on u.process_route_id = pr.id and pr.del_flag = '0'
+    </sql>
+
+    <select id="selectErpMaterialMasterList" parameterType="ErpMaterialMaster" resultMap="ErpMaterialMasterResult">
+        <include refid="selectErpMaterialMasterVo"/>
+        <where>  
+            <if test="materialName != null  and materialName != ''"> and u.material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialSpec != null  and materialSpec != ''"> and u.material_spec like concat('%', #{materialSpec}, '%')</if>
+            <if test="materialModel != null  and materialModel != ''"> and u.material_model like concat('%', #{materialModel}, '%')</if>
+            <if test="categoryId != null "> and u.category_id = #{categoryId}</if>
+            <if test="processRouteId != null "> and u.process_route_id = #{processRouteId}</if>
+            <if test="isActive != null  and isActive != ''"> and u.is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpMaterialMasterById" parameterType="Long" resultMap="ErpMaterialMasterResult">
+        <include refid="selectErpMaterialMasterVo"/>
+        where u.id = #{id}
+    </select>
+
+    <insert id="insertErpMaterialMaster" parameterType="ErpMaterialMaster" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_material_master
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialCode != null and materialCode != ''">material_code,</if>
+            <if test="materialName != null and materialName != ''">material_name,</if>
+            <if test="materialSpec != null">material_spec,</if>
+            <if test="materialModel != null">material_model,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="unitId != null">unit_id,</if>
+            <if test="unitPrice != null">unit_price,</if>
+            <if test="minStock != null">min_stock,</if>
+            <if test="maxStock != null">max_stock,</if>
+            <if test="safetyStock != null">safety_stock,</if>
+            <if test="leadTime != null">lead_time,</if>
+            <if test="shelfLife != null">shelf_life,</if>
+            <if test="isPurchased != null">is_purchased,</if>
+            <if test="isManufactured != null">is_manufactured,</if>
+            <if test="isSales != null">is_sales,</if>
+            <if test="isInventory != null">is_inventory,</if>
+            <if test="isActive != null and isActive != ''">is_active,</if>
+            <if test="processRouteId != null">process_route_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialCode != null and materialCode != ''">#{materialCode},</if>
+            <if test="materialName != null and materialName != ''">#{materialName},</if>
+            <if test="materialSpec != null">#{materialSpec},</if>
+            <if test="materialModel != null">#{materialModel},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="unitId != null">#{unitId},</if>
+            <if test="unitPrice != null">#{unitPrice},</if>
+            <if test="minStock != null">#{minStock},</if>
+            <if test="maxStock != null">#{maxStock},</if>
+            <if test="safetyStock != null">#{safetyStock},</if>
+            <if test="leadTime != null">#{leadTime},</if>
+            <if test="shelfLife != null">#{shelfLife},</if>
+            <if test="isPurchased != null">#{isPurchased},</if>
+            <if test="isManufactured != null">#{isManufactured},</if>
+            <if test="isSales != null">#{isSales},</if>
+            <if test="isInventory != null">#{isInventory},</if>
+            <if test="isActive != null and isActive != ''">#{isActive},</if>
+            <if test="processRouteId != null">#{processRouteId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpMaterialMaster" parameterType="ErpMaterialMaster">
+        update erp_material_master
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialCode != null and materialCode != ''">material_code = #{materialCode},</if>
+            <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
+            <if test="materialSpec != null">material_spec = #{materialSpec},</if>
+            <if test="materialModel != null">material_model = #{materialModel},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+            <if test="minStock != null">min_stock = #{minStock},</if>
+            <if test="maxStock != null">max_stock = #{maxStock},</if>
+            <if test="safetyStock != null">safety_stock = #{safetyStock},</if>
+            <if test="leadTime != null">lead_time = #{leadTime},</if>
+            <if test="shelfLife != null">shelf_life = #{shelfLife},</if>
+            <if test="isPurchased != null">is_purchased = #{isPurchased},</if>
+            <if test="isManufactured != null">is_manufactured = #{isManufactured},</if>
+            <if test="isSales != null">is_sales = #{isSales},</if>
+            <if test="isInventory != null">is_inventory = #{isInventory},</if>
+            <if test="isActive != null and isActive != ''">is_active = #{isActive},</if>
+            <if test="processRouteId != null">process_route_id = #{processRouteId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpMaterialMasterById" parameterType="Long">
+        delete from erp_material_master where id = #{id}
+    </delete>
+
+    <delete id="deleteErpMaterialMasterByIds" parameterType="String">
+        delete from erp_material_master where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

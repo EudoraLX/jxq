@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxqvue.erp.mapper.ErpProductionOperationRecordMapper">
+    
+    <resultMap type="ErpProductionOperationRecord" id="ErpProductionOperationRecordResult">
+        <result property="id"    column="id"    />
+        <result property="operationType" column="operation_type" />
+        <result property="productionOrderId"    column="production_order_id"    />
+        <result property="orderCode"    column="order_code"    />
+        <result property="productId" column="product_id" />
+        <result property="productCode" column="product_code" />
+        <result property="productName" column="product_name" />
+        <result property="unitId" column="unitName" />
+        <result property="unitName" column="unit_name" />
+        <result property="processRouteId"    column="process_route_id"    />
+        <result property="processId"    column="process_id"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="processName"    column="process_name"    />
+        <result property="workCenterId"    column="work_center_id"    />
+        <result property="workCenterCode"    column="work_center_code"    />
+        <result property="workCenterName"    column="work_center_name"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="moldId"    column="mold_id"    />
+        <result property="moldCode"    column="mold_code"    />
+        <result property="moldName"    column="mold_name"    />
+        <result property="operatorId"    column="operator_id"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="operationTime"    column="operation_time"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectErpProductionOperationRecordVo">
+        select r.id, r.operation_type, r.production_order_id, r.process_route_id, r.process_id,
+               r.work_center_id, r.equipment_id, r.mold_id, r.operator_id, r.operation_time, 
+               r.quantity, r.remark, r.create_by, r.create_time, r.update_by, r.update_time,
+               o.order_code, o.product_id, o.unit_id, mm.material_code as product_code, mm.material_name as product_name, eu.unit_name,
+               p.process_code, p.process_name,
+               w.work_center_code, w.work_center_name,
+               e.equipment_code, e.equipment_name,
+               m.mold_code, m.mold_name,
+               u.nick_name as operator_name
+        from erp_production_operation_record r
+        left join erp_production_order o on r.production_order_id = o.id
+        left join erp_process p on r.process_id = p.id
+        left join erp_work_center w on r.work_center_id = w.id
+        left join erp_equipment e on r.equipment_id = e.id
+        left join erp_mold m on r.mold_id = m.id
+        left join sys_user u on r.operator_id = u.user_id
+        left join erp_material_master mm on o.product_id = mm.id
+        left join erp_unit eu on o.unit_id = eu.id
+    </sql>
+
+    <select id="selectErpProductionOperationRecordList" parameterType="ErpProductionOperationRecord" resultMap="ErpProductionOperationRecordResult">
+        <include refid="selectErpProductionOperationRecordVo"/>
+        <where>
+            <if test="operationType != null"> and r.operation_type = #{operationType}</if>
+            <if test="productionOrderId != null"> and r.production_order_id = #{productionOrderId}</if>
+            <if test="orderCode != null  and orderCode != ''"> and o.order_code like concat('%', #{orderCode}, '%')</if>
+            <if test="processId != null"> and r.process_id = #{processId}</if>
+            <if test="processCode != null  and processCode != ''"> and p.process_code like concat('%', #{processCode}, '%')</if>
+            <if test="workCenterId != null"> and r.work_center_id = #{workCenterId}</if>
+            <if test="workCenterCode != null  and workCenterCode != ''"> and w.work_center_code like concat('%', #{workCenterCode}, '%')</if>
+            <if test="equipmentId != null"> and r.equipment_id = #{equipmentId}</if>
+            <if test="equipmentCode != null  and equipmentCode != ''"> and e.equipment_code like concat('%', #{equipmentCode}, '%')</if>
+            <if test="moldId != null"> and r.mold_id = #{moldId}</if>
+            <if test="moldCode != null  and moldCode != ''"> and m.mold_code like concat('%', #{moldCode}, '%')</if>
+            <if test="operatorId != null"> and r.operator_id = #{operatorId}</if>
+            <if test="operatorName != null  and operatorName != ''"> and u.nick_name like concat('%', #{operatorName}, '%')</if>
+            <if test="operationTime != null"> and r.operation_time = #{operationTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(r.operation_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(r.operation_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by r.operation_time desc, r.id desc
+    </select>
+    
+    <select id="selectErpProductionOperationRecordById" parameterType="Long" resultMap="ErpProductionOperationRecordResult">
+        <include refid="selectErpProductionOperationRecordVo"/>
+        where r.id = #{id}
+    </select>
+
+    <select id="getLatestProcessIdByOperatorId" parameterType="Long" resultType="Long">
+        select process_id 
+        from erp_operator_duty 
+        where operator_id = #{operatorId} 
+        order by register_time desc
+        limit 1
+    </select>
+
+    <select id="getWorkCenterInfoByOrderAndProcess" resultMap="ErpProductionOperationRecordResult">
+        select d.work_center_id, d.equipment_id, d.mold_id,
+               w.work_center_code, w.work_center_name,
+               e.equipment_code, e.equipment_name,
+               m.mold_code, m.mold_name
+        from erp_production_order_detail d
+        left join erp_work_center w on d.work_center_id = w.id
+        left join erp_equipment e on d.equipment_id = e.id
+        left join erp_mold m on d.mold_id = m.id
+        where d.order_id = #{productionOrderId}
+        and d.process_id = #{processId}
+        limit 1
+    </select>
+
+    <select id="getProcessRouteDetailsByOrderId" resultMap="ErpProductionOperationRecordResult">
+        select d.process_id, d.work_center_id, d.equipment_id, d.mold_id,
+               p.process_code, p.process_name,
+               w.work_center_code, w.work_center_name,
+               e.equipment_code, e.equipment_name,
+               m.mold_code, m.mold_name
+        from erp_production_order_detail d
+        left join erp_process p on d.process_id = p.id
+        left join erp_work_center w on d.work_center_id = w.id
+        left join erp_equipment e on d.equipment_id = e.id
+        left join erp_mold m on d.mold_id = m.id
+        where d.order_id = #{productionOrderId}
+        order by d.process_order
+    </select>
+        
+    <insert id="insertErpProductionOperationRecord" parameterType="ErpProductionOperationRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into erp_production_operation_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="operationType != null">operation_type,</if>
+            <if test="productionOrderId != null">production_order_id,</if>
+            <if test="processRouteId != null">process_route_id,</if>
+            <if test="processId != null">process_id,</if>
+            <if test="workCenterId != null">work_center_id,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="moldId != null">mold_id,</if>
+            <if test="operatorId != null">operator_id,</if>
+            <if test="operationTime != null">operation_time,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="operationType != null">#{operationType},</if>
+            <if test="productionOrderId != null">#{productionOrderId},</if>
+            <if test="processRouteId != null">#{processRouteId},</if>
+            <if test="processId != null">#{processId},</if>
+            <if test="workCenterId != null">#{workCenterId},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="moldId != null">#{moldId},</if>
+            <if test="operatorId != null">#{operatorId},</if>
+            <if test="operationTime != null">#{operationTime},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpProductionOperationRecord" parameterType="ErpProductionOperationRecord">
+        update erp_production_operation_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operationType != null">operation_type = #{operationType},</if>
+            <if test="productionOrderId != null">production_order_id = #{productionOrderId},</if>
+            <if test="processRouteId != null">process_route_id = #{processRouteId},</if>
+            <if test="processId != null">process_id = #{processId},</if>
+            <if test="workCenterId != null">work_center_id = #{workCenterId},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="moldId != null">mold_id = #{moldId},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="operationTime != null">operation_time = #{operationTime},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpProductionOperationRecordById" parameterType="Long">
+        delete from erp_production_operation_record where id = #{id}
+    </delete>
+
+    <delete id="deleteErpProductionOperationRecordByIds" parameterType="String">
+        delete from erp_production_operation_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getLatestOperationRecord" parameterType="ErpProductionOperationRecord" resultMap="ErpProductionOperationRecordResult">
+        <include refid="selectErpProductionOperationRecordVo"/>
+        WHERE production_order_id = #{productionOrderId} 
+        AND process_id = #{processId}
+        AND operator_id = #{operatorId}
+        ORDER BY operation_time DESC
+        LIMIT 1
+    </select>
+</mapper>
