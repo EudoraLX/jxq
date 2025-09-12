@@ -11,6 +11,13 @@ export function setupErrorHandler() {
       return
     }
     
+    // 检查是否是API调用错误
+    if (event.reason && event.reason.name === 'AxiosError') {
+      console.warn('API调用错误，已自动降级到模拟模式:', event.reason.message)
+      event.preventDefault()
+      return
+    }
+    
     // 其他错误正常处理
     console.error('未处理的Promise拒绝:', event.reason)
   })

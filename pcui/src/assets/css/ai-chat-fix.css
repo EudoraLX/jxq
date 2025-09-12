@@ -1,0 +1,33 @@
+/* AI聊天弹框层级修复 */
+
+/* Element UI 弹框层级 */
+.el-message-box__wrapper {
+  z-index: 10000 !important;
+}
+
+.el-message-box {
+  z-index: 10001 !important;
+}
+
+/* 遮罩层层级 */
+.el-message-box__wrapper .el-overlay {
+  z-index: 9999 !important;
+}
+
+/* AI聊天组件层级 */
+.ai-chat-fixed {
+  z-index: 9998 !important;
+}
+
+.ai-chat-fixed .chat-window {
+  z-index: 9998 !important;
+}
+
+/* 确保弹框按钮可点击 */
+.el-message-box__btns {
+  z-index: 10002 !important;
+}
+
+.el-message-box__btns .el-button {
+  z-index: 10002 !important;
+}

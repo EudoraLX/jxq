@@ -60,6 +60,11 @@ public class OpenRouterClient
         try {
             initWebClient();
             
+            System.out.println("=== OpenRouter API 开始处理 ===");
+            System.out.println("模型: " + config.getModel());
+            System.out.println("最大令牌数: " + config.getMaxTokens());
+            System.out.println("温度: " + config.getTemperature());
+            
             // 构建请求体
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("model", config.getModel());
@@ -68,15 +73,19 @@ public class OpenRouterClient
             
             // 转换消息格式
             List<Map<String, String>> openRouterMessages = new ArrayList<>();
-            for (ChatMessage message : messages) {
+            for (int i = 0; i < messages.size(); i++) {
+                ChatMessage message = messages.get(i);
                 Map<String, String> msg = new HashMap<>();
                 msg.put("role", message.getRole());
                 msg.put("content", message.getContent());
                 openRouterMessages.add(msg);
+                System.out.println("消息" + i + " [" + message.getRole() + "]: " + message.getContent());
             }
             requestBody.put("messages", openRouterMessages);
 
-            log.info("发送OpenRouter请求: {}", objectMapper.writeValueAsString(requestBody));
+            String requestJson = objectMapper.writeValueAsString(requestBody);
+            System.out.println("发送到OpenRouter的完整请求: " + requestJson);
+            log.info("发送OpenRouter请求: {}", requestJson);
 
             // 发送请求
             Mono<Map> response = webClient.post()
@@ -87,19 +96,40 @@ public class OpenRouterClient
                     .timeout(Duration.ofMillis(config.getTimeout()));
 
             Map<String, Object> result = response.block();
+            System.out.println("OpenRouter原始响应: " + result);
             
             if (result != null && result.containsKey("choices")) {
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) result.get("choices");
+                System.out.println("选择数量: " + choices.size());
                 if (!choices.isEmpty()) {
                     Map<String, Object> choice = choices.get(0);
+                    System.out.println("第一个选择: " + choice);
                     Map<String, Object> message = (Map<String, Object>) choice.get("message");
+                    System.out.println("消息内容: " + message);
                     String content = (String) message.get("content");
                     
-                    log.info("OpenRouter响应成功: {}", content);
-                    return content;
+                    System.out.println("提取的AI回复内容: " + content);
+                    System.out.println("AI回复内容长度: " + (content != null ? content.length() : "null"));
+                    
+                    if (content != null && !content.trim().isEmpty()) {
+                        log.info("OpenRouter响应成功: {}", content);
+                        return content;
+                    } else {
+                        System.out.println("AI回复内容为空，检查错误信息...");
+                        if (choice.containsKey("finish_reason")) {
+                            String finishReason = (String) choice.get("finish_reason");
+                            System.out.println("完成原因: " + finishReason);
+                        }
+                        if (result.containsKey("error")) {
+                            Map<String, Object> error = (Map<String, Object>) result.get("error");
+                            System.out.println("API错误: " + error);
+                        }
+                        return "抱歉，AI服务返回了空内容，请稍后重试。";
+                    }
                 }
             }
             
+            System.out.println("OpenRouter响应格式错误，完整响应: " + result);
             log.error("OpenRouter响应格式错误: {}", result);
             return "抱歉，AI服务暂时不可用，请稍后重试。";
             

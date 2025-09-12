@@ -141,4 +141,4 @@ openrouter:
   # 温度参数
   temperature: 0.7
   # 请求超时时间（毫秒）
-  timeout: 30000
+  timeout: 120000

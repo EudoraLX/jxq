@@ -2,19 +2,19 @@
   <div id="app">
     <router-view />
     <theme-picker />
-    <ai-chat-light />
+    <ai-chat-fixed />
   </div>
 </template>
 
 <script>
 import ThemePicker from "@/components/ThemePicker"
-import AiChatLight from "@/components/AiChatLight"
+import AiChatFixed from "@/components/AiChatFixed"
 
 export default {
   name: "App",
   components: { 
     ThemePicker,
-    AiChatLight
+    AiChatFixed
   }
 }
 </script>

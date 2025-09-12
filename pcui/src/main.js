@@ -7,6 +7,7 @@ import './assets/styles/element-variables.scss'
 
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/jxqvue.scss' // jxqvue css
+import '@/assets/css/ai-chat-fix.css' // ai chat fix css
 import App from './App'
 import store from './store'
 import router from './router'

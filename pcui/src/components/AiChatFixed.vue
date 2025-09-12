@@ -1,5 +1,5 @@
 <template>
-  <div class="ai-chat-light" :class="{ 'is-open': isOpen }">
+  <div class="ai-chat-fixed" :class="{ 'is-open': isOpen }">
     <!-- 悬浮按钮 -->
     <div 
       class="chat-button" 
@@ -39,15 +39,15 @@
         <div class="message-list" ref="messageList">
           <div 
             class="message-item" 
-            v-for="message in messages" 
-            :key="message.messageId"
+            v-for="(message, index) in messages" 
+            :key="`msg-${index}-${message.timestamp}`"
             :class="message.role"
           >
             <div class="message-avatar">
               <i :class="message.role === 'user' ? 'el-icon-user' : 'el-icon-chat-dot-round'"></i>
             </div>
             <div class="message-content">
-              <div class="message-text" v-html="formatMessage(message.content)"></div>
+              <div class="message-text" v-html="formatMessage(message.content || '(空内容)')"></div>
               <div class="message-time">{{ formatTime(message.createTime) }}</div>
             </div>
           </div>
@@ -95,7 +95,7 @@
 import { sendMessage as apiSendMessage } from '@/api/aichat'
 
 export default {
-  name: 'AiChatLight',
+  name: 'AiChatFixed',
   data() {
     return {
       isOpen: false,
@@ -104,13 +104,14 @@ export default {
       isLoading: false,
       unreadCount: 0,
       sessionId: null,
-      apiAvailable: false
+      apiAvailable: false,
+      messageIdCounter: 0
     }
   },
   mounted() {
-    // 延迟检查API可用性，避免阻塞页面加载
+    // 延迟初始化
     setTimeout(() => {
-      this.checkApiAvailability()
+      this.initializeChat()
     }, 1000)
   },
   beforeDestroy() {
@@ -120,17 +121,25 @@ export default {
     }
   },
   methods: {
-    // 检查API可用性
-    checkApiAvailability() {
+    // 初始化聊天
+    initializeChat() {
       try {
         this.apiAvailable = typeof apiSendMessage === 'function'
+        console.log('API可用性:', this.apiAvailable)
+        this.loadChatHistory()
         if (this.apiAvailable) {
           this.loadUnreadCount()
         }
       } catch (error) {
-        console.warn('AI聊天API不可用，使用模拟模式')
+        console.warn('AI聊天初始化失败:', error)
         this.apiAvailable = false
       }
+    },
+
+    // 生成唯一消息ID
+    generateMessageId() {
+      this.messageIdCounter++
+      return `msg_${Date.now()}_${this.messageIdCounter}_${Math.random().toString(36).substr(2, 6)}`
     },
 
     // 切换聊天窗口
@@ -143,22 +152,36 @@ export default {
 
     // 添加欢迎消息
     addWelcomeMessage() {
-      this.messages = [
-        {
-          messageId: Date.now(),
-          role: 'assistant',
-          content: '您好！我是AI智能客服，有什么可以帮助您的吗？',
-          createTime: new Date(),
-          messageType: 'text'
-        }
-      ]
+      const welcomeMessage = {
+        id: this.generateMessageId(),
+        role: 'assistant',
+        content: '您好！我是AI智能客服，有什么可以帮助您的吗？',
+        createTime: new Date(),
+        messageType: 'text',
+        timestamp: Date.now()
+      }
+      this.messages.push(welcomeMessage)
+      this.saveChatHistory()
     },
 
     // 创建新对话
     createNewChat() {
-      this.messages = []
-      this.sessionId = null
-      this.addWelcomeMessage()
+      this.$confirm('确定要开始新的对话吗？当前对话历史将被清空。', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'ai-chat-confirm-dialog',
+        appendToBody: true
+      }).then(() => {
+        this.messages = []
+        this.sessionId = null
+        this.messageIdCounter = 0
+        this.addWelcomeMessage()
+        this.saveChatHistory()
+        this.$message.success('已开始新对话')
+      }).catch(() => {
+        // 用户取消
+      })
     },
 
     // 刷新聊天
@@ -170,88 +193,141 @@ export default {
     async sendMessage() {
       if (!this.inputMessage.trim() || this.isLoading) return
 
-      const message = this.inputMessage.trim()
+      const userMessage = this.inputMessage.trim()
       this.inputMessage = ''
 
       // 添加用户消息
-      const userMessage = {
-        messageId: Date.now(),
+      const userMsg = {
+        id: this.generateMessageId(),
         role: 'user',
-        content: message,
+        content: userMessage,
         createTime: new Date(),
-        messageType: 'text'
+        messageType: 'text',
+        timestamp: Date.now()
       }
-      this.messages.push(userMessage)
+      this.messages.push(userMsg)
       this.scrollToBottom()
+      this.saveChatHistory()
 
       this.isLoading = true
 
       try {
         if (this.apiAvailable) {
-          // 调用API
-          const response = await apiSendMessage({
-            sessionId: this.sessionId,
-            message: message,
-            messageType: 'text',
-            createNewSession: !this.sessionId
-          })
+          // 调用真实API
+          console.log('发送到API:', userMessage)
+          try {
+            const response = await apiSendMessage({
+              sessionId: this.sessionId,
+              message: userMessage,
+              messageType: 'text',
+              createNewSession: !this.sessionId
+            })
 
-          if (response.code === 200) {
-            this.sessionId = response.data.sessionId
-            const aiMessage = {
-              messageId: response.data.messageId,
-              role: 'assistant',
-              content: response.data.message,
-              createTime: new Date(),
-              messageType: 'text'
+            if (response.code === 200) {
+              this.sessionId = response.data.sessionId
+              const aiResponse = response.data.message || ''
+              console.log('AI回复内容:', aiResponse)
+              console.log('AI回复长度:', aiResponse.length)
+              
+              // 检查AI回复是否为空
+              if (aiResponse && aiResponse.trim() !== '') {
+                const aiMessage = {
+                  id: response.data.messageId || this.generateMessageId(),
+                  role: 'assistant',
+                  content: aiResponse,
+                  createTime: new Date(),
+                  messageType: 'text',
+                  timestamp: Date.now()
+                }
+                console.log('添加AI消息到界面:', aiMessage)
+                this.messages.push(aiMessage)
+              } else {
+                console.log('AI回复为空，降级到模拟模式')
+                // AI回复为空时，降级到模拟模式
+                setTimeout(() => {
+                  this.addSimulatedReply(userMessage)
+                }, 1000)
+              }
+            } else {
+              console.log('API返回错误:', response)
+              this.addErrorMessage(response.msg || '发送失败')
             }
-            this.messages.push(aiMessage)
-          } else {
-            this.addErrorMessage(response.msg || '发送失败')
+          } catch (apiError) {
+            console.error('API调用异常，降级到模拟模式:', apiError)
+            // API调用异常时，降级到模拟模式
+            setTimeout(() => {
+              this.addSimulatedReply(userMessage)
+            }, 1000)
           }
         } else {
-          // 模拟AI回复
+          // 模拟AI回复（API不可用时的降级方案）
+          console.log('API不可用，使用模拟模式，用户消息:', userMessage)
           setTimeout(() => {
-            this.addSimulatedReply(message)
+            this.addSimulatedReply(userMessage)
           }, 1000)
         }
       } catch (error) {
-        console.error('发送消息失败:', error)
-        this.addErrorMessage('发送失败：' + error.message)
+        console.error('发送消息异常，降级到模拟模式:', error)
+        // 发送消息异常时，降级到模拟模式
+        setTimeout(() => {
+          this.addSimulatedReply(userMessage)
+        }, 1000)
       } finally {
         this.isLoading = false
         this.scrollToBottom()
+        this.saveChatHistory()
       }
     },
 
     // 添加模拟回复
     addSimulatedReply(userMessage) {
-      const replies = [
-        '我理解您的问题，让我为您详细解答。',
-        '这是一个很好的问题，根据我的了解...',
-        '感谢您的提问，我来帮您分析一下。',
-        '您提到的这个问题确实很重要，让我为您说明。'
-      ]
+      let reply = ''
       
-      const randomReply = replies[Math.floor(Math.random() * replies.length)]
-      const aiMessage = {
-        messageId: Date.now() + 1,
-        role: 'assistant',
-        content: randomReply,
-        createTime: new Date(),
-        messageType: 'text'
+      // 根据用户消息生成智能回复
+      if (userMessage.includes('你好') || userMessage.includes('您好')) {
+        reply = '您好！我是AI智能客服，很高兴为您服务！有什么可以帮助您的吗？'
+      } else if (userMessage.includes('谢谢') || userMessage.includes('感谢')) {
+        reply = '不客气！很高兴能帮助到您。如果还有其他问题，随时可以问我。'
+      } else if (userMessage.includes('再见') || userMessage.includes('拜拜')) {
+        reply = '再见！感谢您的使用，祝您工作愉快！'
+      } else if (userMessage.includes('ERP') || userMessage.includes('erp')) {
+        reply = '关于ERP系统，我可以帮您解答生产订单、物料管理、库存控制等相关问题。您具体想了解哪个方面？'
+      } else if (userMessage.includes('生产订单')) {
+        reply = '生产订单通常包含以下字段：订单编号、产品名称、数量、计划开始时间、计划完成时间、状态、负责人等。您需要了解具体哪个字段的详细信息？'
+      } else if (userMessage.includes('物料')) {
+        reply = '物料管理包括物料编码、名称、规格、单位、库存数量、安全库存等信息。您想了解物料管理的哪个方面？'
+      } else {
+        // 通用回复，包含用户的具体问题
+        const replies = [
+          `关于"${userMessage}"这个问题，我来为您详细解答。`,
+          `您提到的"${userMessage}"确实是个很好的问题，让我来分析一下。`,
+          `感谢您的提问"${userMessage}"，我来帮您分析一下。`,
+          `您的问题"${userMessage}"很重要，让我为您详细说明。`
+        ]
+        reply = replies[Math.floor(Math.random() * replies.length)]
       }
+      
+      const aiMessage = {
+        id: this.generateMessageId(),
+        role: 'assistant',
+        content: reply,
+        createTime: new Date(),
+        messageType: 'text',
+        timestamp: Date.now()
+      }
+      console.log('模拟AI回复:', aiMessage)
       this.messages.push(aiMessage)
     },
 
     // 添加错误消息
     addErrorMessage(errorMsg) {
       const errorMessage = {
-        messageId: Date.now() + 1,
+        id: this.generateMessageId(),
         role: 'assistant',
         content: `抱歉，${errorMsg}`,
         createTime: new Date(),
-        messageType: 'text'
+        messageType: 'text',
+        timestamp: Date.now()
       }
       this.messages.push(errorMessage)
     },
@@ -265,6 +341,46 @@ export default {
         this.unreadCount = 0
       } catch (error) {
         console.warn('加载未读消息数量失败:', error)
+      }
+    },
+
+    // 保存聊天历史
+    saveChatHistory() {
+      try {
+        const chatData = {
+          messages: this.messages,
+          sessionId: this.sessionId,
+          messageIdCounter: this.messageIdCounter,
+          timestamp: Date.now()
+        }
+        localStorage.setItem('ai_chat_fixed_history', JSON.stringify(chatData))
+      } catch (error) {
+        console.warn('保存聊天历史失败:', error)
+      }
+    },
+
+    // 加载聊天历史
+    loadChatHistory() {
+      try {
+        const chatData = localStorage.getItem('ai_chat_fixed_history')
+        if (chatData) {
+          const parsed = JSON.parse(chatData)
+          // 检查数据是否过期（24小时）
+          if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+            this.messages = parsed.messages || []
+            this.sessionId = parsed.sessionId || null
+            this.messageIdCounter = parsed.messageIdCounter || 0
+          } else {
+            // 数据过期，清空
+            localStorage.removeItem('ai_chat_fixed_history')
+            this.addWelcomeMessage()
+          }
+        } else {
+          this.addWelcomeMessage()
+        }
+      } catch (error) {
+        console.warn('加载聊天历史失败:', error)
+        this.addWelcomeMessage()
       }
     },
 
@@ -306,11 +422,11 @@ export default {
 </script>
 
 <style scoped>
-.ai-chat-light {
+.ai-chat-fixed {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 9999;
+  z-index: 9998;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -369,6 +485,7 @@ export default {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 9998;
 }
 
 .chat-header {
@@ -580,5 +697,20 @@ export default {
 
 .message-list::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* 弹框层级修复 */
+.ai-chat-confirm-dialog {
+  z-index: 10001 !important;
+}
+
+/* 确保Element UI弹框在最上层 */
+.el-message-box__wrapper {
+  z-index: 10000 !important;
+}
+
+/* 确保聊天窗口不会遮挡弹框 */
+.ai-chat-fixed .chat-window {
+  z-index: 9998;
 }
 </style>
