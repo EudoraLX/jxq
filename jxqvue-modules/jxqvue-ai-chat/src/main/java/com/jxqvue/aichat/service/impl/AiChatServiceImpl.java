@@ -13,6 +13,7 @@ import com.jxqvue.aichat.domain.ChatRequest;
 import com.jxqvue.aichat.domain.ChatResponse;
 import com.jxqvue.aichat.service.IAiChatService;
 import com.jxqvue.aichat.utils.OpenRouterClient;
+import com.jxqvue.aichat.service.LocalAIDatabaseAnalyzer;
 import com.jxqvue.common.utils.DateUtils;
 import com.jxqvue.common.utils.SecurityUtils;
 
@@ -33,6 +34,9 @@ public class AiChatServiceImpl implements IAiChatService
 
     @Autowired
     private OpenRouterClient openRouterClient;
+
+    @Autowired
+    private LocalAIDatabaseAnalyzer localAIDatabaseAnalyzer;
 
     /**
      * 查询AI聊天会话
@@ -211,11 +215,18 @@ public class AiChatServiceImpl implements IAiChatService
                 System.out.println("创建新会话，会话ID: " + sessionId);
             }
             
-            // 测试API连接
-            if (!openRouterClient.testConnection()) {
-                response.setSuccess(false);
-                response.setErrorMessage("AI服务连接失败，请检查网络连接和API配置");
-                return response;
+            // 检测是否是数据库查询问题，优先使用本地AI分析
+            String aiResponse = null;
+            if (localAIDatabaseAnalyzer.isDatabaseQuery(userMessage)) {
+                try {
+                    System.out.println("检测到数据库查询问题，使用本地AI分析");
+                    aiResponse = localAIDatabaseAnalyzer.analyzeWithLocalAI(userMessage);
+                    if (aiResponse != null && !aiResponse.trim().isEmpty()) {
+                        System.out.println("本地AI数据库分析成功");
+                    }
+                } catch (Exception e) {
+                    System.out.println("本地AI数据库分析失败: " + e.getMessage());
+                }
             }
             
             // 保存用户消息
@@ -230,31 +241,41 @@ public class AiChatServiceImpl implements IAiChatService
             insertChatMessage(userMsg);
             System.out.println("用户消息已保存到数据库");
             
-            // 获取历史消息（最近10条）
-            List<ChatMessage> historyMessages = getLatestMessages(sessionId, 10);
-            System.out.println("获取历史消息数量: " + historyMessages.size());
-            
-            // 反转消息顺序，确保按时间顺序发送给AI（从旧到新）
-            List<ChatMessage> orderedMessages = new ArrayList<>();
-            for (int i = historyMessages.size() - 1; i >= 0; i--) {
-                orderedMessages.add(historyMessages.get(i));
-            }
-            
-            System.out.println("按时间顺序排列的消息:");
-            for (int i = 0; i < orderedMessages.size(); i++) {
-                ChatMessage msg = orderedMessages.get(i);
-                System.out.println("消息" + i + ": " + msg.getRole() + " - " + msg.getContent());
-            }
-            
-            // 调用OpenRouter API
-            System.out.println("开始调用OpenRouter API...");
-            String aiResponse = openRouterClient.sendChatRequest(orderedMessages);
-            System.out.println("OpenRouter API返回: " + aiResponse);
-            
-            // 检查AI回复是否为空
+            // 如果本地AI分析失败，使用原有的OpenRouter API
             if (aiResponse == null || aiResponse.trim().isEmpty()) {
-                System.out.println("AI回复为空，使用模拟回复");
-                aiResponse = generateMockResponse(userMessage);
+                // 测试API连接
+                if (!openRouterClient.testConnection()) {
+                    response.setSuccess(false);
+                    response.setErrorMessage("AI服务连接失败，请检查网络连接和API配置");
+                    return response;
+                }
+                
+                // 获取历史消息（最近10条）
+                List<ChatMessage> historyMessages = getLatestMessages(sessionId, 10);
+                System.out.println("获取历史消息数量: " + historyMessages.size());
+                
+                // 反转消息顺序，确保按时间顺序发送给AI（从旧到新）
+                List<ChatMessage> orderedMessages = new ArrayList<>();
+                for (int i = historyMessages.size() - 1; i >= 0; i--) {
+                    orderedMessages.add(historyMessages.get(i));
+                }
+                
+                System.out.println("按时间顺序排列的消息:");
+                for (int i = 0; i < orderedMessages.size(); i++) {
+                    ChatMessage msg = orderedMessages.get(i);
+                    System.out.println("消息" + i + ": " + msg.getRole() + " - " + msg.getContent());
+                }
+                
+                // 调用OpenRouter API
+                System.out.println("开始调用OpenRouter API...");
+                aiResponse = openRouterClient.sendChatRequest(orderedMessages);
+                System.out.println("OpenRouter API返回: " + aiResponse);
+                
+                // 检查AI回复是否为空
+                if (aiResponse == null || aiResponse.trim().isEmpty()) {
+                    System.out.println("AI回复为空，使用模拟回复");
+                    aiResponse = generateMockResponse(userMessage);
+                }
             }
             
             // 保存AI回复
