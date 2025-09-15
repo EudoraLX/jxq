@@ -49,7 +49,7 @@ public class OllamaClient {
                 .uri("/api/generate")
                 .bodyValue(request)
                 .exchange()
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(30))
                 .block()
                 .bodyToMono(String.class)
                 .block();
@@ -81,7 +81,7 @@ public class OllamaClient {
                 .uri("/api/generate")
                 .bodyValue(request)
                 .exchange()
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(30))
                 .block()
                 .bodyToMono(String.class)
                 .block();
@@ -103,7 +103,7 @@ public class OllamaClient {
             String response = webClient.get()
                 .uri("/api/tags")
                 .exchange()
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(30))
                 .block()
                 .bodyToMono(String.class)
                 .block();
@@ -120,17 +120,9 @@ public class OllamaClient {
      */
     private String buildSQLPrompt(String question, String schema) {
         return String.format(
-            "你是一个SQL专家。根据用户问题和数据库结构，生成准确的SQL查询。\n" +
-            "\n" +
-            "用户问题：%s\n" +
-            "\n" +
-            "数据库结构：\n" +
-            "%s\n" +
-            "\n" +
-            "请直接返回SQL查询语句，不要包含任何解释或其他内容。\n" +
-            "只返回SELECT语句，确保语法正确。\n" +
-            "如果问题涉及统计，使用COUNT、SUM等聚合函数。\n" +
-            "如果问题涉及列表，使用LIMIT限制结果数量。",
+            "Generate SQL for: %s\n" +
+            "Schema: %s\n" +
+            "Return only SQL SELECT statement, no explanations.",
             question, schema);
     }
     
@@ -144,16 +136,9 @@ public class OllamaClient {
         }
         
         return String.format(
-            "你是一个数据分析专家。请根据用户问题和查询结果，生成清晰的分析报告。\n" +
-            "\n" +
-            "用户问题：%s\n" +
-            "\n" +
-            "查询结果：\n" +
-            "%s\n" +
-            "\n" +
-            "请用自然语言分析这些数据，提供有价值的洞察。\n" +
-            "如果数据为空，请说明原因。\n" +
-            "如果数据很多，请总结主要趋势。",
+            "Question: %s\n" +
+            "Data: %s\n" +
+            "Analyze the data and provide insights in Chinese.",
             question, dataStr.toString());
     }
     

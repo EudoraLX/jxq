@@ -34,7 +34,10 @@ public class LocalAIDatabaseAnalyzer {
     private RedisTemplate<Object, Object> redisTemplate;
     
     // SQL清理正则表达式
-    private static final Pattern SQL_PATTERN = Pattern.compile("(?i)SELECT.*?;?", Pattern.DOTALL);
+    private static final Pattern SQL_PATTERN = Pattern.compile("(?i)SELECT.*?(?:;|$)", Pattern.DOTALL);
+    
+    // 模型预热标志
+    private volatile boolean modelWarmedUp = false;
     private static final Pattern CODE_BLOCK_PATTERN = Pattern.compile("```(?:sql)?\\s*(.*?)\\s*```", Pattern.DOTALL);
     
     /**
@@ -59,7 +62,13 @@ public class LocalAIDatabaseAnalyzer {
             if (!ollamaClient.testConnection()) {
                 return "Ollama服务未启动，请先启动Ollama服务。\n" +
                        "启动命令：ollama serve\n" +
-                       "下载模型：ollama pull codellama:7b";
+                       "下载模型：ollama pull phi3:mini";
+            }
+            
+            // 3. 预热模型（仅第一次）
+            if (!modelWarmedUp) {
+                warmUpModel();
+                modelWarmedUp = true;
             }
             
             // 3. 获取数据库结构
@@ -173,11 +182,7 @@ public class LocalAIDatabaseAnalyzer {
             sql = codeBlockMatcher.group(1).trim();
         }
         
-        // 提取SELECT语句
-        Matcher sqlMatcher = SQL_PATTERN.matcher(sql);
-        if (sqlMatcher.find()) {
-            sql = sqlMatcher.group(0).trim();
-        }
+        // 不再使用正则表达式提取，直接使用原始SQL
         
         // 确保是SELECT语句
         if (!sql.toUpperCase().startsWith("SELECT")) {
@@ -189,8 +194,8 @@ public class LocalAIDatabaseAnalyzer {
             sql = sql.substring(0, sql.length() - 1);
         }
         
-        // 添加LIMIT限制（如果查询没有LIMIT）
-        if (!sql.toUpperCase().contains("LIMIT")) {
+        // 添加LIMIT限制（如果查询没有LIMIT且不是聚合查询）
+        if (!sql.toUpperCase().contains("LIMIT") && !sql.toUpperCase().contains("COUNT(")) {
             sql += " LIMIT 100";
         }
         
@@ -252,6 +257,20 @@ public class LocalAIDatabaseAnalyzer {
             return analyzeWithLocalAI(testQuestion);
         } catch (Exception e) {
             return "AI分析测试失败: " + e.getMessage();
+        }
+    }
+    
+    /**
+     * 预热模型
+     */
+    private void warmUpModel() {
+        try {
+            System.out.println("开始预热 phi3:mini 模型...");
+            String warmUpPrompt = "Hello";
+            ollamaClient.generateSQL(warmUpPrompt, "test");
+            System.out.println("模型预热完成");
+        } catch (Exception e) {
+            System.out.println("模型预热失败，但继续执行: " + e.getMessage());
         }
     }
 }
