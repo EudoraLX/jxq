@@ -88,8 +88,14 @@ public class LocalAIDatabaseAnalyzer {
             System.out.println("查询结果数量: " + results.size());
             
             // 7. 使用AI分析结果
-            String analysis = ollamaClient.analyzeResults(userQuestion, results);
-            System.out.println("AI分析结果: " + analysis);
+            String analysis;
+            try {
+                analysis = ollamaClient.analyzeResults(userQuestion, results);
+                System.out.println("AI分析结果: " + analysis);
+            } catch (Exception e) {
+                System.out.println("AI分析结果超时，使用备用分析: " + e.getMessage());
+                analysis = generateSimpleAnalysis(userQuestion, results);
+            }
             
             // 8. 缓存结果（1小时）
             redisTemplate.opsForValue().set(cacheKey, analysis, Duration.ofHours(1));
@@ -272,5 +278,32 @@ public class LocalAIDatabaseAnalyzer {
         } catch (Exception e) {
             System.out.println("模型预热失败，但继续执行: " + e.getMessage());
         }
+    }
+    
+    /**
+     * 生成简单分析结果
+     */
+    private String generateSimpleAnalysis(String question, List<Map<String, Object>> results) {
+        if (results == null || results.isEmpty()) {
+            return "查询没有返回任何数据。";
+        }
+        
+        StringBuilder analysis = new StringBuilder();
+        analysis.append("查询结果：\n");
+        
+        for (int i = 0; i < Math.min(results.size(), 5); i++) {
+            Map<String, Object> row = results.get(i);
+            analysis.append("记录 ").append(i + 1).append(": ");
+            for (Map.Entry<String, Object> entry : row.entrySet()) {
+                analysis.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+            }
+            analysis.append("\n");
+        }
+        
+        if (results.size() > 5) {
+            analysis.append("... 还有 ").append(results.size() - 5).append(" 条记录");
+        }
+        
+        return analysis.toString();
     }
 }

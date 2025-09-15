@@ -49,7 +49,7 @@ public class OllamaClient {
                 .uri("/api/generate")
                 .bodyValue(request)
                 .exchange()
-                .timeout(Duration.ofSeconds(30))
+                .timeout(Duration.ofSeconds(15))
                 .block()
                 .bodyToMono(String.class)
                 .block();
@@ -81,7 +81,7 @@ public class OllamaClient {
                 .uri("/api/generate")
                 .bodyValue(request)
                 .exchange()
-                .timeout(Duration.ofSeconds(30))
+                .timeout(Duration.ofSeconds(15))
                 .block()
                 .bodyToMono(String.class)
                 .block();
@@ -103,7 +103,7 @@ public class OllamaClient {
             String response = webClient.get()
                 .uri("/api/tags")
                 .exchange()
-                .timeout(Duration.ofSeconds(30))
+                .timeout(Duration.ofSeconds(15))
                 .block()
                 .bodyToMono(String.class)
                 .block();
@@ -136,9 +136,9 @@ public class OllamaClient {
         }
         
         return String.format(
-            "Question: %s\n" +
-            "Data: %s\n" +
-            "Analyze the data and provide insights in Chinese.",
+            "Q: %s\n" +
+            "D: %s\n" +
+            "Answer in Chinese:",
             question, dataStr.toString());
     }
     
