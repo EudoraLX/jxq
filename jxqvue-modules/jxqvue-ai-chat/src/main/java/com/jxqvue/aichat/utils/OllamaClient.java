@@ -41,7 +41,7 @@ public class OllamaClient {
             String prompt = buildSQLPrompt(userQuestion, databaseSchema);
             
             OllamaRequest request = new OllamaRequest();
-            request.setModel("codellama:7b");
+            request.setModel("phi3:mini");
             request.setPrompt(prompt);
             request.setStream(false);
             
@@ -73,7 +73,7 @@ public class OllamaClient {
             String prompt = buildAnalysisPrompt(question, results);
             
             OllamaRequest request = new OllamaRequest();
-            request.setModel("codellama:7b");
+            request.setModel("phi3:mini");
             request.setPrompt(prompt);
             request.setStream(false);
             
